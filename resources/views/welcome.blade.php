@@ -15,12 +15,26 @@
         <div class="container d-flex justify-content-between align-items-center">
             <h1 class="h4 mb-0">Sistema de Clínicas</h1>
             <div>
-                <a href="{{ Route('user.login') }}" class="btn btn-outline-light me-2">Cadastre-se</a>
-                <a href="" class="btn btn-light text-primary">Login</a>
+                @if (Auth::check())
+                    <a href="{{ Route('patient.dashboard') }}" class="btn btn-outline-light me-2">Dashboard</a>
+                    <a href="{{ Route('patient.logout') }}" class="btn btn-light text-primary">Logout</a>
+                @else
+                    <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Cadastre-se</a>
+                    <a href="{{ Route('user.login') }}" class="btn btn-light text-primary">Login</a>
+                @endif
+
             </div>
         </div>
     </header>
-
+    <x-error-modal
+        modal-id="patientErrorModal"
+        title="Erro"
+    />
+    <x-success-modal
+        modal-id="patientSuccessModal"
+        title="Cadastro Realizado!"
+        message="{{ session('success_message') }}"
+    />
     <!-- Body -->
     <main class="container mt-5">
 

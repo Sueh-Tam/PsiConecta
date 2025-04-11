@@ -15,7 +15,7 @@
         <div class="container d-flex justify-content-between align-items-center">
             <h1 class="h4 mb-0">Psiconecta</h1>
             <div>
-                <a href="/login" class="btn btn-outline-light me-2">Login</a>
+                <a href="{{ Route('user.login') }}" class="btn btn-outline-light me-2">Login</a>
                 <a href="/" class="btn btn-light text-primary">Início</a>
             </div>
         </div>
@@ -30,7 +30,7 @@
     <x-success-modal
         modal-id="patientSuccessModal"
         title="Cadastro Realizado!"
-        message="Cadastrado realizado com sucesso."
+        message="{{ session('success_message') }}"
     />
     <!-- Formulário de Cadastro -->
     <main class="container mt-5">

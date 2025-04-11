@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
@@ -42,5 +44,44 @@ class PatientController extends Controller
                 ->withInput();
         }
 
+    }
+    public function login(Request $request):RedirectResponse{
+
+        $credential = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+            'status' => 'active',
+            'type' => 'patient'
+        ]);
+        if(Auth::check()){
+            return redirect()->back()
+                ->with('show_success_modal', true)
+                ->with('success_message', 'Usuário já está logado!')
+                ->with('success_redirect', route('home'));
+
+        }
+        if (Auth::attempt($credential)) {
+            $request->session()->regenerate();
+            return redirect()->back()
+                ->with('show_success_modal', true)
+                ->with('success_message', 'Login feito com sucesso!')
+                ->with('success_redirect', route('home'));
+        } else {
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->onlyInput('email');
+        }
+    }
+    public function logout(Request $request):RedirectResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->back()
+            ->with('show_success_modal', true)
+            ->with('success_message', 'Logout feito com sucesso!')
+            ->with('success_redirect', route('home'));
     }
 }

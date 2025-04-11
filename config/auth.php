@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'patient' => [  // Adicione este novo guard
+        'driver' => 'session',
+        'provider' => 'patients',
+    ],
     ],
 
     /*
@@ -63,6 +67,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+        'patients' => [  // Adicione este novo provider
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\User::class), // Model específica para pacientes
         ],
 
         // 'users' => [
