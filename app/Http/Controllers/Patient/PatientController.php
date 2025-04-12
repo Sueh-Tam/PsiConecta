@@ -50,15 +50,18 @@ class PatientController extends Controller
         $credential = $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
-            'status' => 'active',
             'type' => 'patient'
         ]);
+        $user = User::withTrashed()->where('email', $request->email)->first();
+        if ($user && $user->trashed()) {
+            $user->restore();
+            $user->save();
+        }
         if(Auth::check()){
             return redirect()->back()
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Usuário já está logado!')
                 ->with('success_redirect', route('home'));
-
         }
         if (Auth::attempt($credential)) {
             $request->session()->regenerate();
@@ -83,5 +86,44 @@ class PatientController extends Controller
             ->with('show_success_modal', true)
             ->with('success_message', 'Logout feito com sucesso!')
             ->with('success_redirect', route('home'));
+    }
+
+    public function update(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'document_number' => 'required|unique:users,document_number',
+        ]);
+        $paciente = User::find(Auth::user()->id);
+
+        if($paciente){
+            $paciente->name = $request->name;
+            $paciente->email = $request->email;
+            $paciente->document_number = preg_replace('/[^0-9]/', '',$request->document_number);
+            $paciente->save();
+            return redirect()->back()
+                ->with('show_success_modal', true)
+                ->with('success_message', 'Paciente atualizado com sucesso!')
+                ->with('success_redirect', route('patient.profile'));
+        }else{
+            return redirect()->back()
+                ->withErrors(['mensagem' => 'Não foi possível atualizar o seu perfil'])
+                ->withInput();
+        }
+    }
+    public function delete(){
+        $paciente = User::find(Auth::user()->id);
+        if($paciente){
+            $paciente->delete();
+            return redirect()->back()
+                ->with('show_success_modal', true)
+                ->with('success_message', 'Conta inativada com sucesso!')
+                ->with('success_redirect', route('home'));
+        }else{
+            return redirect()->back()
+                ->withErrors(['mensagem' => 'Não foi possível inativar o seu perfil'])
+                ->withInput();
+        }
+
     }
 }

@@ -66,6 +66,7 @@
 
         <!-- Lista de Clínicas -->
         <h2 class="mb-4">Clínicas Disponíveis</h2>
+        <label>Quer se tornar um parceiro? <a href="{{ Route('clinic.signup.clinic') }}">Clique aqui</a></label>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <!-- Clínica 1 -->
             <div class="col">
