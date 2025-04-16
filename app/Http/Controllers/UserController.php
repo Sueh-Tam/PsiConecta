@@ -34,7 +34,6 @@ class UserController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users'
             ]);
-            dd($validated);
             if ($validated) {
                 return redirect()->back()
                                  ->withErrors($validated)

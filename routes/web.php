@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Clinic\ClinicController;
 use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -36,9 +38,22 @@ Route::prefix('auth')->group(function () {
     Route::prefix('clinic')->group(function () {
         Route::get('/signup', function () {
             return view('Users.Clinics.register');
-        })->name('clinic.signup.clinic');
-
+        })->name('clinic.signup');
+        Route::post('/register',[ClinicController::class, 'store'])->name('clinic.register');
+        Route::get('/login', function () {
+            return view('Users.Clinics.login');
+        })->name('clinic.login');
+        Route::post('/login',[ClinicController::class, 'login'])->name('clinic.login');
     });
+    Route::prefix('admin')->group(function () {
+
+        Route::get('/login',function (){
+            return view('Users.admin.login');
+        });
+        Route::post('/login',[AdminController::class, 'login'])->name('admin.login');
+        Route::get('/logout',[AdminController::class, 'logout'])->name('admin.logout');
+    });
+
 });
 Route::prefix('patient')->group(function(){
     Route::get('/dashboard', function () {
@@ -51,4 +66,7 @@ Route::prefix('patient')->group(function(){
             ]);
         }
     })->name('patient.dashboard');
+});
+Route::prefix('admin')->group(function(){
+    Route::get('/dashboard', [ClinicController::class,'clinics'])->name('admin.dashboard');
 });

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Psiconecta - Login</title>
+    <title>Psiconecta - Clínica</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
@@ -16,9 +16,9 @@
             <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">Psiconecta</a></h1>
             <div>
                 @if (Auth::check())
-                <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Dashboard</a>
+                <a href="/fazer" class="btn btn-outline-light me-2">Dashboard</a>
                 @else
-                    <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Registre-se</a>
+                    <a href="{{ Route('clinic.signup') }}" class="btn btn-outline-light me-2">Registre-se</a>
                     <a href="{{ Route('home') }}" class="btn btn-light text-primary">Início</a>
                 @endif
 
@@ -43,9 +43,9 @@
             <div class="col-md-6">
                 <div class="card shadow rounded-4">
                     <div class="card-body">
-                        <h2 class="card-title mb-4 text-primary text-center">Login</h2>
+                        <h2 class="card-title mb-4 text-primary text-center">Login da clínica</h2>
 
-                        <form method="POST" action="{{ route('patient.login') }}">
+                        <form method="POST" action="{{ route('clinic.login') }}">
                             @csrf
                             <!-- Email -->
                             <div class="mb-3">
@@ -60,8 +60,8 @@
 
                             <!-- Botão -->
                             <div class="d-grid">
-                                <label>É uma clínica? <a href="{{ Route('clinic.login') }}">Clique aqui</a></label>
-                                <label>Não possui uma conta? <a href="{{ Route('user.signup') }}">Registre-se</a></label>
+                                <label>É um paciente? <a href="{{ Route('user.login') }}">Clique aqui</a></label>
+                                <label>Não possui uma conta? <a href="{{ Route('clinic.signup') }}">Clique aqui</a> para solicitar</label>
                                 <button type="submit" class="btn btn-primary">Login</button>
                             </div>
                         </form>

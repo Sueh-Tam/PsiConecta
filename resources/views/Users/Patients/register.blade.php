@@ -13,7 +13,7 @@
     <!-- Header -->
     <header class="bg-primary text-white py-3 shadow">
         <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0">Psiconecta</h1>
+            <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">Psiconecta</a></h1>
             <div>
                 <a href="{{ Route('user.login') }}" class="btn btn-outline-light me-2">Login</a>
                 <a href="/" class="btn btn-light text-primary">Início</a>

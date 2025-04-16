@@ -15,9 +15,15 @@
         <div class="container d-flex justify-content-between align-items-center">
             <h1 class="h4 mb-0">Sistema de Clínicas</h1>
             <div>
-                @if (Auth::check())
+                @if (Auth::check() && Auth::user()->isPatient())
                     <a href="{{ Route('patient.dashboard') }}" class="btn btn-outline-light me-2">Dashboard</a>
                     <a href="{{ Route('patient.logout') }}" class="btn btn-light text-primary">Logout</a>
+                @elseif (Auth::check() && Auth::user()->isClinic())
+                    <a href="{{ Route('clinic.dashboard') }}" class="btn btn-outline-light me-2">Dashboard</a>
+                    <a href="{{ Route('clinic.logout') }}" class="btn btn-light text-primary">Logout</a>
+                @elseif (Auth::check() && Auth::user()->isAdmin())
+                    <a href="{{ Route('admin.dashboard') }}" class="btn btn-outline-light me-2">Dashboard admin</a>
+                    <a href="{{ Route('admin.logout') }}" class="btn btn-light text-primary">Logout</a>
                 @else
                     <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Cadastre-se</a>
                     <a href="{{ Route('user.login') }}" class="btn btn-light text-primary">Login</a>
@@ -66,7 +72,7 @@
 
         <!-- Lista de Clínicas -->
         <h2 class="mb-4">Clínicas Disponíveis</h2>
-        <label>Quer se tornar um parceiro? <a href="{{ Route('clinic.signup.clinic') }}">Clique aqui</a></label>
+        <label>Quer se tornar um parceiro? <a href="{{ Route('clinic.signup') }}">Clique aqui</a></label>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <!-- Clínica 1 -->
             <div class="col">
