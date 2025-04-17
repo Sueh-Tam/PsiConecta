@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ClinicController extends Controller
 {
@@ -56,16 +57,74 @@ class ClinicController extends Controller
         }
         if(Auth::check()){
             return redirect()->route('home');
-        }else{
+        }
+        if (Auth::attempt($credential)) {
+            $request->session()->regenerate();
             return redirect()->back()
-                ->withErrors(['mensagem' => 'Acesso não autorizado'])
-                ->withInput();
+                ->with('show_success_modal', true)
+                ->with('success_message', 'Login feito com sucesso!')
+                ->with('success_redirect', route('home'));
+        } else {
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->onlyInput('email');
         }
 
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('home')
+            ->with('show_success_modal', true)
+            ->with('success_message', 'Logout feito com sucesso!')
+            ->with('success_redirect', route('home'));
+    }
+
     public function clinics()
     {
         $clinics = User::where('type', 'clinic')->get();
         return view('Dashboard.admin.index', ['clinics' => $clinics]);
+    }
+
+    public function updateClinic(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'id' => 'required|exists:users,id',
+                'situation' => 'required|in:valid,invalid,pending', // Corrigido para match com o form
+                'email' => 'required|email',
+                'name' => 'required',
+                'password' => 'nullable|min:6', // Adicionado nullable
+                'status' => 'required|in:active,inactive', // Adicionado required
+                'document_number' => [
+                    'required',
+                    Rule::unique('users')->ignore($request->id)
+                ],
+            ]);
+
+
+            $clinic = User::findOrFail($request->id);
+
+             $clinic->update([
+                 'situation' => $request->situation, // Ou renomeie no banco para 'situacao'
+                 'email' => $request->email,
+                 'name' => $request->name,
+                 'status' => $request->status,
+                 'password' => $request->password ? bcrypt($request->password) : $clinic->password,
+                 'document_number' => preg_replace('/[^0-9]/', '', $request->document_number),
+             ]);
+
+            return redirect()->back()
+                ->with('show_success_modal', true)
+                ->with('success_message', 'Clínica atualizada com sucesso!');
+        } catch (\Throwable $th) {
+            return redirect()->back()
+                ->withErrors($th->getMessage())
+                ->withInput();
+        }
+
     }
 }

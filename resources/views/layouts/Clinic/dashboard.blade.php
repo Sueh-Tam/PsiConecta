@@ -46,7 +46,9 @@
     <nav class="sidebar">
         <h4 class="text-white mb-4"></h4>
         <a href="/dashboard/consultas" class="@if(request()->is('dashboard/consultas')) active @endif">Consultas</a>
-        <a href="{{ Route('patient.profile') }}" class="@if(request()->is('dashboard/perfil')) active @endif">Meu Perfil</a>
+        <a href="{{ Route('clinic.psychologist.index') }}" >Psicólogos</a>
+        <a href="" >Atendentes</a>
+
     </nav>
 
     <!-- Conteúdo -->

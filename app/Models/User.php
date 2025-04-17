@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
+use function PHPSTORM_META\type;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -62,7 +65,53 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'id_clinic');
     }
+    public function formatDocumentCnpj($documentNumber){
 
+        // Remove todos os caracteres não numéricos
+        $cnpj = preg_replace('/[^0-9]/', '', $documentNumber);
+
+        // Verifica se tem 14 dígitos
+        if (strlen($cnpj) !== 14) {
+            return $cnpj; // Retorna sem formatação se não for CNPJ válido
+        }
+
+        // Aplica a formatação do CNPJ: 00.000.000/0000-00
+        return substr($cnpj, 0, 2) . '.' .
+            substr($cnpj, 2, 3) . '.' .
+            substr($cnpj, 5, 3) . '/' .
+            substr($cnpj, 8, 4) . '-' .
+            substr($cnpj, 12, 2);
+    }
+    public function formartDocumentCPF($documentNumber){
+        // Remove todos os caracteres não numéricos
+        $cpf = preg_replace('/[^0-9]/', '', $documentNumber);
+
+        // Verifica se tem 11 dígitos
+        if (strlen($cpf) !== 11) {
+            return $cpf; // Retorna sem formatação se não for CPF válido
+        }
+
+        // Aplica a formatação do CPF: 000.000.000-00
+        return substr($cpf, 0, 3) . '.' .
+            substr($cpf, 3, 3) . '.' .
+            substr($cpf, 6, 3) . '-' .
+            substr($cpf, 9, 2);
+
+    }
+    public function formatDocumentCRP($documentNumber){
+         // Remove todos os caracteres não numéricos
+        $crp = preg_replace('/[^0-9]/', '', $documentNumber);
+
+        // Verifica se tem 7 dígitos (formato completo)
+        if (strlen($crp) !== 7) {
+            return $crp;
+        }
+
+        // Aplica a formatação do CRP: 00.000-00
+        return substr($crp, 0, 2) . '.' .
+            substr($crp, 2, 3) . '-' .
+            substr($crp, 5, 2);
+    }
     /**
      * Membros da clínica (se este usuário for uma clínica)
      */
