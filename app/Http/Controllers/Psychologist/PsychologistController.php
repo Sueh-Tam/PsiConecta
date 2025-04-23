@@ -79,9 +79,14 @@ class PsychologistController extends Controller
     }
 
     public function psychologistByClinic(Request $request){
-        $psychologists = User::where('id_clinic', Auth::user()->id)
-            ->where('type', 'psychologist')
-            ->get();
+
+        $user = Auth::user();
+        $psychologists = $user
+            ->psychologists()
+            ->paginate(10);
+        // $psychologists = User::where('id_clinic', Auth::user()->id)
+        //     ->where('type', 'psychologist')
+        //     ->get();
         return view('Dashboard.clinic.psychologist.index', ['psychologists' => $psychologists]);
 
     }

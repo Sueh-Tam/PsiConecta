@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Attendant\AttendantController;
 use App\Http\Controllers\Clinic\ClinicController;
 use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\Psychologist\PsychologistController;
@@ -92,6 +93,11 @@ Route::prefix('clinic')->middleware('auth')->group(function () {
         Route::get('/index', [PsychologistController::class,'psychologistByClinic'])->name('clinic.psychologist.index');
         Route::post('/store', [PsychologistController::class, 'store'])->name('clinic.psychologist.store');
         Route::put('/update', [PsychologistController::class, 'update'])->name('clinic.psychologist.update');
+    });
+    Route::prefix('Attendant')->group(function () {
+        Route::get('/index', [AttendantController::class,'attendantByClinic'])->name('clinic.attendant.index');
+        Route::post('/store', [AttendantController::class, 'store'])->name('clinic.attendant.store');
+        Route::put('/update/{id}', [AttendantController::class, 'update'])->name('clinic.attendant.update');
     });
 
 });

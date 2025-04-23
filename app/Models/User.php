@@ -119,7 +119,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(User::class, 'id_clinic');
     }
-
+    public function psychologists()
+    {
+        return $this->hasMany(User::class, 'id_clinic')
+            ->where('type', 'psychologist');
+    }
+    public function attendants()
+    {
+        return $this->hasMany(User::class, 'id_clinic')
+            ->where('type', 'attendant');
+    }
     /**
      * Pacotes onde o usuário é paciente
      */
