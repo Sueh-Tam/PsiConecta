@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Dashboard') - Psiconecta</title>
+    <title>@yield('title', 'Dashboard') - PsiConecta</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap -->

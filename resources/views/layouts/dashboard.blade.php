@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Dashboard') - Psiconecta</title>
+    <title>@yield('title', 'Dashboard') - PsiConecta</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap -->
@@ -44,7 +44,7 @@
 <div class="d-flex">
     <!-- Sidebar -->
     <nav class="sidebar">
-        <h4 class="text-white mb-4">Psiconecta</h4>
+        <h4 class="text-white mb-4">PsiConecta</h4>
         <a href="/dashboard/consultas" class="@if(request()->is('dashboard/consultas')) active @endif">Consultas</a>
         <a href="{{ Route('patient.profile') }}" class="@if(request()->is('dashboard/perfil')) active @endif">Meu Perfil</a>
     </nav>

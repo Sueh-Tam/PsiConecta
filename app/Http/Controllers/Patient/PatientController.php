@@ -49,8 +49,7 @@ class PatientController extends Controller
 
         $credential = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:6',
-            'type' => 'patient'
+            'password' => 'required|min:6'
         ]);
         $user = User::withTrashed()->where('email', $request->email)->first();
         if ($user && $user->trashed()) {

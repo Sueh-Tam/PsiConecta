@@ -17,16 +17,16 @@
             <div>
                 @if (Auth::check() && Auth::user()->isPatient())
                     <a href="{{ Route('patient.dashboard') }}" class="btn btn-outline-light me-2">Dashboard</a>
-                    <a href="{{ Route('patient.logout') }}" class="btn btn-light text-primary">Logout</a>
+                    <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
                 @elseif (Auth::check() && Auth::user()->isClinic())
                     <a href="{{ Route('clinic.dashboard') }}" class="btn btn-outline-light me-2">Dashboard</a>
-                    <a href="{{ Route('clinic.logout') }}" class="btn btn-light text-primary">Logout</a>
+                    <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
                 @elseif (Auth::check() && Auth::user()->isAdmin())
                     <a href="{{ Route('admin.dashboard') }}" class="btn btn-outline-light me-2">Dashboard admin</a>
-                    <a href="{{ Route('admin.logout') }}" class="btn btn-light text-primary">Logout</a>
+                    <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
                 @else
                     <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Cadastre-se</a>
-                    <a href="{{ Route('user.login') }}" class="btn btn-light text-primary">Login</a>
+                    <a href="{{ Route('auth.login') }}" class="btn btn-light text-primary">Login</a>
                 @endif
 
             </div>

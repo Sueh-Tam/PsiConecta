@@ -5,6 +5,7 @@ use App\Http\Controllers\Attendant\AttendantController;
 use App\Http\Controllers\Clinic\ClinicController;
 use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\Psychologist\PsychologistController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -18,15 +19,21 @@ Route::get('/', function () {
 //
 Route::prefix('auth')->group(function () {
 
+    Route::get('/login', function () {
+        return view('Users.login');
+    })->name('auth.login');
+    Route::post('/login',[UserController::class, 'login'])->name('auth.login');
+    Route::post('/logout',[UserController::class, 'logout'])->name('auth.logout');
+
     // --- Paciente ---
     Route::prefix('patient')->group(function () {
         Route::get('/signup', fn () => view('Users.Patients.register'))->name('user.signup');
         Route::post('/register', [PatientController::class, 'store'])->name('patient.register');
 
-        Route::get('/login', fn () => view('Users.Patients.login'))->name('user.login');
-        Route::post('/login', [PatientController::class, 'login'])->name('patient.login');
+        //Route::get('/login', fn () => view('Users.Patients.login'))->name('user.login');
+        //Route::post('/login', [PatientController::class, 'login'])->name('patient.login');
 
-        Route::get('/logout', [PatientController::class, 'logout'])->name('patient.logout');
+        //Route::get('/logout', [PatientController::class, 'logout'])->name('patient.logout');
     });
 
     // --- Clínica ---
@@ -34,17 +41,17 @@ Route::prefix('auth')->group(function () {
         Route::get('/signup', fn () => view('Users.Clinics.register'))->name('clinic.signup');
         Route::post('/register', [ClinicController::class, 'store'])->name('clinic.register');
 
-        Route::get('/login', fn () => view('Users.Clinics.login'))->name('clinic.login');
-        Route::post('/login', [ClinicController::class, 'login'])->name('clinic.login');
+        //Route::get('/login', fn () => view('Users.Clinics.login'))->name('clinic.login');
+        //Route::post('/login', [ClinicController::class, 'login'])->name('clinic.login');
 
-        Route::get('/logout', [ClinicController::class, 'logout'])->name('clinic.logout');
+        //Route::get('/logout', [ClinicController::class, 'logout'])->name('clinic.logout');
     });
 
     // --- Admin ---
     Route::prefix('admin')->group(function () {
-        Route::get('/login', fn () => view('Users.admin.login'))->name('admin.login.view');
-        Route::post('/login', [AdminController::class, 'login'])->name('admin.login');
-        Route::get('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+        //Route::get('/login', fn () => view('Users.admin.login'))->name('admin.login.view');
+        //Route::post('/login', [AdminController::class, 'login'])->name('admin.login');
+        //Route::get('/logout', [AdminController::class, 'logout'])->name('admin.logout');
     });
 });
 

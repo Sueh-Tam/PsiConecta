@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Auth\Events\Validated;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -55,7 +58,76 @@ class UserController extends Controller
                          ->withInput();
         }
     }
+    public function login(Request $request){
+        try {
+            $credential = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required|min:6'
+            ]);
+            $user = User::withTrashed()->where('email', $request->email)->first();
+            if ($user && $user->trashed()) {
+                $user->restore();
+                $user->save();
+            }
+            if(Auth::check()){
+                if(Auth::user()->isPatient()){
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_redirect', route('patient.dashboard'));
+                } elseif (Auth::user()->isClinic()) {
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_redirect', route('clinic.dashboard'));
+                } elseif (Auth::user()->isAdmin()) {
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_redirect', route('admin.dashboard'));
+                }
+            }
+            if (Auth::attempt($credential)) {
+                $request->session()->regenerate();
+                if(Auth::user()->isPatient()){
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_redirect', route('patient.dashboard'));
+                } elseif (Auth::user()->isClinic()) {
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_redirect', route('clinic.dashboard'));
+                } elseif (Auth::user()->isAdmin()) {
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_redirect', route('admin.dashboard'));
+                }
+            } else {
+                return back()->withErrors([
+                    'email' => 'The provided credentials do not match our records.',
+                ])->onlyInput('email');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->back()
+                ->withErrors($th->getMessage())
+                ->withInput();
+        }
+    }
+    public function logout(Request $request):RedirectResponse
+    {
+        Auth::logout();
 
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->back()
+            ->with('show_success_modal', true)
+            ->with('success_message', 'Logout feito com sucesso!')
+            ->with('success_redirect', route('home'));
+    }
     /**
      * Display the specified resource.
      */

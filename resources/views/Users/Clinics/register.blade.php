@@ -13,7 +13,7 @@
     <!-- Header -->
     <header class="bg-primary text-white py-3 shadow">
         <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">Psiconecta</a></h1>
+            <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">PsiConecta</a></h1>
             <div>
                 @if (Auth::check())
                 <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Dashboard</a>
