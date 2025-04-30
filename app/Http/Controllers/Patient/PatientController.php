@@ -45,53 +45,15 @@ class PatientController extends Controller
         }
 
     }
-    public function login(Request $request):RedirectResponse{
 
-        $credential = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6'
-        ]);
-        $user = User::withTrashed()->where('email', $request->email)->first();
-        if ($user && $user->trashed()) {
-            $user->restore();
-            $user->save();
-        }
-        if(Auth::check()){
-            return redirect()->back()
-                ->with('show_success_modal', true)
-                ->with('success_message', 'Usuário já está logado!')
-                ->with('success_redirect', route('home'));
-        }
-        if (Auth::attempt($credential)) {
-            $request->session()->regenerate();
-            return redirect()->back()
-                ->with('show_success_modal', true)
-                ->with('success_message', 'Login feito com sucesso!')
-                ->with('success_redirect', route('home'));
-        } else {
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->onlyInput('email');
-        }
-    }
-    public function logout(Request $request):RedirectResponse
-    {
-        Auth::logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->back()
-            ->with('show_success_modal', true)
-            ->with('success_message', 'Logout feito com sucesso!')
-            ->with('success_redirect', route('home'));
-    }
 
     public function update(Request $request){
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
             'document_number' => 'required|unique:users,document_number',
+            'password' => 'nullable|min:6|confirmed',
         ]);
         $paciente = User::find(Auth::user()->id);
 

@@ -70,7 +70,7 @@ title="Erro no Cadastro de Paciente"
                                 <input type="password" class="form-control" id="senha_confirmation" name="senha_confirmation" minlength="6" required>
                                 <div class="invalid-feedback">As senhas não coincidem.</div>
                             </div>
-                            <label>Ja possui uma conta? <a href="{{ Route('clinic.login') }}">clique aqui</a></label><br>
+                            <label>Ja possui uma conta? <a href="{{ Route('auth.login') }}">clique aqui</a></label><br>
                             <button type="submit" class="btn btn-primary">Cadastrar</button>
                         </form>
                     </div>

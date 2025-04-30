@@ -43,45 +43,7 @@ class ClinicController extends Controller
             ->withInput();
         }
     }
-    public function login(Request $request){
 
-        $credential = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-            'type' => 'clinic'
-        ]);
-        $user = User::withTrashed()->where('email', $request->email)->first();
-        if ($user && $user->trashed()) {
-            $user->restore();
-            $user->save();
-        }
-        if(Auth::check()){
-            return redirect()->route('home');
-        }
-        if (Auth::attempt($credential)) {
-            $request->session()->regenerate();
-            return redirect()->back()
-                ->with('show_success_modal', true)
-                ->with('success_message', 'Login feito com sucesso!')
-                ->with('success_redirect', route('home'));
-        } else {
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->onlyInput('email');
-        }
-
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('home')
-            ->with('show_success_modal', true)
-            ->with('success_message', 'Logout feito com sucesso!')
-            ->with('success_redirect', route('home'));
-    }
 
     public function clinics()
     {

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -121,8 +123,14 @@ class User extends Authenticatable
     }
     public function psychologists()
     {
-        return $this->hasMany(User::class, 'id_clinic')
-            ->where('type', 'psychologist');
+        if($this->isClinic()){
+            return $this->hasMany(User::class, 'id_clinic')
+                ->where('type', 'psychologist');
+        }else{
+            return $this->hasMany(User::class, 'id_clinic','id_clinic')
+                ->where('type', 'psychologist');
+        }
+
     }
     public function attendants()
     {

@@ -85,6 +85,11 @@ class UserController extends Controller
                         ->with('show_success_modal', true)
                         ->with('success_message', 'Usuário já está logado!')
                         ->with('success_redirect', route('admin.dashboard'));
+                } elseif (Auth::user()->isAttendant()) {
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_redirect', route('clinic.dashboard'));
                 }
             }
             if (Auth::attempt($credential)) {
@@ -92,18 +97,28 @@ class UserController extends Controller
                 if(Auth::user()->isPatient()){
                     return redirect()->back()
                         ->with('show_success_modal', true)
-                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_message', 'Usuário logado!')
                         ->with('success_redirect', route('patient.dashboard'));
                 } elseif (Auth::user()->isClinic()) {
                     return redirect()->back()
                         ->with('show_success_modal', true)
-                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_message', 'Usuário logado!')
                         ->with('success_redirect', route('clinic.dashboard'));
                 } elseif (Auth::user()->isAdmin()) {
                     return redirect()->back()
                         ->with('show_success_modal', true)
-                        ->with('success_message', 'Usuário já está logado!')
+                        ->with('success_message', 'Usuário logado!')
                         ->with('success_redirect', route('admin.dashboard'));
+                } elseif (Auth::user()->isAttendant()) {
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário logado!')
+                        ->with('success_redirect', route('clinic.dashboard'));
+                } elseif (Auth::user()->isPsychologist()) {
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Usuário logado!')
+                        ->with('success_redirect', route('psychologist.dashboard'));
                 }
             } else {
                 return back()->withErrors([
@@ -123,10 +138,11 @@ class UserController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->back()
+        return redirect()->route('home')
             ->with('show_success_modal', true)
             ->with('success_message', 'Logout feito com sucesso!')
             ->with('success_redirect', route('home'));
+
     }
     /**
      * Display the specified resource.

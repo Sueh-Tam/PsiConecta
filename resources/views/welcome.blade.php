@@ -13,19 +13,19 @@
     <!-- Header -->
     <header class="bg-primary text-white py-3 shadow">
         <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0">PsiConecta</h1>
+            <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">PsiConecta</a></h1>
             <div>
                 @if (Auth::check() && Auth::user()->isPatient())
                     <a href="{{ Route('patient.dashboard') }}" class="btn btn-outline-light me-2">Dashboard</a>
                     <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
-                @elseif (Auth::check() && Auth::user()->isClinic())
+                @elseif (Auth::check() && (Auth::user()->isClinic() || Auth::user()->isAttendant()))
                     <a href="{{ Route('clinic.dashboard') }}" class="btn btn-outline-light me-2">Dashboard</a>
                     <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
                 @elseif (Auth::check() && Auth::user()->isAdmin())
                     <a href="{{ Route('admin.dashboard') }}" class="btn btn-outline-light me-2">Dashboard admin</a>
                     <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
                 @else
-                    <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Cadastre-se</a>
+                    <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Registre-se</a>
                     <a href="{{ Route('auth.login') }}" class="btn btn-light text-primary">Login</a>
                 @endif
 

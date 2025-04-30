@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Psychologist;
 
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -48,20 +50,22 @@ class PsychologistController extends Controller
 
     public function update(Request $request){
         try {
+            // dd($request);
             $request->validate([
                 'name' => 'required',
                 'email' => 'required|email',
-                'document_number' => 'required|unique:users,document_number,'.$request->id,
+                'document_number' => 'required|unique:users,document_number,'.Auth::user()->id,
                 'appointment_price' => 'required|numeric',
-                'status' => 'required|in:active,inactive',
+                'password' => 'nullable|min:6|confirmed',
             ]);
-            $psychologist = User::find($request->id);
+            $psychologist = User::find(Auth::user()->id);
             $psychologist->name = $request->name;
             $psychologist->email = $request->email;
             $psychologist->document_number = preg_replace('/[^0-9]/', '',$request->document_number);
             $psychologist->status = $request->status;
             $psychologist->appointment_price = $request->appointment_price;
             $psychologist->document_type = 'crp';
+            $psychologist->status = 'active';
             if($request->password){
                 $psychologist->password = bcrypt($request->password);
             }
@@ -90,4 +94,15 @@ class PsychologistController extends Controller
         return view('Dashboard.clinic.psychologist.index', ['psychologists' => $psychologists]);
 
     }
+    public function consultsByPsychologist(Request $request){
+        $today = Carbon::today();
+
+        $appointments = Appointment::with(['patient'])
+            ->where('psychologist_id', Auth::User()->id)
+            ->whereDate('created_at', $today) // ou um campo tipo 'scheduled_for'
+            ->orderBy('created_at')
+            ->get();
+        return view('Dashboard.Psychologists.consults', ['appointments' => $appointments]);
+    }
+
 }

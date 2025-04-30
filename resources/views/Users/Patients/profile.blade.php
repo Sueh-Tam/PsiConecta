@@ -10,7 +10,7 @@
     />
     <x-success-modal
         modal-id="patientSuccessModal"
-        title="Cadastro Realizado!"
+        title="Cadastro Atualziado!"
         message="{{ session('success_message') }}"
     />
 <div class="container mt-4">
@@ -49,7 +49,7 @@
 
         <div class="mb-3">
             <label for="senha_confirmation" class="form-label">Repetir Senha</label>
-            <input type="password" class="form-control" id="senha_confirmation" name="senha_confirmation" minlength="6">
+            <input type="password" class="form-control" id="senha_confirmation" name="password_confirmation" minlength="6">
         </div>
 
         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
@@ -100,26 +100,6 @@
         });
     });
 
-    //Validar senha
-    document.addEventListener("DOMContentLoaded", function () {
-        const input = document.getElementById("document_number");
-    const form = input.closest("form");
-    const senha = document.getElementById("senha");
-    const repetirSenha = document.getElementById("senha_confirmation");
-        console.log(senha.value);
-        console.log(repetirSenha.value);
-    form.addEventListener("submit", function (e) {
-        if (senha.value !== repetirSenha.value) {
-            senha.classList.add('is-invalid');
-            repetirSenha.classList.add('is-invalid');
-            e.preventDefault(); // impede o envio
-            alert("As senhas não coincidem.");
-            repetirSenha.focus();
-        }else{
-            senha.classList.remove('is-invalid');
-            repetirSenha.classList.remove('is-invalid');
-        }
-        });
-    });
+
 
 </script>

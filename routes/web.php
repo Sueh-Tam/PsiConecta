@@ -23,7 +23,7 @@ Route::prefix('auth')->group(function () {
         return view('Users.login');
     })->name('auth.login');
     Route::post('/login',[UserController::class, 'login'])->name('auth.login');
-    Route::post('/logout',[UserController::class, 'logout'])->name('auth.logout');
+    Route::get('/logout',[UserController::class, 'logout'])->name('auth.logout');
 
     // --- Paciente ---
     Route::prefix('patient')->group(function () {
@@ -107,4 +107,14 @@ Route::prefix('clinic')->middleware('auth')->group(function () {
         Route::put('/update/{id}', [AttendantController::class, 'update'])->name('clinic.attendant.update');
     });
 
+});
+
+Route::prefix('psychologist')->group(function () {
+    Route::get('/dashboard', [PsychologistController::class,'consultsByPsychologist'])->name('psychologist.dashboard');
+    Route::get('profile',function(){
+        return view('Dashboard.Psychologists.profile');
+    })->name('psychologist.profile');
+    Route::get('disponibility', function(){
+        return view('Dashboard.Psychologists.disponibility');
+    })->name('psychologist.disponibility');
 });

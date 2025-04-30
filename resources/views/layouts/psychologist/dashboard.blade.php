@@ -67,11 +67,10 @@
     <!-- Sidebar -->
     <nav class="sidebar">
         <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">PsiConecta</a></h1>
-        <a href="{{ Route('clinic.dashboard') }}" class="@if(request()->is('dashboard/consultas')) active @endif">Consultas</a>
-        <a href="{{ Route('clinic.psychologist.index') }}" >Psicólogos</a>
-        @if (Auth::user()->isClinic())
-            <a href="{{ Route('clinic.attendant.index') }}" >Atendentes</a>
-        @endif
+        <a href="" class="@if(request()->is('dashboard/consultas')) active @endif">Consultas</a>
+        <a href="" >Pacientes</a>
+        <a href="{{ Route('psychologist.disponibility') }}" >Disponibilidade</a>
+        <a href="{{ Route('psychologist.profile') }}">Perfil</a>
     </nav>
 
     <!-- Conteúdo -->

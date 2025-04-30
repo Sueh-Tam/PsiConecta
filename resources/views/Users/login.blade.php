@@ -60,7 +60,6 @@
 
                             <!-- Botão -->
                             <div class="d-grid">
-                                <label>É uma clínica? <a href="{{ Route('clinic.login') }}">Clique aqui</a></label>
                                 <label>Não possui uma conta? <a href="{{ Route('user.signup') }}">Registre-se</a></label>
                                 <button type="submit" class="btn btn-primary">Login</button>
                             </div>
