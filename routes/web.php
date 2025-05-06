@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Attendant\AttendantController;
+use App\Http\Controllers\AvaliabilityController;
 use App\Http\Controllers\Clinic\ClinicController;
 use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\Psychologist\PsychologistController;
 use App\Http\Controllers\UserController;
+use App\Models\Avaliability;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -114,7 +117,10 @@ Route::prefix('psychologist')->group(function () {
     Route::get('profile',function(){
         return view('Dashboard.Psychologists.profile');
     })->name('psychologist.profile');
-    Route::get('disponibility', function(){
-        return view('Dashboard.Psychologists.disponibility');
-    })->name('psychologist.disponibility');
+    Route::get('disponibility', [AvaliabilityController::class, 'show'])->name('psychologist.disponibility');
+    Route::post('disponibility/store', [AvaliabilityController::class, 'store'])->name('psychologist.disponibility.store');
+    Route::delete('disponibility/delete/{id}', [AvaliabilityController::class, 'destroy'])->name('psychologist.disponibility.delete');
+    Route::post('/psychologist/availability/deactivate', [AvaliabilityController::class, 'deactivate'])->name('psychologist.availability.deactivate');
+    Route::post('/availability/restore', [AvaliabilityController::class, 'restore'])->name('psychologist.availability.restore');
+
 });
