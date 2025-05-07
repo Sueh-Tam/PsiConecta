@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Package;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PackageController extends Controller
 {
@@ -29,6 +31,64 @@ class PackageController extends Controller
     public function store(Request $request)
     {
         //
+        try {
+
+            $validatedData = $request->validate([
+                'patient_id' => 'required|integer|exists:users,id,type,patient',
+                'psychologist_id' => 'required|integer|exists:users,id,type,psychologist',
+                'total_appointments' => 'required|integer|min:1',
+                'payment_method' => 'required|in:pix,cash',
+            ]);
+
+
+            $psychologist = User::where('id', $validatedData['psychologist_id'])
+                                 ->where('type', 'psychologist')
+                                 ->first();
+
+            if (!$psychologist) {
+                // Caso não encontre um psicólogo, lança uma exceção
+                throw new \Exception('Psicólogo não encontrado.');
+            }
+
+            $patient = User::where('id', $validatedData['patient_id'])
+                           ->where('type', 'patient')
+                           ->first();
+
+            if (!$patient) {
+                throw new \Exception('Paciente não encontrado.');
+            }
+
+
+            $totalPrice = $psychologist->appointment_price * $validatedData['total_appointments'];
+
+
+            if ($patient->balance != $totalPrice) {
+                throw new \Exception('O saldo do paciente não é suficiente para a compra do pacote.');
+            }
+
+
+            $package = Package::create([
+                'patient_id' => $validatedData['patient_id'],
+                'psychologist_id' => $validatedData['psychologist_id'],
+                'total_appointments' => $validatedData['total_appointments'],
+                'price' => $totalPrice,
+                'balance' => $patient->balance,
+                'payment_method' => $validatedData['payment_method'],
+            ]);
+
+            // Retornar sucesso
+            return redirect()->back()
+                ->with('show_success_modal', true)
+                ->with('success_message', 'Pacote comprado com sucesso!');
+
+        } catch (\Exception $th) {
+
+            return redirect()->back()
+                ->withErrors(['error' => $th->getMessage()])
+                ->withInput();
+        }
+
+
     }
 
     /**

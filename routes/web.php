@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Attendant\AttendantController;
 use App\Http\Controllers\AvaliabilityController;
 use App\Http\Controllers\Clinic\ClinicController;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\Psychologist\PsychologistController;
 use App\Http\Controllers\UserController;
@@ -84,10 +85,8 @@ Route::prefix('patient')->middleware('auth')->group(function () {
 
 Route::prefix('admin')->middleware('auth')->group(function () {
 
-    // Dashboard de clínicas
-    Route::get('/dashboard', [ClinicController::class, 'clinics'])->name('admin.dashboard');
 
-    // Atualização de dados da clínica
+    Route::get('/dashboard', [ClinicController::class, 'clinics'])->name('admin.dashboard');
     Route::put('/dashboard/update', [ClinicController::class, 'updateClinic'])->name('admin.update');
 });
 
@@ -109,10 +108,19 @@ Route::prefix('clinic')->middleware('auth')->group(function () {
         Route::post('/store', [AttendantController::class, 'store'])->name('clinic.attendant.store');
         Route::put('/update/{id}', [AttendantController::class, 'update'])->name('clinic.attendant.update');
     });
-
+    Route::prefix('patient')->group(function () {
+        Route::get('/index', [PatientController::class,'patientByClinic'])->name('clinic.patient.index');
+        Route::post('/store', [PatientController::class, 'store'])->name('clinic.patient.store');
+        Route::put('/update/{id}', [PatientController::class, 'update'])->name('clinic.patient.update');
+    });
+    Route::prefix('packages')->group(function () {
+        Route::get('/index', [PackageController::class,'packagesByClinic'])->name('clinic.packages.index');
+        Route::post('/store', [PackageController::class, 'store'])->name('clinic.packages.store');
+        Route::put('/update/{id}', [PackageController::class, 'update'])->name('clinic.packages.update');
+    });
 });
 
-Route::prefix('psychologist')->group(function () {
+Route::prefix('psychologist')->middleware('auth')->group(function () {
     Route::get('/dashboard', [PsychologistController::class,'consultsByPsychologist'])->name('psychologist.dashboard');
     Route::get('profile',function(){
         return view('Dashboard.Psychologists.profile');

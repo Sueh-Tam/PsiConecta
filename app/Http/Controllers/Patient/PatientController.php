@@ -26,6 +26,9 @@ class PatientController extends Controller
 
 
             $paciente = new User();
+            if(Auth::check() && Auth::user()->isAttendant()){
+                $paciente->id_clinic = Auth::user()->id_clinic;
+            }
             $paciente->name = $request->name;
             $paciente->email = $request->email;
             $paciente->password = bcrypt($request->password);
@@ -86,5 +89,21 @@ class PatientController extends Controller
                 ->withInput();
         }
 
+    }
+
+    public function patientByClinic()
+    {
+        $clinicId = Auth::user()->id_clinic;
+
+        $patients = User::where('id_clinic', $clinicId)
+                    ->where('type', 'patient')
+                    ->paginate(10);
+        $psychologists = User::where('id_clinic', $clinicId)
+                    ->where('type', 'psychologist')
+                    ->get();
+        return view('Dashboard.clinic.patient.index')->with([
+            'patients' => $patients,
+            'psychologists' => $psychologists,
+        ]);
     }
 }

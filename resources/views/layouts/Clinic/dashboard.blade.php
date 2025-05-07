@@ -72,6 +72,10 @@
         @if (Auth::user()->isClinic())
             <a href="{{ Route('clinic.attendant.index') }}" >Atendentes</a>
         @endif
+        @if (Auth::user()->isAttendant())
+            <a href="{{ Route('clinic.patient.index') }}" >Pacientes</a>
+
+        @endif
     </nav>
 
     <!-- Conteúdo -->

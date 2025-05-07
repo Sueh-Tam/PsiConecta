@@ -24,7 +24,9 @@
                 @elseif (Auth::check() && Auth::user()->isAdmin())
                     <a href="{{ Route('admin.dashboard') }}" class="btn btn-outline-light me-2">Dashboard admin</a>
                     <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
-
+                @elseif (Auth::check() && Auth::user()->isPsychologist())
+                    <a href="{{ Route('psychologist.dashboard') }}" class="btn btn-outline-light me-2">Dashboard</a>
+                    <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
                 @else
                     <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Registre-se</a>
                     <a href="{{ Route('auth.login') }}" class="btn btn-light text-primary">Login</a>
