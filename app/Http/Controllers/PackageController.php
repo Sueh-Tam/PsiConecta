@@ -30,9 +30,7 @@ class PackageController extends Controller
      */
     public function store(Request $request)
     {
-        //
         try {
-
             $validatedData = $request->validate([
                 'patient_id' => 'required|integer|exists:users,id,type,patient',
                 'psychologist_id' => 'required|integer|exists:users,id,type,psychologist',
@@ -40,13 +38,11 @@ class PackageController extends Controller
                 'payment_method' => 'required|in:pix,cash',
             ]);
 
-
             $psychologist = User::where('id', $validatedData['psychologist_id'])
                                  ->where('type', 'psychologist')
                                  ->first();
 
             if (!$psychologist) {
-                // Caso não encontre um psicólogo, lança uma exceção
                 throw new \Exception('Psicólogo não encontrado.');
             }
 
@@ -58,37 +54,44 @@ class PackageController extends Controller
                 throw new \Exception('Paciente não encontrado.');
             }
 
-
             $totalPrice = $psychologist->appointment_price * $validatedData['total_appointments'];
 
+            // if ($patient->balance != $totalPrice) {
+            //     throw new \Exception('O saldo do paciente não é suficiente para a compra do pacote.');
+            // }
 
-            if ($patient->balance != $totalPrice) {
-                throw new \Exception('O saldo do paciente não é suficiente para a compra do pacote.');
-            }
-
-
+            // Criar o pacote
             $package = Package::create([
                 'patient_id' => $validatedData['patient_id'],
                 'psychologist_id' => $validatedData['psychologist_id'],
                 'total_appointments' => $validatedData['total_appointments'],
                 'price' => $totalPrice,
-                'balance' => $patient->balance,
+                'balance' => 0,
                 'payment_method' => $validatedData['payment_method'],
             ]);
 
-            // Retornar sucesso
+            // Criar as consultas baseadas no total_appointments
+            for ($i = 0; $i < $validatedData['total_appointments']; $i++) {
+                \App\Models\Appointment::create([
+                    'clinic_id' => $psychologist->id_clinic,
+                    'patient_id' => $validatedData['patient_id'],
+                    'psychologist_id' => $validatedData['psychologist_id'],
+                    'package_id' => $package->id,
+                    'status' => 'scheduled',
+                    'payment_status' => 'paid',
+                    'medical_record' => null,
+                ]);
+            }
+
             return redirect()->back()
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Pacote comprado com sucesso!');
 
         } catch (\Exception $th) {
-
             return redirect()->back()
                 ->withErrors(['error' => $th->getMessage()])
                 ->withInput();
         }
-
-
     }
 
     /**

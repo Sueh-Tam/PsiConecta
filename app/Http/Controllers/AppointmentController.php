@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Avaliability;
+use App\Models\Package;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
@@ -28,7 +32,106 @@ class AppointmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            // Validação dos dados
+            $validated = $request->validate([
+                'patient_id' => 'required|exists:users,id',
+                'psychologist_id' => 'required|exists:users,id',
+                'day_of_week' => 'required',
+                'time' => 'required'
+            ]);
+
+            // Calcula a próxima data disponível para o dia da semana selecionado
+            $currentDate = now();
+            $targetDayOfWeek = (int) $request->day_of_week; // Converte para inteiro
+            $daysUntilTarget = ($targetDayOfWeek - $currentDate->dayOfWeek + 7) % 7;
+            $targetDate = $currentDate->copy()->addDays($daysUntilTarget);
+            
+            // Formata a data para exibição no frontend (d/m/Y)
+            $displayDate = $targetDate->format('d/m/Y');
+            // Formata a data para comparação no banco (Y-m-d)
+            $targetDate = $targetDate->format('Y-m-d H:i:s');
+            $dataFormatada = Carbon::createFromFormat('d/m/Y', $request->day_of_week)->startOfDay()->toDateTimeString();            // Calcula a data usando o Carbon baseado no dia da semana
+            
+
+            // Verifica disponibilidade do psicólogo
+            $availability = Avaliability::where('id_psychologist', $request->psychologist_id)
+                                    ->where('dt_avaliability', $dataFormatada)
+                                    ->where('hr_avaliability', $request->time)
+                                    ->where('status', 'available')
+                                    ->first();  
+
+            if (!$availability) {
+                if ($request->ajax()) {
+                    return response()->json(['message' => 'Horário não está mais disponível'], 422);
+                }
+                return redirect()->back()
+                    ->withErrors(['message' => 'Horário não está mais disponível'])
+                    ->withInput();
+            }
+
+            // Busca o pacote ativo do paciente
+            $package = Package::where('patient_id', $request->patient_id)
+                            ->where('psychologist_id', $request->psychologist_id)
+                            ->where('status', 'active')
+                            ->first();
+
+            if (!$package) {
+                if ($request->ajax()) {
+                    return response()->json(['message' => 'Não há pacote ativo para este paciente'], 422);
+                }
+                return redirect()->back()
+                    ->withErrors(['message' => 'Não há pacote ativo para este paciente'])
+                    ->withInput();
+            }
+
+            // Verifica se o pacote tem saldo disponível
+            if ($package->balance + 1 > $package->total_appointments) {
+                if ($request->ajax()) {
+                    return response()->json(['message' => 'É necessário renovar o pacote para agendar mais consultas'], 422);
+                }
+                return redirect()->back()
+                    ->withErrors(['message' => 'É necessário renovar o pacote para agendar mais consultas'])
+                    ->withInput();
+            }
+
+            // Busca um appointment não agendado do pacote
+            $appointment = Appointment::where('patient_id', $request->patient_id)
+                                    ->where('psychologist_id', $request->psychologist_id)
+                                    ->where('status', 'scheduled')
+                                    ->first();
+
+            if (!$appointment) {
+                if ($request->ajax()) {
+                    return response()->json(['message' => 'Não há consultas disponíveis no pacote'], 422);
+                }
+                return redirect()->back()
+                    ->withErrors(['message' => 'Não há consultas disponíveis no pacote'])
+                    ->withInput();
+            }
+
+            // Atualiza o status da disponibilidade
+            $availability->status = 'unvailable';
+            $availability->id_appointments = $appointment->id;
+            $availability->save();
+
+            // Atualiza o saldo do pacote
+            $package->balance += 1;
+            $package->save();
+
+            if ($request->ajax()) {
+                return response()->json(['message' => 'Consulta agendada com sucesso!']);
+            }
+            return redirect()->back()->with('success', 'Consulta agendada com sucesso!');
+
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['message' => 'Erro ao agendar consulta: ' . $e->getMessage()], 422);
+            }
+            return redirect()->back()
+                ->withErrors(['message' => 'Erro ao agendar consulta: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /**
@@ -44,7 +147,26 @@ class AppointmentController extends Controller
      */
     public function edit(Appointment $appointment)
     {
-        //
+        try {
+            // Atualiza o status da consulta para cancelado
+            $appointment->status = 'cancelled';
+            $appointment->save();
+
+            // Busca e atualiza a disponibilidade relacionada
+            $availability = Avaliability::where('id_appointments', $appointment->id)
+                                    ->first();
+
+            if ($availability) {
+                $availability->status = 'available';
+                $availability->id_appointments = null;
+                $availability->save();
+            }
+
+            return response()->json(['message' => 'Consulta cancelada com sucesso!']);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao cancelar consulta: ' . $e->getMessage()], 422);
+        }
     }
 
     /**

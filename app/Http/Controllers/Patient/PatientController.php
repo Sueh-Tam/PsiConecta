@@ -98,9 +98,14 @@ class PatientController extends Controller
         $patients = User::where('id_clinic', $clinicId)
                     ->where('type', 'patient')
                     ->paginate(10);
+
         $psychologists = User::where('id_clinic', $clinicId)
                     ->where('type', 'psychologist')
+                    ->whereHas('availabilities', function($query) {
+                        $query->where('status', 'available');
+                    })
                     ->get();
+
         return view('Dashboard.clinic.patient.index')->with([
             'patients' => $patients,
             'psychologists' => $psychologists,

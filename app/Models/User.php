@@ -146,6 +146,17 @@ class User extends Authenticatable
     }
 
     /**
+     * Retorna o pacote ativo do paciente com consultas disponíveis
+     */
+    public function activePackage()
+    {
+        return $this->patientPackages()
+            ->whereRaw('balance < total_appointments')
+            ->latest()
+            ->first();
+    }
+
+    /**
      * Pacotes onde o usuário é psicólogo
      */
     public function psychologistPackages()

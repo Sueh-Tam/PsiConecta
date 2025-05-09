@@ -21,6 +21,11 @@ class Avaliability extends Model
     {
         return $this->hasOne(Appointment::class, 'availability_id');
     }
+
+    public function appointments()
+    {
+        return $this->appointment();
+    }
     public const TIME_BLOCKS = [
         '08:00-09:00',
         '09:00-10:00',

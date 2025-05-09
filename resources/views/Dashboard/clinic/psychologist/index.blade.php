@@ -3,67 +3,119 @@
 @section('title', 'Psicólogos')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+<div class="container-fluid px-4">
+    <!-- Cabeçalho da Página -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-primary">Lista de Psicólogos</h1>
+            <p class="text-muted mb-0">Gerencie os psicólogos da sua clínica</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#createPsychologistModal">
+            <i class="bi bi-plus-circle me-2"></i>
+            Cadastrar psicólogo
+        </button>
+    </div>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPsychologistModal">
-        Cadastrar psicólogo
-    </button>
+    <!-- Componentes de Modal -->
+    <x-error-modal modal-id="patientErrorModal" title="Erro"/>
+    <x-success-modal modal-id="patientSuccessModal" title="Cadastro Realizado!" message="{{ session('success_message') }}"/>
+
+    <!-- Card da Tabela -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="px-4 py-3">Nome</th>
+                            <th class="px-4 py-3">CRP</th>
+                            <th class="px-4 py-3">Valor da consulta</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($psychologists as $psychologist)
+                            <tr>
+                                <td class="px-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-primary text-white me-2">
+                                            {{ substr($psychologist->name, 0, 2) }}
+                                        </div>
+                                        {{ $psychologist->name }}
+                                    </div>
+                                </td>
+                                <td class="px-4">{{ $psychologist->formatDocumentCRP($psychologist->document_number) }}</td>
+                                <td class="px-4">R$ {{ number_format($psychologist->appointment_price, 2, ',', '.') }}</td>
+                                <td class="px-4">
+                                    <span class="badge rounded-pill @if($psychologist->status == 'active') bg-success @elseif($psychologist->status == 'inactive') bg-danger @else bg-warning @endif">
+                                        {{ $psychologist->status == 'active' ? 'Ativo' : 'Inativo' }}
+                                    </span>
+                                </td>
+                                <td class="px-4 text-center">
+                                    <button class="btn btn-outline-primary btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editPsychologistModal"
+                                            data-id="{{ $psychologist->id }}"
+                                            data-name="{{ $psychologist->name }}"
+                                            data-email="{{ $psychologist->email }}"
+                                            data-document_number="{{ $psychologist->document_number }}"
+                                            data-appointment_price="{{ $psychologist->appointment_price }}"
+                                            data-status="{{ $psychologist->status }}">
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                        Editar
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+
+                        @if ($psychologists->isEmpty())
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+                                        Nenhum psicólogo cadastrado.
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-<x-error-modal
-    modal-id="patientErrorModal"
-    title="Erro"
-/>
-<x-success-modal
-    modal-id="patientSuccessModal"
-    title="Cadastro Realizado!"
-    message="{{ session('success_message') }}"
-/>
-<table class="table table-bordered table-striped shadow-sm rounded">
-    <thead class="table-primary">
-        <tr>
-            <th>Nome</th>
-            <th>CRP</th>
-            <th>Valor da consulta</th>
-            <th>Status</th>
-            <th>Detalhes</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($psychologists as $psychologist)
-            <tr>
-                <td>{{ $psychologist->name }}</td>
-                <td>{{ $psychologist->formatDocumentCRP($psychologist->document_number) }}</td>
-                <td>R${{ $psychologist->appointment_price }}</td>
-                <td><span class="badge @if ($psychologist->status == 'active') bg-success @elseif ($psychologist->status == 'inactive') bg-danger @else bg-warning @endif">{{ $psychologist->status }}</span></td>
-                <td>
-                    <div class="d-flex justify-content-center ">
-                        <button class="btn btn-info"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editPsychologistModal"
-                                data-id="{{ $psychologist->id }}"
-                                data-name="{{ $psychologist->name }}"
-                                data-email="{{ $psychologist->email }}"
-                                data-document_number="{{ $psychologist->document_number }}"
-                                data-appointment_price="{{ $psychologist->appointment_price }}"
-                                data-status="{{ $psychologist->status }}">
-                            Editar psicólogo
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        @endforeach
 
-        @if ($psychologists->isEmpty())
-            <tr>
-                <td colspan="5" class="text-center">Nenhum psicólogo cadastrado.</td>
-            </tr>
-        @endif
-
-    </tbody>
-</table>
 <x-psychologist.create-psychologist />
 <x-psychologist.edit-psychologist />
+
+<style>
+    .avatar-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+    .table th {
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    
+    .badge {
+        font-weight: 500;
+        padding: 0.5em 0.75em;
+    }
+    
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const editPsychologistModal = document.getElementById('editPsychologistModal');

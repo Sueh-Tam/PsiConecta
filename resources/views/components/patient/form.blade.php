@@ -1,7 +1,6 @@
 <div>
     <form method="POST" action="{{ route('patient.register') }}">
         @csrf
-
         <!-- Nome -->
         <div class="mb-3">
             <label for="name" class="form-label">Nome completo</label>

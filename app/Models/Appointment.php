@@ -34,6 +34,6 @@ class Appointment extends Model
 
     public function availability()
     {
-        return $this->belongsTo(Avaliability::class, 'availability_id');
+        return $this->hasOne(Avaliability::class, 'id_appointments');
     }
 }

@@ -11,7 +11,54 @@ use Illuminate\Validation\Rule;
 
 class ClinicController extends Controller
 {
-    //
+    public function dashboard()
+    {
+        $clinic_id = Auth::user()->id_clinic;
+
+        // Buscar pacientes da clínica
+        $patients = User::where('type', 'patient')
+            ->where('id_clinic', $clinic_id)
+            ->get();
+
+        // Buscar agendamentos através da tabela availability
+        $appointments = \App\Models\Appointment::with(['psychologist', 'patient'])
+            ->whereHas('psychologist', function($q) use ($clinic_id) {
+                $q->where('id_clinic', $clinic_id);
+            })
+            ->join('avaliabilities', 'appointments.id', '=', 'avaliabilities.id_appointments')
+            ->select('appointments.*', 'avaliabilities.dt_avaliability', 'avaliabilities.hr_avaliability')
+            ->get()
+            ->map(function($appointment) {
+                return [
+                    'id' => $appointment->id,
+                    'date' => $appointment->availability ? $appointment->availability->dt_avaliability : null,
+                    'start_time' => $appointment->availability ? $appointment->availability->hr_avaliability : null,
+                    'psychologist' => [
+                        'name' => $appointment->psychologist->name,
+                        'initials' => substr($appointment->psychologist->name, 0, 2)
+                    ],
+                    'patient' => [
+                        'name' => $appointment->patient->name,
+                        'initials' => substr($appointment->patient->name, 0, 2)
+                    ],
+                    'status' => $appointment->status
+                ];
+            });
+
+        // Estatísticas para os cards
+        $stats = [
+            'next_appointment' => $appointments->where('status', 'scheduled')
+                ->sortBy('date')
+                ->first(),
+            'completed_appointments' => $appointments->where('status', 'completed')
+                ->where('date', '>=', now()->subMonth())
+                ->count(),
+            'pending_appointments' => $appointments->where('status', 'scheduled')->count()
+        ];
+
+        return view('Dashboard.clinic.index', compact('appointments', 'stats', 'patients'));
+    }
+
     public function store(Request $request){
         try {
             $validated = $request->validate([
@@ -87,6 +134,5 @@ class ClinicController extends Controller
                 ->withErrors($th->getMessage())
                 ->withInput();
         }
-
     }
 }

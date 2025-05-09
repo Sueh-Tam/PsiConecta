@@ -4,9 +4,30 @@
     <meta charset="UTF-8">
     <title>PsiConecta - Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: #0d6efd;
+        }
+        .login-container {
+            min-height: calc(100vh - 180px);
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 <body class="bg-light">
 
@@ -38,33 +59,70 @@
         message="{{ session('success_message') }}"
     />
     <!-- Formulário de Cadastro -->
-    <main class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow rounded-4">
-                    <div class="card-body">
-                        <h2 class="card-title mb-4 text-primary text-center">Login</h2>
+    <main class="login-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="text-center mb-4">
+                        <h1 class="display-6 text-primary">Bem-vindo de volta!</h1>
+                        <p class="text-muted">Entre para continuar sua jornada</p>
+                    </div>
+                    
+                    <div class="card shadow-lg border-0 rounded-4">
+                        <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
+                            <h2 class="h4 mb-0">Login</h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="POST" action="{{ route('auth.login') }}" class="needs-validation" novalidate>
+                                @csrf
+                                
+                                <div class="form-floating mb-3">
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           name="email" 
+                                           placeholder="nome@exemplo.com" 
+                                           required>
+                                    <label for="email">
+                                        <i class="bi bi-envelope me-2"></i>E-mail
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        Por favor, insira um e-mail válido
+                                    </div>
+                                </div>
 
-                        <form method="POST" action="{{ route('auth.login') }}">
-                            @csrf
-                            <!-- Email -->
-                            <div class="mb-3">
-                                <label for="email" class="form-label">E-mail</label>
-                                <input type="email" name="email" id="email" class="form-control" required>
-                            </div>
-                            <!-- Senha -->
-                            <div class="mb-4">
-                                <label for="senha" class="form-label">Senha</label>
-                                <input type="password" name="password" id="senha" class="form-control" required minlength="6">
-                            </div>
+                                <div class="form-floating mb-4 position-relative">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="senha" 
+                                           name="password" 
+                                           placeholder="Senha" 
+                                           required 
+                                           minlength="6">
+                                    <label for="senha">
+                                        <i class="bi bi-lock me-2"></i>Senha
+                                    </label>
+                                    <i class="bi bi-eye-slash password-toggle" onclick="togglePassword()"></i>
+                                    <div class="invalid-feedback">
+                                        A senha deve ter no mínimo 6 caracteres
+                                    </div>
+                                </div>
 
-                            <!-- Botão -->
-                            <div class="d-grid">
-                                <label>Não possui uma conta? <a href="{{ Route('user.signup') }}">Registre-se</a></label>
-                                <button type="submit" class="btn btn-primary">Login</button>
-                            </div>
-                        </form>
-
+                                <div class="d-grid gap-3">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                                    </button>
+                                    
+                                    <div class="text-center">
+                                        <p class="mb-0">Não possui uma conta? 
+                                            <a href="{{ Route('user.signup') }}" class="text-primary text-decoration-none fw-bold">
+                                                Registre-se
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -80,5 +138,33 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validação do formulário
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            });
+        });
+
+        // Toggle de visibilidade da senha
+        function togglePassword() {
+            const senhaInput = document.getElementById('senha');
+            const toggleIcon = document.querySelector('.password-toggle');
+            
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                toggleIcon.classList.replace('bi-eye-slash', 'bi-eye');
+            } else {
+                senhaInput.type = 'password';
+                toggleIcon.classList.replace('bi-eye', 'bi-eye-slash');
+            }
+        }
+    </script>
 </body>
 </html>

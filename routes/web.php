@@ -8,6 +8,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\Psychologist\PsychologistController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AppointmentController;
 use App\Models\Avaliability;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,7 @@ Route::prefix('auth')->group(function () {
         return view('Users.login');
     })->name('auth.login');
     Route::post('/login',[UserController::class, 'login'])->name('auth.login');
+
     Route::get('/logout',[UserController::class, 'logout'])->name('auth.logout');
 
     // --- Paciente ---
@@ -67,6 +69,47 @@ Route::prefix('patient')->middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', fn () => view('Dashboard.Consults.index'))->name('patient.dashboard');
 
+    // API para buscar psicólogo do paciente
+    Route::get('/api/patients/{id}/psychologist', function ($id) {
+        $patient = \App\Models\User::find($id);
+        $activePackage = $patient->activePackage();
+
+        if ($activePackage) {
+            $psychologist = \App\Models\User::find($activePackage->psychologist_id);
+
+            // Buscar disponibilidades do psicólogo
+            $availabilities = \App\Models\Avaliability::where('id_psychologist', $psychologist->id)
+                ->where('status', 'available')
+                ->whereDate('dt_avaliability', '>=', now())
+                ->get();
+
+            // Organizar disponibilidades por dia da semana
+            $availableDays = [];
+            $availableTimesByDay = [];
+
+            foreach ($availabilities as $availability) {
+                $dayOfWeek = Carbon::parse($availability->dt_avaliability)->format('d/m/Y');
+                if (!in_array($dayOfWeek, $availableDays)) {
+                    $availableDays[] = $dayOfWeek;
+                }
+
+                if (!isset($availableTimesByDay[$dayOfWeek])) {
+                    $availableTimesByDay[$dayOfWeek] = [];
+                }
+
+                $availableTimesByDay[$dayOfWeek][] = $availability->hr_avaliability;
+            }
+
+            return response()->json([
+                'psychologist' => $psychologist,
+                'available_days' => $availableDays,
+                'available_times' => $availableTimesByDay
+            ]);
+        }
+
+        return response()->json(['psychologist' => null, 'available_days' => [], 'available_times' => []]);
+    });
+
     // Perfil
     Route::get('/profile', function () {
         if (Auth::check()) {
@@ -96,7 +139,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 Route::prefix('clinic')->middleware('auth')->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', fn () => view('Dashboard.clinic.index'))->name('clinic.dashboard');
+    Route::get('/dashboard', [ClinicController::class, 'dashboard'])->name('clinic.dashboard');
+    Route::post('/appointments/store', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'edit'])->name('appointments.cancel');
 
     Route::prefix('psychologist')->group(function () {
         Route::get('/index', [PsychologistController::class,'psychologistByClinic'])->name('clinic.psychologist.index');
