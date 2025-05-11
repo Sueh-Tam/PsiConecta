@@ -41,25 +41,14 @@ class AppointmentController extends Controller
                 'time' => 'required'
             ]);
 
-            // Calcula a próxima data disponível para o dia da semana selecionado
-            $currentDate = now();
-            $targetDayOfWeek = (int) $request->day_of_week; // Converte para inteiro
-            $daysUntilTarget = ($targetDayOfWeek - $currentDate->dayOfWeek + 7) % 7;
-            $targetDate = $currentDate->copy()->addDays($daysUntilTarget);
-            
-            // Formata a data para exibição no frontend (d/m/Y)
-            $displayDate = $targetDate->format('d/m/Y');
-            // Formata a data para comparação no banco (Y-m-d)
-            $targetDate = $targetDate->format('Y-m-d H:i:s');
             $dataFormatada = Carbon::createFromFormat('d/m/Y', $request->day_of_week)->startOfDay()->toDateTimeString();            // Calcula a data usando o Carbon baseado no dia da semana
-            
 
             // Verifica disponibilidade do psicólogo
             $availability = Avaliability::where('id_psychologist', $request->psychologist_id)
-                                    ->where('dt_avaliability', $dataFormatada)
-                                    ->where('hr_avaliability', $request->time)
-                                    ->where('status', 'available')
-                                    ->first();  
+                        ->where('dt_avaliability', $dataFormatada)
+                        ->where('hr_avaliability', $request->time)
+                        ->where('status', 'available')
+                        ->first();  
 
             if (!$availability) {
                 if ($request->ajax()) {
@@ -73,7 +62,6 @@ class AppointmentController extends Controller
             // Busca o pacote ativo do paciente
             $package = Package::where('patient_id', $request->patient_id)
                             ->where('psychologist_id', $request->psychologist_id)
-                            ->where('status', 'active')
                             ->first();
 
             if (!$package) {
@@ -95,29 +83,20 @@ class AppointmentController extends Controller
                     ->withInput();
             }
 
-            // Busca um appointment não agendado do pacote
-            $appointment = Appointment::where('patient_id', $request->patient_id)
-                                    ->where('psychologist_id', $request->psychologist_id)
-                                    ->where('status', 'scheduled')
-                                    ->first();
+            $package->balance++;
+            $package->save();
+            // Cria uma nova consulta vinculada ao pacote
+            $appointment = new Appointment();
+            $appointment->clinic_id = Auth::user()->id_clinic;
+            $appointment->patient_id = $request->patient_id;
+            $appointment->psychologist_id = $request->psychologist_id;
+            $appointment->package_id = $package->id;
+            $appointment->status = 'scheduled';
+            $appointment->save();
 
-            if (!$appointment) {
-                if ($request->ajax()) {
-                    return response()->json(['message' => 'Não há consultas disponíveis no pacote'], 422);
-                }
-                return redirect()->back()
-                    ->withErrors(['message' => 'Não há consultas disponíveis no pacote'])
-                    ->withInput();
-            }
-
-            // Atualiza o status da disponibilidade
             $availability->status = 'unvailable';
             $availability->id_appointments = $appointment->id;
             $availability->save();
-
-            // Atualiza o saldo do pacote
-            $package->balance += 1;
-            $package->save();
 
             if ($request->ajax()) {
                 return response()->json(['message' => 'Consulta agendada com sucesso!']);

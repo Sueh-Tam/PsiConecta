@@ -73,7 +73,7 @@
                             <h2 class="h4 mb-0">Login</h2>
                         </div>
                         <div class="card-body p-4">
-                            <form method="POST" action="{{ route('auth.login') }}" class="needs-validation" novalidate>
+                            <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate>
                                 @csrf
                                 
                                 <div class="form-floating mb-3">

@@ -15,7 +15,7 @@
         <div class="container d-flex justify-content-between align-items-center">
             <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">PsiConecta</a></h1>
             <div>
-                <a href="{{ Route('auth.login') }}" class="btn btn-outline-light me-2">Login</a>
+                <a href="{{ Route('login') }}" class="btn btn-outline-light me-2">Login</a>
                 <a href="/" class="btn btn-light text-primary">Início</a>
             </div>
         </div>

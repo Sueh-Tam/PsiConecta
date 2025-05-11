@@ -102,7 +102,7 @@ title="Erro no Cadastro de Paciente"
 
                             <div class="text-center mt-4">
                                 <p class="mb-0">Já possui uma conta? 
-                                    <a href="{{ Route('auth.login') }}" class="text-primary text-decoration-none">
+                                    <a href="{{ Route('login') }}" class="text-primary text-decoration-none">
                                         Faça login aqui
                                     </a>
                                 </p>

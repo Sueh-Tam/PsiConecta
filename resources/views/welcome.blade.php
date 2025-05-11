@@ -45,7 +45,7 @@
                     <a href="{{ Route('auth.logout') }}" class="btn btn-light text-primary">Logout</a>
                 @else
                     <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Registre-se</a>
-                    <a href="{{ Route('auth.login') }}" class="btn btn-light text-primary">Login</a>
+                    <a href="{{ Route('login') }}" class="btn btn-light text-primary">Login</a>
                 @endif
 
             </div>

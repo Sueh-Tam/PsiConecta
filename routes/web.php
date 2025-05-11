@@ -26,8 +26,8 @@ Route::prefix('auth')->group(function () {
 
     Route::get('/login', function () {
         return view('Users.login');
-    })->name('auth.login');
-    Route::post('/login',[UserController::class, 'login'])->name('auth.login');
+    })->name('login');
+    Route::post('/login',[UserController::class, 'login'])->name('login');
 
     Route::get('/logout',[UserController::class, 'logout'])->name('auth.logout');
 

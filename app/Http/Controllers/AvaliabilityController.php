@@ -66,17 +66,17 @@ class AvaliabilityController extends Controller
                 ->where('hr_avaliability', $item['hr_avaliability'])
                 ->exists();
 
-            if ($exists) {
-                return redirect()->back()
-                    ->withErrors("Já existe uma disponibilidade para {$item['dt_avaliability']} no horário {$item['hr_avaliability']}.")
-                    ->withInput();
+            if (!$exists) {
+                Avaliability::create([
+                    'id_psychologist' => $psychologistId,
+                    'dt_avaliability' => $item['dt_avaliability'],
+                    'hr_avaliability' => $item['hr_avaliability'],
+                ]);
             }
-
-            Avaliability::create([
-                'id_psychologist' => $psychologistId,
-                'dt_avaliability' => $item['dt_avaliability'],
-                'hr_avaliability' => $item['hr_avaliability'],
-            ]);
+            // return redirect()->back()
+            //     ->withErrors("Já existe uma disponibilidade para {$item['dt_avaliability']} no horário {$item['hr_avaliability']}.")
+            //     ->withInput();
+            
         }
 
         return redirect()->back()->with('success', 'Disponibilidades salvas com sucesso!');

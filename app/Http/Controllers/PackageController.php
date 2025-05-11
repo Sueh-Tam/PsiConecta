@@ -71,17 +71,17 @@ class PackageController extends Controller
             ]);
 
             // Criar as consultas baseadas no total_appointments
-            for ($i = 0; $i < $validatedData['total_appointments']; $i++) {
-                \App\Models\Appointment::create([
-                    'clinic_id' => $psychologist->id_clinic,
-                    'patient_id' => $validatedData['patient_id'],
-                    'psychologist_id' => $validatedData['psychologist_id'],
-                    'package_id' => $package->id,
-                    'status' => 'scheduled',
-                    'payment_status' => 'paid',
-                    'medical_record' => null,
-                ]);
-            }
+            // for ($i = 0; $i < $validatedData['total_appointments']; $i++) {
+            //     \App\Models\Appointment::create([
+            //         'clinic_id' => $psychologist->id_clinic,
+            //         'patient_id' => $validatedData['patient_id'],
+            //         'psychologist_id' => $validatedData['psychologist_id'],
+            //         'package_id' => $package->id,
+            //         'status' => 'scheduled',
+            //         'payment_status' => 'paid',
+            //         'medical_record' => null,
+            //     ]);
+            // }
 
             return redirect()->back()
                 ->with('show_success_modal', true)

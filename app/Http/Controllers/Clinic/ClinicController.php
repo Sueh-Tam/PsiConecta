@@ -44,7 +44,6 @@ class ClinicController extends Controller
                     'status' => $appointment->status
                 ];
             });
-
         // Estatísticas para os cards
         $stats = [
             'next_appointment' => $appointments->where('status', 'scheduled')

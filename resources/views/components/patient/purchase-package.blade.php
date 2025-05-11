@@ -4,7 +4,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{ Route('clinic.packages.store') }}" method="POST">
-                @csrf
+                @csrf 
                 <input type="hidden" name="patient_id" value="{{ $patient->id }}">
                 <input type="hidden" name="psychologist_id" value="{{ auth()->user()->id }}">
 
