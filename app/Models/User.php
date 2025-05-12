@@ -67,6 +67,40 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'id_clinic');
     }
+    
+    /**
+     * Relação many-to-many entre clínicas e pacientes
+     * Permite que uma clínica tenha vários pacientes
+     */
+    public function patients()
+    {
+        // Somente para usuários do tipo clínica
+        if ($this->type === 'clinic' || $this->type === 'attendant') {
+            return $this->belongsToMany(User::class, 'clinic_patient', 'id_clinic', 'id_patient')
+                ->where('type', 'patient')
+                ->withTimestamps();
+        }
+        return null;
+    }
+    
+    /**
+     * Relação many-to-many entre pacientes e clínicas
+     * Permite que um paciente pertença a várias clínicas
+     */
+    public function clinics()
+    {
+        // Somente para usuários do tipo paciente
+        if ($this->type === 'patient') {
+            return $this->belongsToMany(User::class, 'clinic_patient', 'id_patient', 'id_clinic')
+                ->where('type', 'clinic')
+                ->withTimestamps();
+        }
+        return null;
+    }
+
+    public function psychologist(){
+        return $this->belongsTo(User::class, 'id_clinic')->where('type', 'psychologist');
+    }
     public function formatDocumentCnpj($documentNumber){
 
         // Remove todos os caracteres não numéricos
@@ -104,8 +138,8 @@ class User extends Authenticatable
          // Remove todos os caracteres não numéricos
         $crp = preg_replace('/[^0-9]/', '', $documentNumber);
 
-        // Verifica se tem 7 dígitos (formato completo)
-        if (strlen($crp) !== 7) {
+        // Verifica se tem 8 dígitos (formato completo)
+        if (strlen($crp) !== 8) {
             return $crp;
         }
 

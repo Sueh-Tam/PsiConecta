@@ -54,8 +54,8 @@ class DatabaseSeeder extends Seeder
                     'name' => "Dr. {$name}",
                     'email' => "psicologo" . Str::random(4) . "@psiconecta.com",
                     'password' => Hash::make('123456'),
-                    'document_type' => 'cpf',
-                    'document_number' => $faker->numberBetween(20000000000, 29999999999),
+                    'document_type' => 'crp',
+                    'document_number' => $faker->numberBetween(1000000, 99999999),
                     'appointment_price' => rand(100, 300),
                     'type' => 'psychologist',
                     'situation' => 'valid',
@@ -90,5 +90,8 @@ class DatabaseSeeder extends Seeder
                 'status' => 'active',
             ]);
         }
+        
+        // Executar o seeder para vincular pacientes a clínicas
+        $this->call(ClinicPatientSeeder::class);
     }
 }

@@ -24,6 +24,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header class="bg-primary text-white py-3 shadow sticky-top">
@@ -69,43 +70,11 @@
             <p class="lead mb-4">Encontre o profissional ideal para cuidar da sua saúde mental</p>
             <div class="d-flex justify-content-center gap-3">
                 <a href="{{ Route('user.signup') }}" class="btn btn-light btn-lg">Começar Agora</a>
-                <a href="#clinicas" class="btn btn-outline-light btn-lg">Ver Clínicas</a>
             </div>
         </div>
     </section>
 
     <main class="container">
-        <!-- Slider de Clínicas -->
-        <section class="mb-5">
-            <div id="clinicasCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#clinicasCarousel" data-bs-slide-to="0" class="active"></button>
-                    <button type="button" data-bs-target="#clinicasCarousel" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#clinicasCarousel" data-bs-slide-to="2"></button>
-                </div>
-                <div class="carousel-inner rounded shadow">
-                    <div class="carousel-item active">
-                        <img src="https://via.placeholder.com/1200x400?text=Clínica+Bem+Estar" class="d-block w-100" alt="Clínica Bem Estar">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://via.placeholder.com/1200x400?text=Clínica+Saúde+Mental" class="d-block w-100" alt="Clínica Saúde Mental">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://via.placeholder.com/1200x400?text=Clínica+Viva+Melhor" class="d-block w-100" alt="Clínica Viva Melhor">
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#clinicasCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#clinicasCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Próximo</span>
-                </button>
-            </div>
-        </section>
-
-        <!-- Lista de Clínicas -->
         <section id="clinicas" class="mb-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Clínicas Parceiras</h2>
@@ -115,50 +84,18 @@
             </div>
 
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                <div class="col">
-                    <div class="card h-100 shadow-sm clinic-card">
-                        <div class="position-relative">
-                            <img src="https://via.placeholder.com/400x200?text=Clínica+Bem+Estar" class="card-img-top" alt="Clínica Bem Estar">
-                            <div class="position-absolute top-0 end-0 m-2">
-                                <span class="badge bg-primary">Destaque</span>
+                @forelse ($clinics as $clinic)
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $clinic->name }}</h5>
+                                <a href="{{ Route('psychologist.clinic',['id' => $clinic->id]) }}" class="btn btn-primary">Ver Psicólogos</a>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Clínica Bem Estar</h5>
-                            <p class="card-text">
-                                <i class="bi bi-geo-alt text-primary"></i> Centro da cidade<br>
-                                <i class="bi bi-star-fill text-warning"></i> 4.8/5 (120 avaliações)
-                            </p>
-                            <a href="/clinicas/1/psicologos" class="btn btn-primary w-100">
-                                <i class="bi bi-search"></i> Ver Psicólogos
-                            </a>
-                        </div>
                     </div>
-                </div>
-
-                <!-- Clínica 2 -->
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <img src="https://via.placeholder.com/400x200?text=Clínica+Saúde+Mental" class="card-img-top" alt="Clínica Saúde Mental">
-                        <div class="card-body">
-                            <h5 class="card-title">Clínica Saúde Mental</h5>
-                            <p class="card-text">Equipe dedicada a cuidar do seu bem-estar emocional.</p>
-                            <a href="/clinicas/2/psicologos" class="btn btn-primary">Ver Psicólogos</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Clínica 3 -->
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <img src="https://via.placeholder.com/400x200?text=Clínica+Viva+Melhor" class="card-img-top" alt="Clínica Viva Melhor">
-                        <div class="card-body">
-                            <h5 class="card-title">Clínica Viva Melhor</h5>
-                            <p class="card-text">Ambiente acolhedor com profissionais experientes.</p>
-                            <a href="/clinicas/3/psicologos" class="btn btn-primary">Ver Psicólogos</a>
-                        </div>
-                    </div>
-                </div>
+                @empty
+                    <label>Tem anda não</label>
+                @endforelse
             </div>
         </section>
     </main>

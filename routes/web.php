@@ -10,15 +10,27 @@ use App\Http\Controllers\Psychologist\PsychologistController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AppointmentController;
 use App\Models\Avaliability;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // Página inicial
 Route::get('/', function () {
-    return view('welcome');
+    $clinics = User::where('type', 'clinic')
+    ->where('situation','valid')->get();
+    return view('welcome')->with('clinics', $clinics);
 })->name('home');
 
+Route::get('/clinic/{id}/psychologists', function ($id) {
+    $clinic = User::find($id);
+    $clinics = User::where('type', 'clinic')
+    ->where('situation','valid')->get();
+    $psychologists = $clinic->psychologists()->get();
+    
+    return view('clinic.psychologists')->with(['psychologists' => $psychologists,
+    'clinics' => $clinics,'clinic' => $clinic]);
+})->name('psychologist.clinic');
 //
 // ROTAS DE AUTENTICAÇÃO
 //
@@ -35,11 +47,6 @@ Route::prefix('auth')->group(function () {
     Route::prefix('patient')->group(function () {
         Route::get('/signup', fn () => view('Users.Patients.register'))->name('user.signup');
         Route::post('/register', [PatientController::class, 'store'])->name('patient.register');
-
-        //Route::get('/login', fn () => view('Users.Patients.login'))->name('user.login');
-        //Route::post('/login', [PatientController::class, 'login'])->name('patient.login');
-
-        //Route::get('/logout', [PatientController::class, 'logout'])->name('patient.logout');
     });
 
     // --- Clínica ---
@@ -47,17 +54,6 @@ Route::prefix('auth')->group(function () {
         Route::get('/signup', fn () => view('Users.Clinics.register'))->name('clinic.signup');
         Route::post('/register', [ClinicController::class, 'store'])->name('clinic.register');
 
-        //Route::get('/login', fn () => view('Users.Clinics.login'))->name('clinic.login');
-        //Route::post('/login', [ClinicController::class, 'login'])->name('clinic.login');
-
-        //Route::get('/logout', [ClinicController::class, 'logout'])->name('clinic.logout');
-    });
-
-    // --- Admin ---
-    Route::prefix('admin')->group(function () {
-        //Route::get('/login', fn () => view('Users.admin.login'))->name('admin.login.view');
-        //Route::post('/login', [AdminController::class, 'login'])->name('admin.login');
-        //Route::get('/logout', [AdminController::class, 'logout'])->name('admin.logout');
     });
 });
 
