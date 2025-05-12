@@ -91,6 +91,8 @@ class AppointmentController extends Controller
             $appointment->patient_id = $request->patient_id;
             $appointment->psychologist_id = $request->psychologist_id;
             $appointment->package_id = $package->id;
+            $appointment->dt_appointment = $availability->dt_avaliability;
+            $appointment->hr_appointment = $availability->hr_avaliability;
             $appointment->status = 'scheduled';
             $appointment->save();
 

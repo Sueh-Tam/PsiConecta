@@ -18,21 +18,29 @@ class ClinicController extends Controller
         // Buscar pacientes da clínica
         $patients = User::where('type', 'patient')
             ->where('id_clinic', $clinic_id)
-            ->get();
+            ->with(['patientPackages' => function($query) {
+                $query->latest();
+            }])
+            ->get()
+            ->map(function($patient) {
+                $activePackage = $patient->activePackage();
+                $patient->appointments_left = $activePackage 
+                    ? $activePackage->total_appointments - $activePackage->balance
+                    : 0;
+                return $patient;
+            });
 
         // Buscar agendamentos através da tabela availability
         $appointments = \App\Models\Appointment::with(['psychologist', 'patient'])
             ->whereHas('psychologist', function($q) use ($clinic_id) {
                 $q->where('id_clinic', $clinic_id);
             })
-            ->join('avaliabilities', 'appointments.id', '=', 'avaliabilities.id_appointments')
-            ->select('appointments.*', 'avaliabilities.dt_avaliability', 'avaliabilities.hr_avaliability')
             ->get()
             ->map(function($appointment) {
                 return [
                     'id' => $appointment->id,
-                    'date' => $appointment->availability ? $appointment->availability->dt_avaliability : null,
-                    'start_time' => $appointment->availability ? $appointment->availability->hr_avaliability : null,
+                    'date' => $appointment->dt_avaliability,
+                    'start_time' => $appointment->hr_avaliability,
                     'psychologist' => [
                         'name' => $appointment->psychologist->name,
                         'initials' => substr($appointment->psychologist->name, 0, 2)

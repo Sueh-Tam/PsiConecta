@@ -1,4 +1,4 @@
-@extends('layouts.clinic.dashboard')
+@extends('layouts.Clinic.dashboard')
 
 @section('title', 'Minhas Consultas')
 

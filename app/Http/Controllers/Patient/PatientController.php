@@ -90,7 +90,7 @@ class PatientController extends Controller
         }
 
     }
-
+ 
     public function patientByClinic()
     {
         $clinicId = Auth::user()->id_clinic;
