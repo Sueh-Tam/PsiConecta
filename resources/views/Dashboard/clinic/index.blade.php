@@ -129,7 +129,10 @@
                                         <span class="badge bg-warning text-dark">Agendada</span>
                                         @break
                                     @case('cancelled')
-                                        <span class="badge bg-danger">Cancelada</span>
+                                        <span class="badge" style="background-color: #8B0000">Cancelamento Tardio</span>
+                                        @break
+                                    @case('canceled_early')
+                                        <span class="badge" style="background-color: #FFA500">Cancelamento Antecipado</span>
                                         @break
                                     @default
                                         <span class="badge bg-secondary">{{ ucfirst($appointment['status']) }}</span>
@@ -137,11 +140,14 @@
                                 </td>
                                 <td class="px-4 text-center">
                                     @if($appointment['status'] === 'scheduled')
-                                        <button class="btn btn-sm btn-success me-2" title="Marcar como realizada">
+                                        <button class="btn btn-sm btn-success me-2" title="Marcar como realizada" data-appointment-id="{{ $appointment['id'] }}"> 
                                             <i class="bi bi-check-circle"></i> Realizada
                                         </button>
-                                        <button class="btn btn-sm btn-danger" title="Cancelar consulta" data-appointment-id="{{ $appointment['id'] }}">
+                                        <button class="btn btn-sm btn-danger me-2" title="Cancelar consulta" data-appointment-id="{{ $appointment['id'] }}">
                                             <i class="bi bi-x-circle"></i> Cancelar
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" title="Cancelar antecipadamente" data-appointment-id="{{ $appointment['id'] }}">
+                                            <i class="bi bi-calendar-x"></i> Cancelar Antecipadamente
                                         </button>
                                     @endif
                                 </td>
@@ -192,7 +198,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const cancelButtons = document.querySelectorAll('.btn-danger');
-        
+        const cancelEarlyButtons = document.querySelectorAll('.btn-outline-danger');
+        const completeButtons = document.querySelectorAll('.btn-success');
         cancelButtons.forEach(button => {
             button.addEventListener('click', function() {
                 if (confirm('Tem certeza que deseja cancelar esta consulta?')) {
@@ -213,6 +220,56 @@
                     .catch(error => {
                         console.error('Erro:', error);
                         alert('Erro ao cancelar a consulta');
+                    });
+                }
+            });
+        });
+
+        cancelEarlyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja cancelar antecipadamente esta consulta?')) {
+                    const appointmentId = this.getAttribute('data-appointment-id');
+                    
+                    fetch(`/clinic/appointments/${appointmentId}/canceledEarly`, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao cancelar antecipadamente a consulta');
+                    });
+                }
+            });
+        });
+
+        completeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja marcar esta consulta como realizada?')) {
+                    const appointmentId = this.getAttribute('data-appointment-id');
+                    
+                    fetch(`/clinic/appointments/${appointmentId}/complet`, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao marcar a consulta como realizada');
                     });
                 }
             });

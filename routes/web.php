@@ -138,7 +138,8 @@ Route::prefix('clinic')->middleware('auth')->group(function () {
     Route::get('/dashboard', [ClinicController::class, 'dashboard'])->name('clinic.dashboard');
     Route::post('/appointments/store', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'edit'])->name('appointments.cancel');
-
+    Route::patch('/appointments/{appointment}/canceledEarly', [AppointmentController::class, 'canceledEarly'])->name('appointments.canceled.early');
+    Route::patch('/appointments/{appointment}/complet', [AppointmentController::class, 'completAppointment'])->name('appointments.complet.appointment');
     Route::prefix('psychologist')->group(function () {
         Route::get('/index', [PsychologistController::class,'psychologistByClinic'])->name('clinic.psychologist.index');
         Route::post('/store', [PsychologistController::class, 'store'])->name('clinic.psychologist.store');

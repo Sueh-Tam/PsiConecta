@@ -91,8 +91,9 @@ class AppointmentController extends Controller
             $appointment->patient_id = $request->patient_id;
             $appointment->psychologist_id = $request->psychologist_id;
             $appointment->package_id = $package->id;
-            $appointment->dt_appointment = $availability->dt_avaliability;
-            $appointment->hr_appointment = $availability->hr_avaliability;
+            $appointment->payment_status = 'paid';
+            $appointment->dt_avaliability = $availability->dt_avaliability;
+            $appointment->hr_avaliability = $availability->hr_avaliability;
             $appointment->status = 'scheduled';
             $appointment->save();
 
@@ -122,7 +123,19 @@ class AppointmentController extends Controller
     {
         //
     }
-
+    public function completAppointment(Appointment $appointment, $medical_record = ''){
+        try {
+            // Atualiza o status da consulta para concluída
+            $appointment->status = 'completed';
+            if(Auth::user()->isPsychologist()){
+                $appointment->medical_record = $medical_record;
+            }
+            $appointment->save();
+            return response()->json(['message' => 'Consulta realizada com sucesso!']);
+        }catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao atualizar consulta: '. $e->getMessage()], 422);
+        }
+    }
     /**
      * Show the form for editing the specified resource.
      */
@@ -136,6 +149,32 @@ class AppointmentController extends Controller
             // Busca e atualiza a disponibilidade relacionada
             $availability = Avaliability::where('id_appointments', $appointment->id)
                                     ->first();
+            
+            if ($availability) {
+                $availability->status = 'available';
+                $availability->id_appointments = null;
+                $availability->save();
+            }
+
+            return response()->json(['message' => 'Consulta cancelada com sucesso!']);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao cancelar consulta: ' . $e->getMessage()], 422);
+        }
+    }
+
+    public function canceledEarly(Appointment $appointment){
+        try {
+            // Atualiza o status da consulta para cancelado
+            $appointment->status = 'canceled_early';
+            $appointment->save();
+            $package = Package::find($appointment->package_id);
+            if ($package) {
+                $package->balance--;
+                $package->save();
+            }
+            // Busca e atualiza a disponibilidade relacionada
+            $availability = Avaliability::where('id_appointments', $appointment->id)->first();
 
             if ($availability) {
                 $availability->status = 'available';

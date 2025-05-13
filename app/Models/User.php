@@ -74,7 +74,7 @@ class User extends Authenticatable
      */
     public function patients()
     {
-        // Somente para usuários do tipo clínica
+        // Somente para usuários do tipo clínica ou atendente
         if ($this->type === 'clinic' || $this->type === 'attendant') {
             return $this->belongsToMany(User::class, 'clinic_patient', 'id_clinic', 'id_patient')
                 ->where('type', 'patient')

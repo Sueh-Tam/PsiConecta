@@ -94,10 +94,8 @@ class PatientController extends Controller
     public function patientByClinic()
     {
         $clinicId = Auth::user()->id_clinic;
-
-        $patients = User::where('id_clinic', $clinicId)
-                    ->where('type', 'patient')
-                    ->paginate(10);
+        $clinic = User::find($clinicId);
+        $patients = $clinic->patients()->paginate(10);
 
         $psychologists = User::where('id_clinic', $clinicId)
                     ->where('type', 'psychologist')

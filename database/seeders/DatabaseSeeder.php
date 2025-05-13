@@ -93,5 +93,8 @@ class DatabaseSeeder extends Seeder
         
         // Executar o seeder para vincular pacientes a clínicas
         $this->call(ClinicPatientSeeder::class);
+
+        // Executar o seeder para criar disponibilidades
+        $this->call(AvaliabilitySeeder::class);
     }
 }

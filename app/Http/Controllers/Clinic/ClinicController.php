@@ -13,11 +13,10 @@ class ClinicController extends Controller
 {
     public function dashboard()
     {
-        $clinic_id = Auth::user()->id_clinic;
-
-        // Buscar pacientes da clínica
-        $patients = User::where('type', 'patient')
-            ->where('id_clinic', $clinic_id)
+        $clinicId = Auth::user()->id_clinic;
+        $clinic = User::find($clinicId);
+        // Buscar pacientes da clínica usando a relação many-to-many
+        $patients = $clinic->patients()
             ->with(['patientPackages' => function($query) {
                 $query->latest();
             }])
@@ -29,11 +28,10 @@ class ClinicController extends Controller
                     : 0;
                 return $patient;
             });
-
         // Buscar agendamentos através da tabela availability
         $appointments = \App\Models\Appointment::with(['psychologist', 'patient'])
-            ->whereHas('psychologist', function($q) use ($clinic_id) {
-                $q->where('id_clinic', $clinic_id);
+            ->whereHas('psychologist', function($q) use ($clinicId) {
+                $q->where('id_clinic', $clinicId);
             })
             ->get()
             ->map(function($appointment) {
