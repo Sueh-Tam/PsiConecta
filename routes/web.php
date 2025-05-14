@@ -140,6 +140,8 @@ Route::prefix('clinic')->middleware('auth')->group(function () {
     Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'edit'])->name('appointments.cancel');
     Route::patch('/appointments/{appointment}/canceledEarly', [AppointmentController::class, 'canceledEarly'])->name('appointments.canceled.early');
     Route::patch('/appointments/{appointment}/complet', [AppointmentController::class, 'completAppointment'])->name('appointments.complet.appointment');
+    Route::get('/appointments/{appointment}/show', [AppointmentController::class, 'show'])->name('appointments.edit');
+    Route::put('/appointments/{appointment}/update', [AppointmentController::class,'finishAppointment'])->name('appointments.update');
     Route::prefix('psychologist')->group(function () {
         Route::get('/index', [PsychologistController::class,'psychologistByClinic'])->name('clinic.psychologist.index');
         Route::post('/store', [PsychologistController::class, 'store'])->name('clinic.psychologist.store');

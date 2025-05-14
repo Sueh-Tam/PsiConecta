@@ -4,88 +4,261 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agendarModal">
-        Agendar Consulta
-    </button>
-</div>
+<div class="container-fluid px-4">
 
-<table class="table table-bordered table-striped shadow-sm rounded">
-    <thead class="table-primary">
-        <tr>
-            <th>Data e Hora</th>
-            <th>Psicólogo</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>12/04/2025 - 14:00</td>
-            <td>Dr. Ana Paula</td>
-            <td><span class="badge bg-success">Atendido</span></td>
-        </tr>
-        <tr>
-            <td>15/04/2025 - 10:00</td>
-            <td>Dr. João Mendes</td>
-            <td><span class="badge bg-warning text-dark">Agendada</span></td>
-        </tr>
-        <tr>
-            <td>10/04/2025 - 09:00</td>
-            <td>Dr. Fernanda Silva</td>
-            <td><span class="badge bg-danger">Falta</span></td>
-        </tr>
-    </tbody>
-</table>
-
-<!-- Modal de Agendamento -->
-<div class="modal fade" id="agendarModal" tabindex="-1" aria-labelledby="agendarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="agendarModalLabel">Agendar Consulta</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="clinica" class="form-label">Clínica</label>
-                    <select class="form-select" id="clinica" required>
-                        <option selected disabled>Selecione a clínica</option>
-                        <option value="1">Clínica Vida Plena</option>
-                        <option value="2">Clínica Equilíbrio</option>
-                        <option value="3">Clínica Bem Viver</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="psicologo" class="form-label">Psicólogo</label>
-                    <select class="form-select" id="psicologo" required>
-                        <option selected disabled>Selecione o psicólogo</option>
-                        <option value="1">Dr. Ana Paula</option>
-                        <option value="2">Dr. João Mendes</option>
-                        <option value="3">Dr. Fernanda Silva</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="data" class="form-label">Dias disponíveis</label>
-                    <input type="datetime-local" class="form-control" id="data" required>
-                </div>
-                <div class="mb-3">
-                    <label for="data" class="form-label">Horários disponíveis</label>
-                    <input type="datetime-local" class="form-control" id="data" required>
-                </div>
-                <div class="mb-3">
-                    <label for="valor" class="form-label">Valor (R$)</label>
-                    <input type="number" class="form-control" id="valor" placeholder="Ex: 120.00" step="0.01" required>
+    <!-- Cards de Resumo -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-primary mb-1">Próxima Consulta</h6>
+                            @if($stats['next_appointment'])
+                                <h5 class="mb-0">{{ \Carbon\Carbon::parse($stats['next_appointment']['date'])->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($stats['next_appointment']['start_time'])->format('H:i') }}</h5>
+                                <small class="text-muted">{{ $stats['next_appointment']['patient']['name'] }}</small>
+                            @else
+                                <h5 class="mb-0">Nenhuma consulta agendada</h5>
+                                <small class="text-muted">-</small>
+                            @endif
+                        </div>
+                        <i class="bi bi-calendar-check text-primary fs-1 ms-3"></i>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Confirmar</button>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-success mb-1">Consultas Realizadas</h6>
+                            <h5 class="mb-0">{{ $stats['completed_appointments'] }}</h5>
+                            <small class="text-muted">Último mês</small>
+                        </div>
+                        <i class="bi bi-check-circle text-success fs-1 ms-3"></i>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-warning mb-1">Próximos Agendamentos</h6>
+                            <h5 class="mb-0">{{ $stats['pending_appointments'] }}</h5>
+                            <small class="text-muted">Consultas pendentes</small>
+                        </div>
+                        <i class="bi bi-clock text-warning fs-1 ms-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Tabela de Consultas -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0 text-primary">Lista de Consultas</h5>
+                </div>
+                <div class="col-auto">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar consulta...">
+                        <span class="input-group-text bg-primary text-white">
+                            <i class="bi bi-search"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="px-4 py-3">Data e Hora</th>
+                            <th class="px-4 py-3">Paciente</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($appointments as $appointment)
+                            <tr>
+                                <td class="px-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-calendar-event text-primary me-2"></i>
+                                        {{ \Carbon\Carbon::parse($appointment['date'])->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($appointment['start_time'])->format('H:i') }}
+                                    </div>
+                                </td>
+                                <td class="px-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-info text-white me-2">{{ $appointment['patient']['initials'] }}</div>
+                                        {{ $appointment['patient']['name'] }}
+                                    </div>
+                                </td>
+                                <td class="px-4">
+                                @switch($appointment['status'])
+                                    @case('completed')
+                                        <span class="badge bg-success">Realizada</span>
+                                        @break
+                                    @case('scheduled')
+                                        <span class="badge bg-warning text-dark">Agendada</span>
+                                        @break
+                                    @case('cancelled')
+                                        <span class="badge" style="background-color: #8B0000">Cancelamento Tardio</span>
+                                        @break
+                                    @case('canceled_early')
+                                        <span class="badge" style="background-color: #FFA500">Cancelamento Antecipado</span>
+                                        @break
+                                    @default
+                                        <span class="badge bg-secondary">{{ ucfirst($appointment['status']) }}</span>
+                                @endswitch
+                                </td>
+                                <td class="px-4 text-center">
+                                    @if ($appointment['status'] != 'canceled_early' && $appointment['status']!= 'cancelled')
+                                        <a href="{{ route('appointments.edit', $appointment['id']) }}" class="btn btn-sm btn-success me-2" title="Marcar como realizada">
+                                            <i class="bi bi-check-circle"></i> {{ $appointment['status']=='completed'? 'Visualizar':'Realizar' }}
+                                        </a>
+                                    @endif
+                                    
+                                    @if($appointment['status'] === 'scheduled')
+                                        <button class="btn btn-sm btn-danger me-2" title="Cancelar consulta" data-appointment-id="{{ $appointment['id'] }}">
+                                            <i class="bi bi-x-circle"></i> Cancelar
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" title="Cancelar antecipadamente" data-appointment-id="{{ $appointment['id'] }}">
+                                            <i class="bi bi-calendar-x"></i> Cancelar Antecipadamente
+                                        </button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-3">
+                                    <p class="text-muted mb-0">Nenhuma consulta encontrada</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .border-left-primary {
+            border-left: 4px solid #0d6efd;
+        }
+        .border-left-success {
+            border-left: 4px solid #198754;
+        }
+        .border-left-warning {
+            border-left: 4px solid #ffc107;
+        }
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
 </div>
 
-<!-- JS Bootstrap local (ou substitua por asset se já estiver copiado para o projeto) -->
+
 <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cancelButtons = document.querySelectorAll('.btn-danger');
+        const cancelEarlyButtons = document.querySelectorAll('.btn-outline-danger');
+        
+
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja cancelar esta consulta?')) {
+                    const appointmentId = this.getAttribute('data-appointment-id');
+                    
+                    fetch(`/psychologist/appointments/${appointmentId}/cancel`, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao cancelar a consulta');
+                    });
+                }
+            });
+        });
+
+        cancelEarlyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja cancelar antecipadamente esta consulta?')) {
+                    const appointmentId = this.getAttribute('data-appointment-id');
+                    
+                    fetch(`/psychologist/appointments/${appointmentId}/canceledEarly`, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao cancelar antecipadamente a consulta');
+                    });
+                }
+            });
+        });
+
+        completeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja marcar esta consulta como realizada?')) {
+                    const appointmentId = this.getAttribute('data-appointment-id');
+                    
+                    fetch(`/psychologist/appointments/${appointmentId}/complet`, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao marcar a consulta como realizada');
+                    });
+                }
+            });
+        });
+    });
+</script>
 @endsection

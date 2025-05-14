@@ -121,8 +121,23 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment)
     {
-        //
+        return view('Dashboard.Consults.edit', compact('appointment'));
     }
+
+    public function finishAppointment(Appointment $appointment, Request $request){
+        try {
+            $appointment->medical_record = $request->medical_record;
+            $appointment->status = 'completed';
+            $appointment->save();
+            return redirect()->back()->with(['show_success_modal' => true, 'message' => 'Prontuário salvo com sucesso!', 'title' => 'Consulta realizada com sucesso!']);
+        } catch (\Throwable $th) {
+            return redirect()->back()
+                ->withErrors($th->getMessage())
+                ->withInput();
+        }
+        
+    }
+
     public function completAppointment(Appointment $appointment, $medical_record = ''){
         try {
             // Atualiza o status da consulta para concluída

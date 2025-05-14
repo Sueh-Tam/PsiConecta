@@ -97,12 +97,55 @@ class PsychologistController extends Controller
     public function consultsByPsychologist(Request $request){
         $today = Carbon::today();
 
-        $appointments = Appointment::with(['patient'])
-            ->where('psychologist_id', Auth::User()->id)
-            ->whereDate('created_at', $today) // ou um campo tipo 'scheduled_for'
-            ->orderBy('created_at')
-            ->get();
-        return view('Dashboard.Psychologists.consults', ['appointments' => $appointments]);
+        $clinicId = Auth::user()->id_clinic;
+        $clinic = User::find($clinicId);
+        // Buscar pacientes da clínica usando a relação many-to-many
+        $patients = $clinic->patients()
+            ->with(['patientPackages' => function($query) {
+                $query->latest();
+            }])
+            ->get()
+            ->map(function($patient) {
+                $activePackage = $patient->activePackage();
+                $patient->appointments_left = $activePackage 
+                    ? $activePackage->total_appointments - $activePackage->balance
+                    : 0;
+                return $patient;
+            });
+        // Buscar agendamentos através da tabela availability
+        $appointments = \App\Models\Appointment::with(['psychologist', 'patient'])
+            ->whereHas('psychologist', function($q) use ($clinicId) {
+                $q->where('id_clinic', $clinicId);
+            })
+            ->where('psychologist_id', Auth::user()->id)
+            ->get()
+            ->map(function($appointment) {
+                return [
+                    'id' => $appointment->id,
+                    'date' => $appointment->dt_avaliability,
+                    'start_time' => $appointment->hr_avaliability,
+                    'psychologist' => [
+                        'name' => $appointment->psychologist->name,
+                        'initials' => substr($appointment->psychologist->name, 0, 2)
+                    ],
+                    'patient' => [
+                        'name' => $appointment->patient->name,
+                        'initials' => substr($appointment->patient->name, 0, 2)
+                    ],
+                    'status' => $appointment->status
+                ];
+            });
+        // Estatísticas para os cards
+        $stats = [
+            'next_appointment' => $appointments->where('status', 'scheduled')
+                ->sortBy('date')
+                ->first(),
+            'completed_appointments' => $appointments->where('status', 'completed')
+                ->where('date', '>=', now()->subMonth())
+                ->count(),
+            'pending_appointments' => $appointments->where('status', 'scheduled')->count()
+        ];
+        return view('Dashboard.Psychologists.consults', ['appointments' => $appointments,'stats' => $stats, 'patients' => $patients, 'today' => $today]);
     }
 
 }
