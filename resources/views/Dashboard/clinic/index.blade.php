@@ -16,7 +16,7 @@
             <i class="bi bi-calendar-plus me-2"></i>
             Agendar Consulta
         </button>
-    </div>
+    </div> 
 
     <!-- Cards de Resumo -->
     <div class="row mb-4">
@@ -77,13 +77,33 @@
                 <div class="col">
                     <h5 class="mb-0 text-primary">Lista de Consultas</h5>
                 </div>
-                <div class="col-auto">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Buscar consulta...">
-                        <span class="input-group-text bg-primary text-white">
-                            <i class="bi bi-search"></i>
-                        </span>
-                    </div>
+                <div class="col-auto d-flex gap-2">
+                    <select id="psychologist-filter" name="psychologist" class="form-control">
+                        <option value="">Selecionar Psicólogo</option>
+                        @foreach($psychologists as $psychologist)
+                            <option value="{{ $psychologist->id }}" {{ request('psychologist') == $psychologist->id ? 'selected' : '' }}>{{ $psychologist->name }}</option>
+                        @endforeach
+                    </select>
+                    <select id="patient-filter" name="patient" class="form-control">
+                        <option value="">Selecionar Paciente</option>
+                        @foreach($patients as $patient)
+                            <option value="{{ $patient->id }}" {{ request('patient') == $patient->id ? 'selected' : '' }}>{{ $patient->name }}</option>
+                        @endforeach
+                    </select>
+                    
+                    <input type="date" id="date-filter" name="date" class="form-control" value="{{ request('date') }}">
+                    <select id="status-filter" name="status" class="form-control">
+                        <option value="">Todos os status</option>
+                        <option value="scheduled" {{ request('status') == 'scheduled' ? 'selected' : '' }}>Agendada</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Concluída</option>
+                        <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>Cancelada</option>
+                    </select>
+                    <button id="apply-filters" class="btn btn-primary me-2">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    <button id="reset-filters" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-1"></i>Limpar
+                    </button>
                 </div>
             </div>
         </div>
@@ -134,6 +154,9 @@
                                     @case('canceled_early')
                                         <span class="badge" style="background-color: #FFA500">Cancelamento Antecipado</span>
                                         @break
+                                    @case('canceled_late')
+                                        <span class="badge" style="background-color: #8B0000">Cancelamento Tardio</span>
+                                        @break
                                     @default
                                         <span class="badge bg-secondary">{{ ucfirst($appointment['status']) }}</span>
                                 @endswitch
@@ -161,6 +184,16 @@
                         @endforelse
                     </tbody>
                 </table>
+                @if($appointments->hasPages())
+                    <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
+                        <div class="small text-muted">
+                            Mostrando {{ $appointments->firstItem() ?? 0 }} - {{ $appointments->lastItem() ?? 0 }} de {{ $appointments->total() }} resultados
+                        </div>
+                        <div>
+                            {{ $appointments->appends(request()->query())->links('pagination::bootstrap-4') }}
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -197,6 +230,30 @@
 <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Manipulação dos filtros
+        const applyFiltersButton = document.getElementById('apply-filters');
+        const resetFiltersButton = document.getElementById('reset-filters');
+
+        resetFiltersButton.addEventListener('click', function() {
+            window.location.href = window.location.pathname;
+        });
+
+        applyFiltersButton.addEventListener('click', function() {
+            const patientFilter = document.getElementById('patient-filter').value;
+            const psychologistFilter = document.getElementById('psychologist-filter').value;
+            const dateFilter = document.getElementById('date-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+
+            const params = new URLSearchParams(window.location.search);
+            if (patientFilter) params.set('patient', patientFilter);
+            if (psychologistFilter) params.set('psychologist', psychologistFilter);
+            if (dateFilter) params.set('date', dateFilter);
+            if (statusFilter) params.set('status', statusFilter);
+
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
+        });
+
+        // Manipulação dos botões de ação
         const cancelButtons = document.querySelectorAll('.btn-danger');
         const cancelEarlyButtons = document.querySelectorAll('.btn-outline-danger');
         const completeButtons = document.querySelectorAll('.btn-success');

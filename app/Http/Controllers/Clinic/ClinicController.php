@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 
 class ClinicController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
         $clinicId = Auth::user()->id_clinic;
         $clinic = User::find($clinicId);
@@ -25,29 +25,60 @@ class ClinicController extends Controller
                 $activePackage = $patient->activePackage();
                 $patient->appointments_left = $activePackage 
                     ? $activePackage->total_appointments - $activePackage->balance
-                    : 0;
+                    : 0; 
                 return $patient;
             });
-        // Buscar agendamentos através da tabela availability
-        $appointments = \App\Models\Appointment::with(['psychologist', 'patient'])
+        // Iniciar a query de agendamentos
+        $query = \App\Models\Appointment::with(['psychologist', 'patient'])
             ->whereHas('psychologist', function($q) use ($clinicId) {
-                $q->where('id_clinic', $clinicId);
-            })
-            ->get()
-            ->map(function($appointment) {
+                $q->where('clinic_id', $clinicId);
+            });
+
+        // Aplicar filtro de paciente se fornecido
+        if (request()->has('patient') && request('patient')) {
+            $query->where('patient_id', request('patient'));
+        }
+
+        // Aplicar filtro de psicólogo se fornecido
+        if (request()->has('psychologist') && request('psychologist')) {
+            $query->where('psychologist_id', request('psychologist'));
+        }
+
+        // Aplicar filtro de data se fornecido
+        if (request()->has('date') && request('date')) {
+            $query->whereDate('dt_avaliability', request('date'));
+        }
+
+        // Aplicar filtro de status se fornecido
+        if (request()->has('status') && request('status')) {
+            $query->where('status', request('status'));
+        }
+
+        // Executar a query com ordenação e paginação
+        $appointments = $query
+            ->orderBy('dt_avaliability', 'asc')
+            ->orderBy('hr_avaliability', 'asc')
+            ->paginate(10)
+            ->through(function($appointment) {
+                $psychologist = $appointment->psychologist;
+                $patient = $appointment->patient;
+                
                 return [
                     'id' => $appointment->id,
                     'date' => $appointment->dt_avaliability,
                     'start_time' => $appointment->hr_avaliability,
                     'psychologist' => [
-                        'name' => $appointment->psychologist->name,
-                        'initials' => substr($appointment->psychologist->name, 0, 2)
+                        'name' => $psychologist->name,
+                        'initials' => strtoupper(substr($psychologist->name, 0, 2))
                     ],
                     'patient' => [
-                        'name' => $appointment->patient->name,
-                        'initials' => substr($appointment->patient->name, 0, 2)
+                        'name' => $patient->name,
+                        'initials' => strtoupper(substr($patient->name, 0, 2))
                     ],
-                    'status' => $appointment->status
+                    'status' => $appointment->status,
+                    'can_be_completed' => $appointment->status === 'scheduled',
+                    'can_be_cancelled' => $appointment->status === 'scheduled',
+                    'can_be_cancelled_early' => $appointment->status === 'scheduled'
                 ];
             });
         // Estatísticas para os cards
@@ -60,8 +91,11 @@ class ClinicController extends Controller
                 ->count(),
             'pending_appointments' => $appointments->where('status', 'scheduled')->count()
         ];
-
-        return view('Dashboard.clinic.index', compact('appointments', 'stats', 'patients'));
+        $clinic = User::find(Auth::user()->id_clinic);
+        $psychologists = $clinic->psychologists()->get();
+        $patients = $clinic->patients()->get();
+       
+        return view('Dashboard.clinic.index', compact('appointments', 'stats', 'patients','psychologists','patients'));
     }
 
     public function store(Request $request){
