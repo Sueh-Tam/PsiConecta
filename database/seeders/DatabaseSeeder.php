@@ -96,5 +96,11 @@ class DatabaseSeeder extends Seeder
 
         // Executar o seeder para criar disponibilidades
         $this->call(AvaliabilitySeeder::class);
+        
+        // Executar o seeder para criar pacotes
+        $this->call(PackageSeeder::class);
+        
+        // Executar o seeder para criar consultas
+        $this->call(AppointmentSeeder::class);
     }
 }

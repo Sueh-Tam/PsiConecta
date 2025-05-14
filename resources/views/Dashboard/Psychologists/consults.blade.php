@@ -6,6 +6,21 @@
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dateFilter = document.getElementById('date-filter');
+    const statusFilter = document.getElementById('status-filter');
+    const applyFilters = document.getElementById('apply-filters');
+
+    applyFilters.addEventListener('click', function() {
+        const date = dateFilter.value;
+        const status = statusFilter.value;
+        
+        window.location.href = `{{ route('psychologist.dashboard') }}?date=${date}&status=${status}`;
+    });
+});
+</script>
+
 <div class="container-fluid px-4">
 
     <!-- Cards de Resumo -->
@@ -66,13 +81,17 @@
                 <div class="col">
                     <h5 class="mb-0 text-primary">Lista de Consultas</h5>
                 </div>
-                <div class="col-auto">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Buscar consulta...">
-                        <span class="input-group-text bg-primary text-white">
-                            <i class="bi bi-search"></i>
-                        </span>
-                    </div>
+                <div class="col-auto d-flex gap-2">
+                    <input type="date" id="date-filter" class="form-control" value="{{ request('date') }}">
+                    <select id="status-filter" class="form-control">
+                        <option value="">Todos os status</option>
+                        <option value="scheduled" {{ request('status') == 'scheduled' ? 'selected' : '' }}>Agendada</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Concluída</option>
+                        <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>Cancelada</option>
+                    </select>
+                    <button id="apply-filters" class="btn btn-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -116,24 +135,18 @@
                                     @case('canceled_early')
                                         <span class="badge" style="background-color: #FFA500">Cancelamento Antecipado</span>
                                         @break
+                                    @case('canceled_late')
+                                        <span class="badge" style="background-color: #8B0000">Cancelamento Tardio</span>
+                                        @break
                                     @default
                                         <span class="badge bg-secondary">{{ ucfirst($appointment['status']) }}</span>
                                 @endswitch
                                 </td>
                                 <td class="px-4 text-center">
                                     @if ($appointment['status'] != 'canceled_early' && $appointment['status']!= 'cancelled')
-                                        <a href="{{ route('appointments.edit', $appointment['id']) }}" class="btn btn-sm btn-success me-2" title="Marcar como realizada">
-                                            <i class="bi bi-check-circle"></i> {{ $appointment['status']=='completed'? 'Visualizar':'Realizar' }}
+                                        <a href="{{ route('appointments.edit', $appointment['id']) }}" class="btn btn-sm {{ $appointment['status'] == 'scheduled' ? 'btn-success' : 'btn-secondary' }} me-2" title="Marcar como realizada">
+                                            <i class="bi bi-check-circle"></i> {{ $appointment['status'] == 'scheduled' ? 'Realizar':'Visualizar' }}
                                         </a>
-                                    @endif
-                                    
-                                    @if($appointment['status'] === 'scheduled')
-                                        <button class="btn btn-sm btn-danger me-2" title="Cancelar consulta" data-appointment-id="{{ $appointment['id'] }}">
-                                            <i class="bi bi-x-circle"></i> Cancelar
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" title="Cancelar antecipadamente" data-appointment-id="{{ $appointment['id'] }}">
-                                            <i class="bi bi-calendar-x"></i> Cancelar Antecipadamente
-                                        </button>
                                     @endif
                                 </td>
                             </tr>
@@ -146,6 +159,16 @@
                         @endforelse
                     </tbody>
                 </table>
+                @if($appointments->hasPages())
+                <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
+                    <div class="small text-muted">
+                        Mostrando {{ $appointments->firstItem() ?? 0 }} - {{ $appointments->lastItem() ?? 0 }} de {{ $appointments->total() }} resultados
+                    </div>
+                    <div>
+                        {{ $appointments->appends(request()->query())->links('pagination::bootstrap-4') }}
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -230,31 +253,6 @@
                     .catch(error => {
                         console.error('Erro:', error);
                         alert('Erro ao cancelar antecipadamente a consulta');
-                    });
-                }
-            });
-        });
-
-        completeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                if (confirm('Tem certeza que deseja marcar esta consulta como realizada?')) {
-                    const appointmentId = this.getAttribute('data-appointment-id');
-                    
-                    fetch(`/psychologist/appointments/${appointmentId}/complet`, {
-                        method: 'PATCH',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message);
-                        window.location.reload();
-                    })
-                    .catch(error => {
-                        console.error('Erro:', error);
-                        alert('Erro ao marcar a consulta como realizada');
                     });
                 }
             });

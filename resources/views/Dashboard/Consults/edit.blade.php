@@ -46,6 +46,10 @@ message="{{ session('message') }}"
                             @case('canceled_early')
                                 <span class="badge" style="background-color: #FFA500">Cancelamento Antecipado</span>
                                 @break
+                            @case('canceled_late')
+                                <span class="badge" style="background-color: #8B0000">Cancelamento Tardio</span>
+                                @break
+
                             @default
                                 <span class="badge bg-secondary">{{ ucfirst($appointment['status']) }}</span>
                         @endswitch</p>

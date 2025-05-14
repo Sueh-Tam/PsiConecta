@@ -112,14 +112,30 @@ class PsychologistController extends Controller
                     : 0;
                 return $patient;
             });
-        // Buscar agendamentos através da tabela availability
-        $appointments = \App\Models\Appointment::with(['psychologist', 'patient'])
+
+        // Iniciar a query de agendamentos
+        $query = \App\Models\Appointment::with(['psychologist', 'patient'])
             ->whereHas('psychologist', function($q) use ($clinicId) {
                 $q->where('id_clinic', $clinicId);
             })
-            ->where('psychologist_id', Auth::user()->id)
-            ->get()
-            ->map(function($appointment) {
+            ->where('psychologist_id', Auth::user()->id);
+
+        // Aplicar filtro de data se fornecido
+        if ($request->has('date') && $request->date) {
+            $query->whereDate('dt_avaliability', $request->date);
+        }
+
+        // Aplicar filtro de status se fornecido
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Executar a query
+        $appointments = $query
+            ->orderBy('dt_avaliability', 'asc')
+            ->orderBy('hr_avaliability', 'asc')
+            ->paginate(10)
+            ->through(function($appointment) {
                 return [
                     'id' => $appointment->id,
                     'date' => $appointment->dt_avaliability,
