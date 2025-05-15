@@ -31,6 +31,13 @@ Route::get('/clinic/{id}/psychologists', function ($id) {
     return view('clinic.psychologists')->with(['psychologists' => $psychologists,
     'clinics' => $clinics,'clinic' => $clinic]);
 })->name('psychologist.clinic');
+
+Route::get('/api/clinic/{id}/psychologists', function ($id) {
+    $clinic = User::find($id);
+    $psychologists = $clinic->psychologists()->get();
+    
+    return $psychologists;
+});
 //
 // ROTAS DE AUTENTICAÇÃO
 //
@@ -65,7 +72,7 @@ Route::prefix('patient')->middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [PatientController::class,'dashboard'])->name('patient.dashboard');
     Route::put('/cancel/{appointment}', [AppointmentController::class,'cancellByPatient'])->name('patient.cancellByPatient.appointment');
-    
+    Route::get('/packages', [PackageController::class,'packagesByPatient'])->name('patient.packages');
     // API para buscar psicólogo do paciente
     Route::get('/api/patients/{id}/psychologist', function ($id) {
         $patient = \App\Models\User::find($id);
