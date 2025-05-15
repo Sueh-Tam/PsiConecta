@@ -7,9 +7,54 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PatientController extends Controller
 {
+    public function dashboard(Request $request){
+        $query = Auth::user()->patientAppointments();
+
+        // Aplicar filtro de psicólogo
+        if ($request->has('psicologo') && $request->psicologo) {
+            $query->where('psychologist_id', $request->psicologo);
+        }
+
+        // Aplicar filtro de data
+        //dd($request->date);
+        if ($request->has('date') && $request->date) {            
+            $query->whereDate('dt_avaliability', $request->date);
+        }
+
+        // Aplicar filtro de status
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $appointments = $query
+        ->orderBy('dt_avaliability', 'asc')
+        ->orderBy('hr_avaliability', 'asc')
+        ->paginate(10);
+        
+        $psychologists = Auth::user()->patientAppointments()
+            ->with('psychologist')
+            ->select('psychologist_id')
+            ->distinct()
+            ->get()
+            ->pluck('psychologist');
+        
+        $stats = [
+            'next_appointment' => $appointments->where('status', 'scheduled')
+                ->sortBy('date')
+                ->first(),
+            'completed_appointments' => $appointments->where('status', 'completed')
+                ->where('date', '>=', now()->subMonth())
+                ->count(),
+            'pending_appointments' => $appointments->where('status', 'scheduled')->count()
+        ];
+
+        return view('Dashboard.Consults.index', compact('appointments', 'stats', 'psychologists'));
+    }
+
     public function store(Request $request)
     {
         try {

@@ -63,8 +63,9 @@ Route::prefix('auth')->group(function () {
 Route::prefix('patient')->middleware('auth')->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', fn () => view('Dashboard.Consults.index'))->name('patient.dashboard');
-
+    Route::get('/dashboard', [PatientController::class,'dashboard'])->name('patient.dashboard');
+    Route::put('/cancel/{appointment}', [AppointmentController::class,'cancellByPatient'])->name('patient.cancellByPatient.appointment');
+    
     // API para buscar psicólogo do paciente
     Route::get('/api/patients/{id}/psychologist', function ($id) {
         $patient = \App\Models\User::find($id);

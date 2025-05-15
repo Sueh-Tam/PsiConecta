@@ -204,6 +204,41 @@ class AppointmentController extends Controller
         }
     }
 
+    public function cancellByPatient(Appointment $appointment){
+        try {
+            $appointmentDateTime = Carbon::parse($appointment->dt_avaliability)->setTimeFromTimeString($appointment->hr_avaliability);          
+            $now = Carbon::now();
+            $hrLessToConult = $now->diffInHours($appointmentDateTime, false);
+            
+            if($hrLessToConult >= 24){
+                $appointment->status = 'canceled_early';
+                $package = Package::find($appointment->package_id);
+                if ($package) {
+                    $package->balance--;
+                    $package->save();
+                }
+            }else{
+                $appointment->status = 'canceled_late';
+            }
+            
+            $appointment->save();
+            
+            // Busca e atualiza a disponibilidade relacionada
+            $availability = Avaliability::where('id_appointments', $appointment->id)->first();
+
+            if ($availability) {
+                $availability->status = 'available';
+                $availability->id_appointments = null;
+                $availability->save();
+            }
+
+            return response()->json(['message' => 'Consulta cancelada com sucesso!']);
+
+        }catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao cancelar consulta: '. $e->getMessage()], 422);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      */
