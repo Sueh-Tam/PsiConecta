@@ -92,7 +92,7 @@
                         <option value="canceled_late">Cancelamento Tardio</option>
                     </select>
                     <button id="apply-filters" class="btn btn-primary">
-                        <i class="bi bi-search"></i>
+                        <i class="bi bi-search"></i>Buscar
                     </button>
                     <button id="reset-filters" class="btn btn-outline-secondary">
                         <i class="bi bi-x-circle me-1"></i>Limpar
@@ -106,6 +106,7 @@
                     <thead class="table-light">
                         <tr>
                             <th class="px-4 py-3">Data e Hora</th>
+                            <th class="px-4 py-3">Clínica</th>
                             <th class="px-4 py-3">Psicólogo</th>
                             <th class="px-4 py-3">Status</th>
                             <th class="px-4 py-3 text-center">Ações</th>
@@ -118,6 +119,11 @@
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-calendar-event text-primary me-2"></i>
                                     {{  \Carbon\Carbon::parse($appointment->dt_avaliability)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($appointment->hr_avaliability)->format('H:i') }}
+                                </div>
+                            </td>
+                            <td class="px-4">
+                                <div class="d-flex align-items-center">
+                                    {{  $appointment->psychologist()->first()->clinic->name }}
                                 </div>
                             </td>
                             <td class="px-4">
