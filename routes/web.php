@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\Route;
 // Página inicial
 Route::get('/', function () {
     $clinics = User::where('type', 'clinic')
-    ->where('situation','valid')->get();
+    ->where('situation','valid')
+    ->where('status','active')->get();
     return view('welcome')->with('clinics', $clinics);
 })->name('home');
 
@@ -144,12 +145,15 @@ Route::prefix('clinic')->middleware('auth')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [ClinicController::class, 'dashboard'])->name('clinic.dashboard');
-    Route::post('/appointments/store', [AppointmentController::class, 'store'])->name('appointments.store');
-    Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'edit'])->name('appointments.cancel');
-    Route::patch('/appointments/{appointment}/canceledEarly', [AppointmentController::class, 'canceledEarly'])->name('appointments.canceled.early');
-    Route::patch('/appointments/{appointment}/complet', [AppointmentController::class, 'completAppointment'])->name('appointments.complet.appointment');
-    Route::get('/appointments/{appointment}/show', [AppointmentController::class, 'show'])->name('appointments.edit');
-    Route::put('/appointments/{appointment}/update', [AppointmentController::class,'finishAppointment'])->name('appointments.update');
+    Route::prefix('appointments')->group(function () {
+        Route::post('/store', [AppointmentController::class, 'store'])->name('appointments.store');
+        Route::patch('/{appointment}/cancel', [AppointmentController::class, 'edit'])->name('appointments.cancel');
+        Route::patch('/{appointment}/canceledEarly', [AppointmentController::class, 'canceledEarly'])->name('appointments.canceled.early');
+        Route::patch('/{appointment}/complet', [AppointmentController::class, 'completAppointment'])->name('appointments.complet.appointment');
+        Route::get('/{appointment}/show', [AppointmentController::class, 'show'])->name('appointments.edit');
+        Route::put('/{appointment}/update', [AppointmentController::class,'finishAppointment'])->name('appointments.update');
+    });
+    
     Route::prefix('psychologist')->group(function () {
         Route::get('/index', [PsychologistController::class,'psychologistByClinic'])->name('clinic.psychologist.index');
         Route::post('/store', [PsychologistController::class, 'store'])->name('clinic.psychologist.store');

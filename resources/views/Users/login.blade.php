@@ -50,7 +50,7 @@
     <!-- Modal de Erro -->
     <x-error-modal
         modal-id="patientErrorModal"
-        title="Erro no Cadastro de Paciente"
+        title="Erro ao logar"
     />
     <!-- Modal de Sucesso -->
     <x-success-modal

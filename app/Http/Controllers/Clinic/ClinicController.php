@@ -13,7 +13,12 @@ class ClinicController extends Controller
 {
     public function dashboard(Request $request)
     {
-        $clinicId = Auth::user()->id_clinic;
+        if(Auth::user()->isClinic()){
+            $clinicId = Auth::user()->id;
+        }else{
+            $clinicId = Auth::user()->id_clinic;
+        }
+        
         $clinic = User::find($clinicId);
         // Buscar pacientes da clínica usando a relação many-to-many
         $patients = $clinic->patients()
@@ -91,7 +96,6 @@ class ClinicController extends Controller
                 ->count(),
             'pending_appointments' => $appointments->where('status', 'scheduled')->count()
         ];
-        $clinic = User::find(Auth::user()->id_clinic);
         $psychologists = $clinic->psychologists()->get();
         $patients = $clinic->patients()->get();
        

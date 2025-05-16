@@ -211,9 +211,9 @@
         }
     </style>
 </div>
-<!-- JS Bootstrap local -->
-<script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
 <!-- Modal de Confirmação de Cancelamento -->
+<!-- Carregando Bootstrap JS no final do documento para garantir que o DOM esteja carregado -->
+<script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
 <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

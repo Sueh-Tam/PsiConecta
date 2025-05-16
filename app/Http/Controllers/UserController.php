@@ -65,6 +65,18 @@ class UserController extends Controller
                 'password' => 'required|min:6'
             ]);
             $user = User::withTrashed()->where('email', $request->email)->first();
+            if($user->isClinic() && $user->situation == 'invalid' || $user->status == 'inactive'){
+                return back()->withErrors([
+                    'acesso_rejeitado' => 'Não é possível acessar pois a clínica está inativa ou inválida.',
+                ]);
+            }
+            if($user->isPsychologist() || $user->isAttendant()){
+                if($user->clinic->situation == 'invalid' || $user->clinic->status == 'inactive'){
+                    return back()->withErrors([
+                        'acesso_rejeitado' => 'Não é possível acessar pois a clínica está inativa ou inválida.',
+                    ]);
+                }
+            }
             if ($user && $user->trashed()) {
                 $user->restore();
                 $user->save();
