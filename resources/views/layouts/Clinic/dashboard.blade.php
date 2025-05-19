@@ -183,7 +183,24 @@
                     </div>
                     <div>
                         <h5 class="mb-0">{{ Auth::user()->name }}</h5>
-                        <small class="text-muted">{{ Auth::user()->type }}</small>
+                        <small class="text-muted">
+                        @php
+                        switch (Auth::user()->type) {
+                            case 'clinic':
+                                echo 'Clínica';
+                                break;
+                            case 'psychologist':
+                                echo 'Psicólogo';
+                                break;
+                            case 'attendant':
+                                echo 'Atendente';
+                                break;
+                            default:
+                                echo 'Não definido';
+                                break;
+                        } 
+                        @endphp
+                        </small>
                     </div>
                 </div>
             </div>

@@ -98,7 +98,7 @@ class ClinicController extends Controller
         ];
         $psychologists = $clinic->psychologists()->get();
         $patients = $clinic->patients()->get();
-       
+        
         return view('Dashboard.clinic.index', compact('appointments', 'stats', 'patients','psychologists','patients'));
     }
 
