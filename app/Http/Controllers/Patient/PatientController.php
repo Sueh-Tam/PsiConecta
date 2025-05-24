@@ -120,6 +120,14 @@ class PatientController extends Controller
             'email' => 'required|email',
             'document_number' => 'required|unique:users,document_number',
             'password' => 'nullable|min:6|confirmed',
+        ], [
+            'name.required' => 'O campo nome é obrigatório.',
+            'email.required' => 'O campo email é obrigatório.',
+            'email.email' => 'Por favor, insira um endereço de email válido.',
+            'document_number.required' => 'O campo número do documento é obrigatório.',
+            'document_number.unique' => 'Este número de documento já está sendo usado.',
+            'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+            'password.confirmed' => 'A confirmação da senha não corresponde.',
         ]);
         $paciente = User::find(Auth::user()->id);
 
@@ -154,18 +162,24 @@ class PatientController extends Controller
 
     }
  
-    public function patientByClinic()
+    public function patientByClinic(Request $request)
     {
         $clinicId = Auth::user()->id_clinic;
         $clinic = User::find($clinicId);
-        $patients = $clinic->patients()->paginate(10);
+        if($request->searchPatient){
+            $patients = User::where('document_number', '=', $request->searchPatient)
+            ->where('type','patient')
+            ->paginate(10);
+        }else{
+            $patients = $clinic->patients()->paginate(10);
+        }
 
         $psychologists = User::where('id_clinic', $clinicId)
-                    ->where('type', 'psychologist')
-                    ->whereHas('availabilities', function($query) {
-                        $query->where('status', 'available');
-                    })
-                    ->get();
+            ->where('type', 'psychologist')
+            ->whereHas('availabilities', function($query) {
+                $query->where('status', 'available');
+            })
+            ->get();
 
         return view('Dashboard.clinic.patient.index')->with([
             'patients' => $patients,

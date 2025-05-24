@@ -33,12 +33,17 @@
                     <h5 class="mb-0 text-primary">Lista de Pacientes</h5>
                 </div>
                 <div class="col-auto">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="searchPatient" placeholder="Buscar paciente...">
-                        <span class="input-group-text bg-primary text-white">
-                            <i class="bi bi-search"></i>
-                        </span>
-                    </div>
+                    <form method="GET" action="{{ Route('clinic.patient.index') }}" id="searchForm">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchPatient" name="searchPatient" placeholder="Buscar paciente...">
+                            <button type="submit" class="input-group-text bg-primary text-white border-0" style="cursor: pointer;">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <button type="button" id="reset-filters" class="btn btn-outline-secondary" onclick="window.location.href = '{{ Route('clinic.patient.index') }}'">
+                                <i class="bi bi-x-circle me-1"></i>Limpar
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -126,7 +131,14 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const resetFiltersButton = document.getElementById('reset-filters');
 
+        resetFiltersButton.addEventListener('click', function() {
+            window.location.href = window.location.pathname;
+        });
+    });
 <style>
 .avatar-circle {
     width: 40px;
