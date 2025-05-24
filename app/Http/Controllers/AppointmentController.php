@@ -62,6 +62,8 @@ class AppointmentController extends Controller
             // Busca o pacote ativo do paciente
             $package = Package::where('patient_id', $request->patient_id)
                             ->where('psychologist_id', $request->psychologist_id)
+                            ->whereRaw('total_appointments > balance')
+                            ->orderBy('created_at', 'asc') // Ordena por id em ordem decrescente para obter o mais recente
                             ->first();
 
             if (!$package) {
@@ -87,7 +89,7 @@ class AppointmentController extends Controller
             $package->save();
             // Cria uma nova consulta vinculada ao pacote
             $appointment = new Appointment();
-            $appointment->clinic_id = Auth::user()->id_clinic;
+            $appointment->clinic_id = $package->psychologist()->first()->id_clinic;
             $appointment->patient_id = $request->patient_id;
             $appointment->psychologist_id = $request->psychologist_id;
             $appointment->package_id = $package->id;

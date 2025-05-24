@@ -7,6 +7,16 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
+        }
+    </style>
 </head>
 <body class="bg-light">
 
@@ -57,10 +67,9 @@
 
                             <!-- CPF -->
                             <div class="mb-3">
-                                <label class="form-label">Tipo de document_number</label>
+                                <label class="form-label">Tipo de documento</label>
                                 <select name="document_type" id="document_type" class="form-select mb-2" onchange="atualizarDocumento()">
                                     <option value="cpf" selected>CPF</option>
-                                    <option value="rg">RG</option>
                                 </select>
                                 <input type="text" name="document_number" id="document_number" class="form-control" placeholder="000.000.000-00" required>
                             </div>

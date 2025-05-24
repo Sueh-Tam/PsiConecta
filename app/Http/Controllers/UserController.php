@@ -35,12 +35,18 @@ class UserController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required',
-                'email' => 'required|email|unique:users'
+                'email' => 'required|email|unique:users',
+            ], [
+                'name.required' => 'O campo nome é obrigatório.',
+                'email.required' => 'O campo e-mail é obrigatório.',
+                'email.email' => 'Por favor, informe um endereço de e-mail válido.',
+                'email.unique' => 'Este e-mail já está sendo utilizado por outro usuário.',
             ]);
+            
             if ($validated) {
                 return redirect()->back()
-                                 ->withErrors($validated)
-                                 ->withInput();
+                    ->withErrors($validated)
+                    ->withInput();
             }
             $paciente = new User();
             $paciente->name = $request->name;
@@ -63,17 +69,22 @@ class UserController extends Controller
             $credential = $request->validate([
                 'email' => 'required|email',
                 'password' => 'required|min:6'
+            ], [
+                'email.required' => 'O campo e-mail é obrigatório.',
+                'email.email' => 'Por favor, informe um endereço de e-mail válido.',
+                'password.required' => 'O campo senha é obrigatório.',
+                'password.min' => 'A senha deve ter pelo menos 6 caracteres.'
             ]);
             $user = User::withTrashed()->where('email', $request->email)->first();
-            if($user->isClinic() && $user->situation == 'invalid' || $user->status == 'inactive'){
+            if($user->isClinic() && $user->situation == 'invalid' || $user->status == 'inactive' || $user->situation == 'pending'){
                 return back()->withErrors([
-                    'acesso_rejeitado' => 'Não é possível acessar pois a clínica está inativa ou inválida.',
+                    'acesso_rejeitado' => 'Não é possível acessar pois o cadastro da clínica está inativo ou pendente.',
                 ]);
             }
             if($user->isPsychologist() || $user->isAttendant()){
-                if($user->clinic->situation == 'invalid' || $user->clinic->status == 'inactive'){
+                if($user->clinic->situation == 'invalid' || $user->clinic->status == 'inactive' || $user->situation == 'pending'){
                     return back()->withErrors([
-                        'acesso_rejeitado' => 'Não é possível acessar pois a clínica está inativa ou inválida.',
+                        'acesso_rejeitado' => 'Não é possível acessar pois a clínica está inativo ou pendente .',
                     ]);
                 }
             }
@@ -134,7 +145,7 @@ class UserController extends Controller
                 }
             } else {
                 return back()->withErrors([
-                    'email' => 'The provided credentials do not match our records.',
+                    'email' => 'As credenciais fornecidas não correspondem aos nossos registros.',
                 ])->onlyInput('email');
             }
         } catch (\Throwable $th) {

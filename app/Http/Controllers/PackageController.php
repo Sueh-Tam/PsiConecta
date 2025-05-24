@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClinicPatient;
 use App\Models\Package;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -56,6 +57,18 @@ class PackageController extends Controller
                 'psychologist_id' => 'required|integer|exists:users,id,type,psychologist',
                 'total_appointments' => 'required|integer|min:1',
                 'payment_method' => 'required|in:pix,cash',
+            ], [
+                'patient_id.required' => 'O campo paciente é obrigatório.',
+                'patient_id.integer' => 'O campo paciente deve ser um número inteiro.',
+                'patient_id.exists' => 'O paciente selecionado não existe ou não é válido.',
+                'psychologist_id.required' => 'O campo psicólogo é obrigatório.',
+                'psychologist_id.integer' => 'O campo psicólogo deve ser um número inteiro.',
+                'psychologist_id.exists' => 'O psicólogo selecionado não existe ou não é válido.',
+                'total_appointments.required' => 'O número total de consultas é obrigatório.',
+                'total_appointments.integer' => 'O número total de consultas deve ser um número inteiro.',
+                'total_appointments.min' => 'O número total de consultas deve ser pelo menos 1.',
+                'payment_method.required' => 'O método de pagamento é obrigatório.',
+                'payment_method.in' => 'O método de pagamento selecionado não é válido. Escolha entre pix ou dinheiro.',
             ]);
 
             $psychologist = User::where('id', $validatedData['psychologist_id'])
@@ -73,7 +86,16 @@ class PackageController extends Controller
             if (!$patient) {
                 throw new \Exception('Paciente não encontrado.');
             }
-
+            $ClinicPatient = ClinicPatient::where('id_patient', $validatedData['patient_id'])
+                ->where('id_clinic',$psychologist->id_clinic)
+                ->first();
+                
+            if (!$ClinicPatient) {
+                ClinicPatient::create([
+                    'id_patient' => $validatedData['patient_id'],
+                    'id_clinic' => $psychologist->id_clinic,
+                ]);
+            }
             // Verifica se existe um pacote anterior com o mesmo psicólogo
             $lastPackage = Package::where('patient_id', $validatedData['patient_id'])
                                  ->where('psychologist_id', $validatedData['psychologist_id'])

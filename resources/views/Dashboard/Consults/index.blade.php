@@ -27,7 +27,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             @if($stats['next_appointment'])
-                                <h5 class="mb-0">{{ \Carbon\Carbon::parse($stats['next_appointment']['date'])->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($stats['next_appointment']['start_time'])->format('H:i') }}</h5>
+                                <h5 class="mb-0">{{ \Carbon\Carbon::parse($stats['next_appointment']['dt_avaliability'])->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($stats['next_appointment']['hr_avaliability'])->format('H:i') }}</h5>
                                 <small class="text-muted">{{ $stats['next_appointment']['psychologist']['name'] }}</small>
                             @else
                                 <h5 class="mb-0">Nenhuma consulta agendada</h5>
@@ -211,6 +211,9 @@
         }
     </style>
 </div>
+<!-- Incluindo o componente de agendamento de consultas com clínica -->
+@include('components.appointments.create-appointment-with-clinic')
+
 <!-- Modal de Confirmação de Cancelamento -->
 <!-- Carregando Bootstrap JS no final do documento para garantir que o DOM esteja carregado -->
 <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>

@@ -29,7 +29,6 @@ class PatientController extends Controller
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
-
         $appointments = $query
         ->orderBy('dt_avaliability', 'asc')
         ->orderBy('hr_avaliability', 'asc')
@@ -41,10 +40,13 @@ class PatientController extends Controller
             ->distinct()
             ->get()
             ->pluck('psychologist');
-        
+
+        $packages = Auth::user()->patientPackages()->whereRaw('total_appointments > balance')
+            ->orderBy('created_at', 'desc')
+            ->get();
         $stats = [
             'next_appointment' => $appointments->where('status', 'scheduled')
-                ->sortBy('date')
+                ->sortBy('hr_avaliability')
                 ->first(),
             'completed_appointments' => $appointments->where('status', 'completed')
                 ->where('date', '>=', now()->subMonth())
@@ -52,7 +54,7 @@ class PatientController extends Controller
             'pending_appointments' => $appointments->where('status', 'scheduled')->count()
         ];
 
-        return view('Dashboard.Consults.index', compact('appointments', 'stats', 'psychologists'));
+        return view('Dashboard.Consults.index', compact('appointments', 'stats', 'psychologists','packages'));
     }
 
     public function store(Request $request)
@@ -67,6 +69,22 @@ class PatientController extends Controller
                 'password' => 'required|min:6',
                 'document_type' => 'required|in:cpf,rg',
                 'document_number' => 'required|unique:users,document_number',
+                'data_nascimento' => 'required|date|before_or_equal:'.now()->subYears(18)->format('Y-m-d')
+
+            ],
+            [
+                'name.required' => 'O nome é obrigatório',
+                'email.required' => 'O email é obrigatório',
+                'email.email' => 'Digite um email válido',
+                'email.unique' => 'Este email já está em uso',
+                'password.required' => 'A senha é obrigatória',
+                'password.min' => 'A senha deve ter pelo menos 6 caracteres',
+                'document_type.required' => 'O tipo de documento é obrigatório',
+                'document_number.required' => 'O número do documento é obrigatório',
+                'document_number.unique' => 'Este número de documento já está em uso',
+                'data_nascimento.required' => 'A data de nascimento é obrigatória',
+                'data_nascimento.date' => 'Digite uma data válida',
+                'data_nascimento.before_or_equal' => 'Você deve ter pelo menos 18 anos'
             ]);
 
 

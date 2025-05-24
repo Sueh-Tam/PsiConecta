@@ -114,6 +114,51 @@ Route::prefix('patient')->middleware('auth')->group(function () {
 
         return response()->json(['psychologist' => null, 'available_days' => [], 'available_times' => []]);
     });
+    Route::get('/api/psychologist/{id}', function ($id) {
+        $patient = \App\Models\User::find(Auth::user()->id);
+        $psychologist  = \App\Models\User::find($id);;
+
+        $activePackage = $patient->activePackage()
+            ->where('psychologist_id', $psychologist->id)
+            ->where('total_appointments','>','balance')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($activePackage) {
+
+            // Buscar disponibilidades do psicólogo
+            $availabilities = \App\Models\Avaliability::where('id_psychologist', $psychologist->id)
+                ->where('status', 'available')
+                ->whereDate('dt_avaliability', '>=', now())
+                ->get();
+
+            // Organizar disponibilidades por dia da semana
+            $availableDays = [];
+            $availableTimesByDay = [];
+
+            foreach ($availabilities as $availability) {
+                $dayOfWeek = Carbon::parse($availability->dt_avaliability)->format('d/m/Y');
+                if (!in_array($dayOfWeek, $availableDays)) {
+                    $availableDays[] = $dayOfWeek;
+                }
+
+                if (!isset($availableTimesByDay[$dayOfWeek])) {
+                    $availableTimesByDay[$dayOfWeek] = [];
+                }
+
+                $availableTimesByDay[$dayOfWeek][] = $availability->hr_avaliability;
+            }
+
+            return response()->json([
+                'psychologist' => $psychologist,
+                'available_days' => $availableDays,
+                'available_times' => $availableTimesByDay,
+                'package' => $activePackage,
+            ]);
+        }
+
+        return response()->json(['psychologist' => null, 'available_days' => [], 'available_times' => []]);
+    });
 
     // Perfil
     Route::get('/profile', function () {
