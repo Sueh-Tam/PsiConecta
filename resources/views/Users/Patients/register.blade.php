@@ -8,6 +8,12 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --font-size: 16px;
+        }
+        * {
+            font-size: var(--font-size);
+        }
         body {
             min-height: 100vh;
             display: flex;
@@ -15,6 +21,34 @@
         }
         main {
             flex: 1;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-size: calc(var(--font-size) * 1.5) !important;
+        }
+        p, a, span, div, label, input, select, button {
+            font-size: var(--font-size) !important;
+        }
+        .font-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .font-control button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .font-control button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
@@ -105,36 +139,64 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- Controles de Fonte -->
+    <div class="font-control">
+        <button onclick="changeFontSize('decrease')">A-</button>
+        <button onclick="changeFontSize('reset')">A</button>
+        <button onclick="changeFontSize('increase')">A+</button>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para ajuste de fonte
+        function changeFontSize(action) {
+            const root = document.documentElement;
+            const currentSize = parseInt(getComputedStyle(root).getPropertyValue('--font-size')) || 16;
+            
+            switch(action) {
+                case 'increase':
+                    root.style.setProperty('--font-size', `${currentSize + 2}px`);
+                    break;
+                case 'decrease':
+                    if (currentSize > 8) {
+                        root.style.setProperty('--font-size', `${currentSize - 2}px`);
+                    }
+                    break;
+                case 'reset':
+                    root.style.setProperty('--font-size', '16px');
+                    break;
+            }
+        }
+
+        // Funções do formulário
+        const documentoInput = document.getElementById('document_number');
+        const tipoSelect = document.getElementById('document_type');
+
+        function atualizarDocumento() {
+            documentoInput.value = '';
+            if (tipoSelect.value === 'cpf') {
+                documentoInput.placeholder = '000.000.000-00';
+            } else {
+                documentoInput.placeholder = '00.000.000-0';
+            }
+        }
+
+        documentoInput.addEventListener('input', () => {
+            let value = documentoInput.value.replace(/\D/g, '');
+            if (tipoSelect.value === 'cpf') {
+                if (value.length > 11) value = value.slice(0, 11);
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            } else {
+                if (value.length > 9) value = value.slice(0, 9);
+                value = value.replace(/(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1})$/, '$1-$2');
+            }
+            documentoInput.value = value;
+        });
+    </script>
 </body>
-<script>
-    const documentoInput = document.getElementById('document_number');
-    const tipoSelect = document.getElementById('document_type');
-
-    function atualizarDocumento() {
-        documentoInput.value = '';
-        if (tipoSelect.value === 'cpf') {
-            documentoInput.placeholder = '000.000.000-00';
-        } else {
-            documentoInput.placeholder = '00.000.000-0';
-        }
-    }
-
-    documentoInput.addEventListener('input', () => {
-        let value = documentoInput.value.replace(/\D/g, '');
-        if (tipoSelect.value === 'cpf') {
-            if (value.length > 11) value = value.slice(0, 11);
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        } else {
-            if (value.length > 9) value = value.slice(0, 9);
-            value = value.replace(/(\d{2})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1})$/, '$1-$2');
-        }
-        documentoInput.value = value;
-    });
-</script>
 </html>

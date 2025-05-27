@@ -7,6 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
+        :root {
+            --font-size: 16px;
+        }
+        * {
+            font-size: var(--font-size);
+        }
         .form-control:focus {
             border-color: #0d6efd;
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
@@ -27,6 +33,34 @@
             display: flex;
             align-items: center;
         }
+        h1, h2, h3, h4, h5, h6 {
+            font-size: calc(var(--font-size) * 1.5) !important;
+        }
+        p, a, span, div {
+            font-size: var(--font-size) !important;
+        }
+        .font-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .font-control button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .font-control button:hover {
+            background: #0056b3;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -42,7 +76,6 @@
                     <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Registre-se</a>
                     <a href="{{ Route('home') }}" class="btn btn-light text-primary">Início</a>
                 @endif
-
             </div>
         </div>
     </header>
@@ -58,7 +91,7 @@
         title="Login"
         message="{{ session('success_message') }}"
     />
-    <!-- Formulário de Cadastro -->
+    <!-- Formulário de Login -->
     <main class="login-container">
         <div class="container">
             <div class="row justify-content-center">
@@ -136,9 +169,36 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- Controles de Fonte -->
+    <div class="font-control">
+        <button onclick="changeFontSize('decrease')">A-</button>
+        <button onclick="changeFontSize('reset')">A</button>
+        <button onclick="changeFontSize('increase')">A+</button>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Função para ajuste de fonte
+        function changeFontSize(action) {
+            const root = document.documentElement;
+            const currentSize = parseInt(getComputedStyle(root).getPropertyValue('--font-size')) || 16;
+            
+            switch(action) {
+                case 'increase':
+                    root.style.setProperty('--font-size', `${currentSize + 2}px`);
+                    break;
+                case 'decrease':
+                    if (currentSize > 8) {
+                        root.style.setProperty('--font-size', `${currentSize - 2}px`);
+                    }
+                    break;
+                case 'reset':
+                    root.style.setProperty('--font-size', '16px');
+                    break;
+            }
+        }
+
         // Validação do formulário
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form');
@@ -163,6 +223,35 @@
             } else {
                 senhaInput.type = 'password';
                 toggleIcon.classList.replace('bi-eye', 'bi-eye-slash');
+            }
+        }
+    </script>
+</body>
+</html>
+
+    <div class="font-control">
+        <button onclick="changeFontSize('decrease')">A-</button>
+        <button onclick="changeFontSize('reset')">A</button>
+        <button onclick="changeFontSize('increase')">A+</button>
+    </div>
+
+    <script>
+        function changeFontSize(action) {
+            const root = document.documentElement;
+            const currentSize = parseInt(getComputedStyle(root).getPropertyValue('--font-size')) || 16;
+            
+            switch(action) {
+                case 'increase':
+                    root.style.setProperty('--font-size', `${currentSize + 2}px`);
+                    break;
+                case 'decrease':
+                    if (currentSize > 8) {
+                        root.style.setProperty('--font-size', `${currentSize - 2}px`);
+                    }
+                    break;
+                case 'reset':
+                    root.style.setProperty('--font-size', '16px');
+                    break;
             }
         }
     </script>

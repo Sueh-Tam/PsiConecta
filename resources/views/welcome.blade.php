@@ -7,6 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
+        :root {
+            --font-size: 16px;
+        }
+        * {
+            font-size: var(--font-size);
+        }
         body {
             min-height: 100vh;
             display: flex;
@@ -29,6 +35,35 @@
         .carousel-item img {
             object-fit: cover;
             height: 400px;
+        }
+        .font-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .font-control button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .font-control button:hover {
+            background: #0056b3;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-size: calc(var(--font-size) * 1.5) !important;
+        }
+        p, a, span, div {
+            font-size: var(--font-size) !important;
         }
     </style>
 </head>
@@ -140,3 +175,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<div class="font-control">
+    <button onclick="changeFontSize('decrease')">A-</button>
+    <button onclick="changeFontSize('reset')">A</button>
+    <button onclick="changeFontSize('increase')">A+</button>
+</div>
+
+<script>
+    function changeFontSize(action) {
+        const root = document.documentElement;
+        const currentSize = parseInt(getComputedStyle(root).getPropertyValue('--font-size')) || 16;
+        
+        switch(action) {
+            case 'increase':
+                root.style.setProperty('--font-size', `${currentSize + 2}px`);
+                break;
+            case 'decrease':
+                if (currentSize > 8) {
+                    root.style.setProperty('--font-size', `${currentSize - 2}px`);
+                }
+                break;
+            case 'reset':
+                root.style.setProperty('--font-size', '16px');
+                break;
+        }
+    }
+</script>
