@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>PsiConecta - Login</title>
+    <title>PsiConecta - Redefinir Senha</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -28,7 +28,7 @@
         .form-floating > .form-control:not(:placeholder-shown) ~ label {
             color: #0d6efd;
         }
-        .login-container {
+        .reset-container {
             min-height: calc(100vh - 180px);
             display: flex;
             align-items: center;
@@ -36,7 +36,7 @@
         h1, h2, h3, h4, h5, h6 {
             font-size: calc(var(--font-size) * 1.5) !important;
         }
-        p, a, span, div {
+        p, a, span, div, label, input {
             font-size: var(--font-size) !important;
         }
         .font-control {
@@ -70,43 +70,48 @@
         <div class="container d-flex justify-content-between align-items-center">
             <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">PsiConecta</a></h1>
             <div>
-                @if (Auth::check())
-                <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Dashboard</a>
-                @else
-                    <a href="{{ Route('user.signup') }}" class="btn btn-outline-light me-2">Registre-se</a>
-                    <a href="{{ Route('home') }}" class="btn btn-light text-primary">Início</a>
-                @endif
+                <a href="{{ Route('home') }}" class="btn btn-light text-primary">Início</a>
             </div>
         </div>
     </header>
 
     <!-- Modal de Erro -->
     <x-error-modal
-        modal-id="patientErrorModal"
-        title="Erro ao logar"
+        modal-id="resetErrorModal"
+        title="Erro ao redefinir senha"
     />
     <!-- Modal de Sucesso -->
     <x-success-modal
-        modal-id="patientSuccessModal"
-        title="Login"
+        modal-id="resetSuccessModal"
+        title="Senha Redefinida"
         message="{{ session('success_message') }}"
     />
-    <!-- Formulário de Login -->
-    <main class="login-container">
+
+    <!-- Formulário de Redefinição de Senha -->
+    <x-error-modal
+        modal-id="patientErrorModal"
+        title="Erro"
+    />
+    <x-success-modal
+        modal-id="patientSuccessModal"
+        title="Senha atualizada com sucesso"
+        message="{{ session('success_message') }}"
+    />
+    <main class="reset-container">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-5">
                     <div class="text-center mb-4">
-                        <h1 class="display-6 text-primary">Bem-vindo de volta!</h1>
-                        <p class="text-muted">Entre para continuar sua jornada</p>
+                        <h1 class="display-6 text-primary">Redefinir Senha</h1>
+                        <p class="text-muted">Preencha os campos abaixo para redefinir sua senha</p>
                     </div>
                     
                     <div class="card shadow-lg border-0 rounded-4">
                         <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
-                            <h2 class="h4 mb-0">Login</h2>
+                            <h2 class="h4 mb-0">Redefinição de Senha</h2>
                         </div>
                         <div class="card-body p-4">
-                            <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate>
+                            <form method="POST" action="{{ Route('auth.reset.password') }}" class="needs-validation" novalidate>
                                 @csrf
                                 
                                 <div class="form-floating mb-3">
@@ -124,37 +129,68 @@
                                     </div>
                                 </div>
 
-                                <div class="form-floating mb-4 position-relative">
+                                <div class="form-floating mb-3">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="cpf" 
+                                           name="cpf" 
+                                           placeholder="CPF" 
+                                           required 
+                                           pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                                           maxlength="14"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                                           >
+                                    <label for="cpf">
+                                        <i class="bi bi-person-badge me-2"></i>CPF
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        Por favor, insira um CPF válido
+                                    </div>
+                                </div>
+
+                                <div class="form-floating mb-3 position-relative">
                                     <input type="password" 
                                            class="form-control" 
-                                           id="senha" 
+                                           id="nova_senha" 
                                            name="password" 
-                                           placeholder="Senha" 
+                                           placeholder="Nova Senha" 
                                            required 
                                            minlength="6">
-                                    <label for="senha">
-                                        <i class="bi bi-lock me-2"></i>Senha
+                                    <label for="nova_senha">
+                                        <i class="bi bi-lock me-2"></i>Nova Senha
                                     </label>
-                                    <i class="bi bi-eye-slash password-toggle" onclick="togglePassword()"></i>
+                                    <i class="bi bi-eye-slash password-toggle" onclick="togglePassword('nova_senha')"></i>
                                     <div class="invalid-feedback">
                                         A senha deve ter no mínimo 6 caracteres
                                     </div>
                                 </div>
 
+                                <div class="form-floating mb-4 position-relative">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="confirma_senha" 
+                                           name="password_confirmation" 
+                                           placeholder="Confirme a Nova Senha" 
+                                           required 
+                                           minlength="6">
+                                    <label for="confirma_senha">
+                                        <i class="bi bi-lock-fill me-2"></i>Confirme a Nova Senha
+                                    </label>
+                                    <i class="bi bi-eye-slash password-toggle" onclick="togglePassword('confirma_senha')"></i>
+                                    <div class="invalid-feedback">
+                                        As senhas devem ser iguais
+                                    </div>
+                                </div>
+
                                 <div class="d-grid gap-3">
                                     <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                                        <i class="bi bi-check-circle me-2"></i>Redefinir Senha
                                     </button>
                                     
                                     <div class="text-center">
-                                        <p class="mb-0">Não possui uma conta? 
-                                            <a href="{{ Route('user.signup') }}" class="text-primary text-decoration-none fw-bold">
-                                                Registre-se
-                                            </a>
-                                        </p>
-                                        <p class="mb-0">Esqueceu a senha?
-                                            <a href="{{ Route('auth.reset.password') }}" class="text-primary text-decoration-none fw-bold">
-                                                Clique aqui para recuperar a sua senha
+                                        <p class="mb-0">Lembrou sua senha? 
+                                            <a href="{{ Route('login') }}" class="text-primary text-decoration-none fw-bold">
+                                                Faça login
                                             </a>
                                         </p>
                                     </div>
@@ -204,23 +240,52 @@
             }
         }
 
+        // Formatação do CPF
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+                e.target.value = value;
+            }
+        });
+
         // Validação do formulário
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form');
+            const novaSenha = document.getElementById('nova_senha');
+            const confirmaSenha = document.getElementById('confirma_senha');
             
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
                 }
+
+                // Validação de senhas iguais
+                if (novaSenha.value !== confirmaSenha.value) {
+                    event.preventDefault();
+                    confirmaSenha.setCustomValidity('As senhas não coincidem');
+                } else {
+                    confirmaSenha.setCustomValidity('');
+                }
+
                 form.classList.add('was-validated');
+            });
+
+            // Limpa a validação customizada quando o usuário digita
+            confirmaSenha.addEventListener('input', function() {
+                if (novaSenha.value === confirmaSenha.value) {
+                    confirmaSenha.setCustomValidity('');
+                } else {
+                    confirmaSenha.setCustomValidity('As senhas não coincidem');
+                }
             });
         });
 
         // Toggle de visibilidade da senha
-        function togglePassword() {
-            const senhaInput = document.getElementById('senha');
-            const toggleIcon = document.querySelector('.password-toggle');
+        function togglePassword(fieldId) {
+            const senhaInput = document.getElementById(fieldId);
+            const toggleIcon = senhaInput.nextElementSibling.nextElementSibling;
             
             if (senhaInput.type === 'password') {
                 senhaInput.type = 'text';
@@ -228,35 +293,6 @@
             } else {
                 senhaInput.type = 'password';
                 toggleIcon.classList.replace('bi-eye', 'bi-eye-slash');
-            }
-        }
-    </script>
-</body>
-</html>
-
-    <div class="font-control">
-        <button onclick="changeFontSize('decrease')">A-</button>
-        <button onclick="changeFontSize('reset')">A</button>
-        <button onclick="changeFontSize('increase')">A+</button>
-    </div>
-
-    <script>
-        function changeFontSize(action) {
-            const root = document.documentElement;
-            const currentSize = parseInt(getComputedStyle(root).getPropertyValue('--font-size')) || 16;
-            
-            switch(action) {
-                case 'increase':
-                    root.style.setProperty('--font-size', `${currentSize + 2}px`);
-                    break;
-                case 'decrease':
-                    if (currentSize > 8) {
-                        root.style.setProperty('--font-size', `${currentSize - 2}px`);
-                    }
-                    break;
-                case 'reset':
-                    root.style.setProperty('--font-size', '16px');
-                    break;
             }
         }
     </script>

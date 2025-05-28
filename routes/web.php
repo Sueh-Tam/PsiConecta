@@ -48,9 +48,11 @@ Route::prefix('auth')->group(function () {
         return view('Users.login');
     })->name('login');
     Route::post('/login',[UserController::class, 'login'])->name('login');
-
     Route::get('/logout',[UserController::class, 'logout'])->name('auth.logout');
-
+    Route::get('/reset/password', function () {
+        return view('Users.Patients.reset_password');
+    })->name('auth.reset.password');
+    Route::post('/reset/password',[UserController::class, 'resetPassword'])->name('auth.reset.password');
     // --- Paciente ---
     Route::prefix('patient')->group(function () {
         Route::get('/signup', fn () => view('Users.Patients.register'))->name('user.signup');

@@ -154,6 +154,56 @@ class UserController extends Controller
                 ->withInput();
         }
     }
+
+    public function resetPassword(Request $request){
+        try {
+            $validated = $request->validate([
+                'password' =>'required|min:6',
+                'password_confirmation' =>'required|same:password',
+                'email' =>'required|email',
+                'cpf' =>'required|min:14|max:14'
+            ],[
+                'password.required' => 'O campo senha é obrigatório.',
+                'password.min' => 'A senha deve ter pelo menos 15 caracteres.',
+                'password_confirmation.required' => 'O campo confirmação de senha é obrigatório.',
+                'password_confirmation.same' => 'As senhas não coincidem.',
+                'email.required' => 'O campo e-mail é obrigatório.',
+                'email.email' => 'Por favor, informe um endereço de e-mail válido.',
+                'cpf.required' => 'O campo CPF é obrigatório.',
+                'cpf.min' => 'O CPF deve ter pelo menos 14 caracteres.',
+                'cpf.max' => 'O CPF deve ter no máximo 14 caracteres.',
+            ]);
+            
+            // Remove caracteres não numéricos do CPF
+            $cpf = preg_replace('/[^0-9]/', '', $validated['cpf']);
+            
+            $usuario = User::where('email', $request->email)->where('document_number', $cpf)->first();
+            if ($usuario) {
+                if($validated['password'] == $validated['password_confirmation']){
+                    $usuario->password = bcrypt($validated['password']);
+                    $usuario->save();
+                    return redirect()->back()
+                        ->with('show_success_modal', true)
+                        ->with('success_message', 'Senha alterada com sucesso!')
+                        ->with('success_redirect', route('home')); 
+                }else{
+                    return redirect()->back()
+                        ->withErrors(['mensagem' => 'As senhas não coincidem.'])
+                        ->withInput();
+                }
+                
+            }else{
+                return redirect()->back()
+                ->withErrors(['mensagem' => 'Usuário não encontrado'])
+                ->withInput();
+            }
+        }catch (\Throwable $th) {
+            return redirect()->back()
+                ->withErrors($th->getMessage())
+                ->withInput();
+        }
+    }
+
     public function logout(Request $request):RedirectResponse
     {
         Auth::logout();
