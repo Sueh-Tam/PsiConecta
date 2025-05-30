@@ -90,13 +90,13 @@
                             <!-- Nome -->
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nome completo</label>
-                                <input type="text" name="name" id="nome" class="form-control" required>
+                                <input type="text" name="name" id="nome" class="form-control" value="{{ old('name') }}" required>
                             </div>
 
                             <!-- Email -->
                             <div class="mb-3">
                                 <label for="email" class="form-label">E-mail</label>
-                                <input type="email" name="email" id="email" class="form-control" required>
+                                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
                             </div>
 
                             <!-- CPF -->
@@ -105,13 +105,13 @@
                                 <select name="document_type" id="document_type" class="form-select mb-2" onchange="atualizarDocumento()">
                                     <option value="cpf" selected>CPF</option>
                                 </select>
-                                <input type="text" name="document_number" id="document_number" class="form-control" placeholder="000.000.000-00" required>
+                                <input type="text" name="document_number" id="document_number" class="form-control" placeholder="000.000.000-00" value="{{ old('document_number') }}" required>
                             </div>
 
                             <!-- Data de Nascimento -->
                             <div class="mb-3">
                                 <label for="data_nascimento" class="form-label">Data de nascimento</label>
-                                <input type="date" name="data_nascimento" id="data_nascimento" class="form-control" required>
+                                <input type="date" name="data_nascimento" id="data_nascimento" class="form-control" value="{{ old('data_nascimento') }}" required>
                             </div>
 
                             <!-- Senha -->

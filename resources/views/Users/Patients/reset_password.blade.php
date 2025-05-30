@@ -120,6 +120,7 @@
                                            id="email" 
                                            name="email" 
                                            placeholder="nome@exemplo.com" 
+                                           value="{{ old('email') }}"
                                            required>
                                     <label for="email">
                                         <i class="bi bi-envelope me-2"></i>E-mail
@@ -135,11 +136,11 @@
                                            id="cpf" 
                                            name="cpf" 
                                            placeholder="CPF" 
+                                           value="{{ old('cpf') }}"
                                            required 
                                            pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
                                            maxlength="14"
-                                           oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                                           >
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                     <label for="cpf">
                                         <i class="bi bi-person-badge me-2"></i>CPF
                                     </label>

@@ -115,6 +115,7 @@
                                            id="email" 
                                            name="email" 
                                            placeholder="nome@exemplo.com" 
+                                           value="{{ old('email') }}"
                                            required>
                                     <label for="email">
                                         <i class="bi bi-envelope me-2"></i>E-mail

@@ -166,7 +166,7 @@
                             
                             // Atualiza o saldo de consultas com os dados da API se disponível
                             if (data.package && data.package.balance && appointmentsLeftSpan) {
-                                appointmentsLeftSpan.textContent = data.package.balance;
+                                appointmentsLeftSpan.textContent = data.package.total_appointments - data.package.balance ;
                                 appointmentsLeftInfo.style.display = 'block';
                             }
                         }
