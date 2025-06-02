@@ -51,17 +51,6 @@ O PsiConecta é desenvolvido utilizando tecnologias modernas e seguras:
 
 - Laravel Framework
 - MySQL
-- Vue.js
-- Tailwind CSS
+- Bootstrap
+- JavaScript
 
-## Segurança
-
-Nosso sistema segue rigorosos padrões de segurança e está em conformidade com:
-
-- LGPD (Lei Geral de Proteção de Dados)
-- Padrões do CFP (Conselho Federal de Psicologia)
-- Criptografia de dados sensíveis
-
-## Licença
-
-O PsiConecta é um software proprietário. Todos os direitos reservados.
