@@ -9,7 +9,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                <!-- Área de Mensagens -->
                 @if($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -26,7 +25,6 @@
                     </div>
                 @endif
 
-                <!-- Campo de Seleção do Psicólogo (Desabilitado inicialmente) -->
                 <div class="mb-3">
                     <label for="psychologist" class="form-label">Psicólogo</label>
                     <select class="form-select" id="psychologist" name="psychologist_id" required>
@@ -37,14 +35,12 @@
                     </select>
                 </div>
                 
-                <!-- Informação sobre saldo de consultas -->
                 <div class="mb-3" id="appointmentsLeftInfo" style="display: none;">
                     <div class="alert alert-info">
                         <strong>Saldo:</strong> <span id="appointmentsLeft">0</span> consultas restantes
                     </div>
                 </div>
 
-                <!-- Campo de Seleção do Dia da Semana -->
                 <div class="mb-3">
                     <label for="day_of_week" class="form-label">Dia da Semana</label>
                     <select class="form-select" id="day_of_week" name="day_of_week" disabled required>
@@ -52,7 +48,6 @@
                     </select>
                 </div>
 
-                <!-- Campo de Seleção do Horário -->
                 <div class="mb-3">
                     <label for="time" class="form-label">Horário Disponível</label>
                     <select class="form-select" id="time" name="time" disabled required>
@@ -87,19 +82,15 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    // Sucesso - recarrega a página
                     window.location.reload();
                 } else {
-                    // Exibe mensagens de erro
                     const errorDiv = document.createElement('div');
                     errorDiv.className = 'alert alert-danger';
                     errorDiv.innerHTML = `<ul class="mb-0"><li>${result.message || 'Ocorreu um erro ao agendar a consulta.'}</li></ul>`;
                     
-                    // Remove alertas anteriores
                     const oldAlerts = this.querySelectorAll('.alert');
                     oldAlerts.forEach(alert => alert.remove());
                     
-                    // Adiciona novo alerta no início do modal-body
                     const modalBody = this.querySelector('.modal-body');
                     modalBody.insertBefore(errorDiv, modalBody.firstChild);
                 }
@@ -120,16 +111,13 @@
 
         
 
-        // Quando um psicólogo for selecionado
         psychologistSelect.addEventListener('change', function() {
-            // Reseta e desabilita os campos dependentes
             daySelect.innerHTML = '<option value="">Selecione um dia</option>';
             daySelect.disabled = true;
             timeSelect.value = '';
             timeSelect.disabled = true;
 
             if (this.value) {
-                // Atualiza o saldo de consultas
                 const selectedOption = this.options[this.selectedIndex];
                 const appointmentsLeft = selectedOption.getAttribute('data-appointments-left');
                 const appointmentsLeftInfo = document.getElementById('appointmentsLeftInfo');
@@ -141,18 +129,14 @@
                     appointmentsLeftInfo.style.display = 'none';
                 }
                 
-                // Preenche o select de dias
                 fetch(`/patient/api/psychologist/${this.value}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(this.value)
                         console.log(data);
                         if (data.psychologist) {
-                            // Armazena as disponibilidades
                             availableDays = data.available_days;
                             availableTimes = data.available_times;
-                            
-                            // Habilita e preenche o select de dias
                             daySelect.innerHTML = '<option value="">Selecione um dia</option>';
                             availableDays.forEach(day => {
                                 const option = document.createElement('option');
@@ -161,10 +145,7 @@
                                 daySelect.appendChild(option);
                             });
                             
-                            // Habilita os selects
                             daySelect.disabled = false;
-                            
-                            // Atualiza o saldo de consultas com os dados da API se disponível
                             if (data.package && data.package.balance && appointmentsLeftSpan) {
                                 appointmentsLeftSpan.textContent = data.package.total_appointments - data.package.balance ;
                                 appointmentsLeftInfo.style.display = 'block';
@@ -173,15 +154,12 @@
                     })
                     .catch(error => console.error('Erro:', error));
                 
-                // Habilita o select de dias
                 daySelect.disabled = false;
             } else {
-                // Esconde a informação de saldo quando nenhum psicólogo está selecionado
                 document.getElementById('appointmentsLeftInfo').style.display = 'none';
             }
         });
 
-        // Quando um dia for selecionado
         daySelect.addEventListener('change', function() {
             timeSelect.innerHTML = '<option value="">Selecione um horário</option>';
             timeSelect.disabled = true;

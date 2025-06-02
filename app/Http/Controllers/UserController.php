@@ -11,25 +11,17 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
         try {
@@ -174,7 +166,7 @@ class UserController extends Controller
                 'cpf.max' => 'O CPF deve ter no máximo 14 caracteres.',
             ]);
             
-            // Remove caracteres não numéricos do CPF
+
             $cpf = preg_replace('/[^0-9]/', '', $validated['cpf']);
             
             $usuario = User::where('email', $request->email)->where('document_number', $cpf)->first();

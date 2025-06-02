@@ -11,8 +11,6 @@ use Illuminate\Http\Request;
 
 class PsychologistController extends Controller
 {
-    //
-
     public function store(Request $request){
         try {
             $request->validate([
@@ -50,7 +48,6 @@ class PsychologistController extends Controller
 
     public function update(Request $request){
         try {
-            // dd($request);
             $request->validate([
                 'name' => 'required',
                 'email' => 'required|email',
@@ -88,9 +85,6 @@ class PsychologistController extends Controller
         $psychologists = $user
             ->psychologists()
             ->paginate(10);
-        // $psychologists = User::where('id_clinic', Auth::user()->id)
-        //     ->where('type', 'psychologist')
-        //     ->get();
         return view('Dashboard.clinic.psychologist.index', ['psychologists' => $psychologists]);
 
     }
@@ -99,7 +93,6 @@ class PsychologistController extends Controller
 
         $clinicId = Auth::user()->id_clinic;
         $clinic = User::find($clinicId);
-        // Buscar pacientes da clínica usando a relação many-to-many
         $patients = $clinic->patients()
             ->with(['patientPackages' => function($query) {
                 $query->latest();
@@ -113,24 +106,20 @@ class PsychologistController extends Controller
                 return $patient;
             });
 
-        // Iniciar a query de agendamentos
         $query = \App\Models\Appointment::with(['psychologist', 'patient'])
             ->whereHas('psychologist', function($q) use ($clinicId) {
                 $q->where('id_clinic', $clinicId);
             })
             ->where('psychologist_id', Auth::user()->id);
 
-        // Aplicar filtro de data se fornecido
         if ($request->has('date') && $request->date) {
             $query->whereDate('dt_avaliability', $request->date);
         }
 
-        // Aplicar filtro de status se fornecido
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
 
-        // Executar a query
         $appointments = $query
             ->orderBy('dt_avaliability', 'asc')
             ->orderBy('hr_avaliability', 'asc')
@@ -151,7 +140,6 @@ class PsychologistController extends Controller
                     'status' => $appointment->status
                 ];
             });
-        // Estatísticas para os cards
         $stats = [
             'next_appointment' => $appointments->where('status', 'scheduled')
                 ->sortBy('date')

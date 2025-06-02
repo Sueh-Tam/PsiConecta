@@ -22,7 +22,6 @@ message="{{ session('message') }}"
                 @csrf
                 @method('PUT')
 
-                <!-- Informações da Consulta -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h5 class="card-title mb-3">Informações do Paciente</h5>
@@ -57,7 +56,6 @@ message="{{ session('message') }}"
                     </div>
                 </div>
 
-                <!-- Prontuário Médico -->
                 <div class="mb-4">
                     <h5 class="card-title mb-3">Prontuário Médico</h5>
                     <div class="form-group">
@@ -65,7 +63,6 @@ message="{{ session('message') }}"
                     </div>
                 </div>
 
-                <!-- Botões de Ação -->
                 <div class="d-flex justify-content-between">
                     <a href="{{ Route('psychologist.dashboard') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Voltar

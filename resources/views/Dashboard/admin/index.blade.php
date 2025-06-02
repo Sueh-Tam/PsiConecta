@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <div class="container-fluid px-4">
-    <!-- Cabeçalho da Página -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0 text-primary">Lista de Clínicas</h1>
@@ -15,7 +14,6 @@
         </div>
     </div>
 
-    <!-- Card da Tabela -->
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -108,7 +106,6 @@ title="Erro"
     </script>
 
 
-<!-- JS Bootstrap local (ou substitua por asset se já estiver copiado para o projeto) -->
 <style>
     .avatar-circle {
         width: 36px;

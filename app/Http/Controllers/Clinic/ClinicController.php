@@ -20,7 +20,6 @@ class ClinicController extends Controller
         }
         
         $clinic = User::find($clinicId);
-        // Buscar pacientes da clínica usando a relação many-to-many
         $patients = $clinic->patients()
             ->with(['patientPackages' => function($query) {
                 $query->latest();
@@ -33,33 +32,27 @@ class ClinicController extends Controller
                     : 0; 
                 return $patient;
             });
-        // Iniciar a query de agendamentos
         $query = \App\Models\Appointment::with(['psychologist', 'patient'])
             ->whereHas('psychologist', function($q) use ($clinicId) {
                 $q->where('clinic_id', $clinicId);
             });
 
-        // Aplicar filtro de paciente se fornecido
         if (request()->has('patient') && request('patient')) {
             $query->where('patient_id', request('patient'));
         }
 
-        // Aplicar filtro de psicólogo se fornecido
         if (request()->has('psychologist') && request('psychologist')) {
             $query->where('psychologist_id', request('psychologist'));
         }
 
-        // Aplicar filtro de data se fornecido
         if (request()->has('date') && request('date')) {
             $query->whereDate('dt_avaliability', request('date'));
         }
 
-        // Aplicar filtro de status se fornecido
         if (request()->has('status') && request('status')) {
             $query->where('status', request('status'));
         }
 
-        // Executar a query com ordenação e paginação
         $appointments = $query
             ->orderBy('dt_avaliability', 'asc')
             ->orderBy('hr_avaliability', 'asc')
@@ -86,7 +79,6 @@ class ClinicController extends Controller
                     'can_be_cancelled_early' => $appointment->status === 'scheduled'
                 ];
             });
-        // Estatísticas para os cards
         $stats = [
             'next_appointment' => $appointments->where('status', 'scheduled')
                 ->sortBy('date')

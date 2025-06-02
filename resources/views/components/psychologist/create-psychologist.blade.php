@@ -5,10 +5,6 @@
                 <div class="card shadow-sm p-4 rounded">
                     <h4 class="mb-3">Cadastrar Psicólogo</h4>
 
-                    {{-- @if (session()->has('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif --}}
-
                     <form action="{{ Route('clinic.psychologist.store') }}" method="POST">
                         @csrf
 

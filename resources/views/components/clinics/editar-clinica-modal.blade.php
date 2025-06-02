@@ -1,8 +1,7 @@
 
 <div class="modal fade" id="editarClinicaModal" tabindex="-1" aria-labelledby="editarClinicaModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> {{-- modal-lg aumenta a largura --}}
+    <div class="modal-dialog modal-lg">
         <form class="modal-content" action="{{ route('admin.update') }}" method="POST">
-            {{-- CSRF token para proteção contra CSRF --}}
             @csrf
             @method('PUT')
             <div class="modal-header">
@@ -35,7 +34,6 @@
 
                 <div class="mb-3">
                     <label for="situacaoClinica" class="form-label">Situação</label>
-                     <!-- Corrigir o name do select de situação -->
                     <select class="form-select" id="situacaoClinica" name="situation" required>
                         <option value="valid">Aprovado</option>
                         <option value="pending">Pendente</option>

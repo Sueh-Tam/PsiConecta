@@ -12,16 +12,28 @@ class Avaliability extends Model
         'id_psychologist', 'status', 'dt_avaliability', 'hr_avaliability'
     ];
 
+    /**
+     * Relacionamento: Obtém o psicólogo associado à disponibilidade
+     * Relação: Muitos para Um (N:1) - Cada disponibilidade pertence a um psicólogo
+     */
     public function psychologist()
     {
         return $this->belongsTo(User::class, 'id_psychologist');
     }
 
+    /**
+     * Relacionamento: Obtém a consulta associada à disponibilidade
+     * Relação: Um para Um (1:1) - Cada disponibilidade pode ter uma consulta
+     */
     public function appointment()
     {
         return $this->hasOne(Appointment::class, 'availability_id');
     }
 
+    /**
+     * Relacionamento: Alias para o relacionamento appointment()
+     * Relação: Um para Um (1:1) - Método alternativo para acessar a consulta
+     */
     public function appointments()
     {
         return $this->appointment();

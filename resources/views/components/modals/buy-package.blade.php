@@ -1,4 +1,3 @@
-<!-- Modal de Compra de Pacote -->
 @props(['clinics'])
 <x-success-modal
         modal-id="patientSuccessModal"
@@ -20,7 +19,6 @@
                 @csrf
                 <div class="modal-body">
                     <input type="hidden" name="patient_id" value="{{ Auth::user()->id }}">
-                    <!-- Campo de Seleção de Clínica -->
                     <div class="mb-3">
                         <label for="clinic_id" class="form-label">Clínica</label>
                         <select class="form-select" id="clinic_id" name="clinic_id" required>
@@ -31,7 +29,6 @@
                         </select>
                     </div>
 
-                    <!-- Campo de Seleção de Psicólogo -->
                     <div class="mb-3">
                         <label for="psychologist_id_{{ Auth::user()->id }}" class="form-label">Psicólogo</label>
                         <select class="form-select" id="psychologist_id_{{ Auth::user()->id }}" name="psychologist_id" required>
@@ -39,13 +36,11 @@
                         </select>
                     </div>
 
-                    <!-- Campo de Quantidade de Sessões -->
                     <div class="mb-3">
                         <label for="total_appointments_{{ Auth::user()->id }}" class="form-label">Quantidade de Sessões</label>
                         <input type="number" class="form-control" id="total_appointments_{{ Auth::user()->id }}" name="total_appointments" min="1" required>
                     </div>
 
-                    <!-- Campo de Valor Total (Calculado automaticamente) -->
                     <div class="mb-3">
                         <label for="price" class="form-label">Valor Total</label>
                         <div class="input-group">
@@ -54,7 +49,6 @@
                         </div>
                     </div>
 
-                    <!-- Campo de Método de Pagamento -->
                     <div class="mb-3">
                         <label class="form-label">Método de Pagamento</label>
                         <div class="d-flex gap-3">

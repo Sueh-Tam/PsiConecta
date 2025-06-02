@@ -25,7 +25,6 @@
     </style>
 </head>
 <body class="bg-light">
-    <!-- Header -->
     <header class="bg-primary text-white py-3 shadow">
         <div class="container d-flex justify-content-between align-items-center">
             <h1 class="h4 mb-0"><a href="{{ route('home') }}" class="text-white text-decoration-none">PsiConecta</a></h1>
@@ -44,7 +43,6 @@
 modal-id="patientErrorModal"
 title="Erro no Cadastro de Paciente"
 />
-<!-- Modal de Sucesso -->
 <x-success-modal
     modal-id="patientSuccessModal"
     title="Cadastro Realizado!"
@@ -120,13 +118,10 @@ title="Erro no Cadastro de Paciente"
         const docInput = document.getElementById('document_number');
 
         function formatarCNPJ(valor) {
-            // Remove tudo que não é número
             let numeros = valor.replace(/\D/g, '');
             
-            // Limita a 14 dígitos
             numeros = numeros.slice(0, 14);
             
-            // Aplica a máscara
             let cnpjFormatado = numeros;
             
             if (numeros.length > 2) {
@@ -145,7 +140,6 @@ title="Erro no Cadastro de Paciente"
             return cnpjFormatado;
         }
 
-        // Mantém a posição do cursor após a formatação
         function manterPosicaoCursor(input, posicaoInicial) {
             const formatadores = ['.', '/', '-'];
             let ajuste = 0;
@@ -162,10 +156,8 @@ title="Erro no Cadastro de Paciente"
             const posicaoInicial = this.selectionStart;
             const valorAntigo = this.value;
             
-            // Formata o valor
             this.value = formatarCNPJ(this.value);
             
-            // Ajusta a posição do cursor
             const novaPosicao = manterPosicaoCursor(this, posicaoInicial);
             this.setSelectionRange(novaPosicao, novaPosicao);
         });
@@ -176,7 +168,6 @@ title="Erro no Cadastro de Paciente"
 
         docInput.addEventListener('input', aplicarMascara);
 
-        // Aplica máscara automaticamente ao carregar a página
         aplicarMascara();
     
     document.addEventListener("DOMContentLoaded", function () {

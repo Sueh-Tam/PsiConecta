@@ -182,7 +182,6 @@ class AppointmentController extends Controller
 
     public function canceledEarly(Appointment $appointment){
         try {
-            // Atualiza o status da consulta para cancelado
             $appointment->status = 'canceled_early';
             $appointment->save();
             $package = Package::find($appointment->package_id);
@@ -190,7 +189,6 @@ class AppointmentController extends Controller
                 $package->balance--;
                 $package->save();
             }
-            // Busca e atualiza a disponibilidade relacionada
             $availability = Avaliability::where('id_appointments', $appointment->id)->first();
 
             if ($availability) {
@@ -225,7 +223,6 @@ class AppointmentController extends Controller
             
             $appointment->save();
             
-            // Busca e atualiza a disponibilidade relacionada
             $availability = Avaliability::where('id_appointments', $appointment->id)->first();
 
             if ($availability) {

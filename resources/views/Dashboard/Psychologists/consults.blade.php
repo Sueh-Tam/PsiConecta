@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="container-fluid px-4">
 
-    <!-- Cards de Resumo -->
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card border-left-primary shadow h-100 py-2">
@@ -74,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 
-    <!-- Tabela de Consultas -->
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3">
             <div class="row align-items-center">

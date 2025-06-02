@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AvaliabilityController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     private const diasSemanaMap = [
         'domingo' => 0,
         'segunda' => 1,
@@ -26,20 +24,14 @@ class AvaliabilityController extends Controller
     ];
     public function index()
     {
-        //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
-        //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
 {
     try {
@@ -84,9 +76,7 @@ class AvaliabilityController extends Controller
                     'hr_avaliability' => $item['hr_avaliability'],
                 ]);
             }
-            // return redirect()->back()
-            //     ->withErrors("Já existe uma disponibilidade para {$item['dt_avaliability']} no horário {$item['hr_avaliability']}.")
-            //     ->withInput();
+
             
         }
 
@@ -140,9 +130,7 @@ class AvaliabilityController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(Avaliability $avaliability)
     {
         $user = Auth::user(); // psicólogo autenticado
@@ -156,32 +144,24 @@ class AvaliabilityController extends Controller
         ->groupBy(function ($item) {
             return Carbon::parse($item->dt_avaliability)->locale('pt_BR')->dayName;
         });
-    //dd($availabilities);
+
         return view('Dashboard.Psychologists.disponibility', [
             'groupedAvailabilities' => $availabilities,
             'timeBlocks' => Avaliability::TIME_BLOCKS
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(Avaliability $avaliability)
     {
-        //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(Request $request, Avaliability $avaliability)
     {
-        //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy($id)
 {
         $avaliability = Avaliability::where('id', $id)

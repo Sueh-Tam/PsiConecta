@@ -108,7 +108,6 @@
 </div>
 @endsection
 <script>
-    //formatar e validar cpf
     document.addEventListener("DOMContentLoaded", function () {
         const input = document.getElementById("document_number");
         const erro = document.getElementById("erro-documento");

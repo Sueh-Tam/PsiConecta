@@ -40,7 +40,6 @@
                             <label class="form-check-label" for="check_{{ $loop->index }}">
                                 {{ $block }}
                             </label>
-                            <!-- Campos ocultos para manter os names esperados -->
                             <input type="hidden" name="start_time[]" value="{{ $start }}" disabled>
                             <input type="hidden" name="end_time[]" value="{{ $end }}" disabled>
                         </div>

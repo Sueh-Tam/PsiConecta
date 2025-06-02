@@ -46,7 +46,6 @@
 @include('components.modals.buy-package')
 
 <div class="container-fluid px-4">
-    <!-- Cabeçalho da Página -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <p class="text-muted mb-0">Gerencie seus pacotes de consulta</p>
@@ -57,7 +56,6 @@
         </button>
     </div> 
 
-    <!-- Cards de Resumo -->
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card border-left-primary shadow h-100 py-2">
@@ -102,7 +100,6 @@
             </div>
         </div>
     </div>
-    <!-- Tabela de Pacotes -->
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3">
             <div class="row align-items-center">

@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 class AttendantController extends Controller
 {
-    //
     public function attendantByClinic(){
         $user = Auth::user();
         $attendants = $user
