@@ -34,10 +34,13 @@ class AppointmentSeeder extends Seeder
                 $appointmentHour = sprintf("%02d:%02d", rand(8, 18), rand(0, 1) * 30); // Horas entre 8:00 e 18:30
                 
                 // Definir status aleatório para a consulta
-                if($package->balance < $i){
+                $today = Carbon::now();
+                $appointmentDateTime = Carbon::instance($appointmentDate);
+                
+                if ($appointmentDateTime->lt($today)) {
                     $status = $faker->randomElement(['completed', 'cancelled', 'canceled_late', 'canceled_early']);
-                }else{
-                    $status = 'scheduled';
+                } else {
+                    $status = $faker->randomElement(['scheduled', 'canceled_early']);
                 }
                 
                 

@@ -27,6 +27,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Atualiza registros com 'crp' para 'rg' antes de reverter o enum
+        DB::table('users')->where('document_type', 'crp')->update(['document_type' => 'rg']);
+
         // Reverte a alteração, removendo 'crp' da lista de tipos válidos
         Schema::table('users', function (Blueprint $table) {
             // Primeiro, modifica a coluna para remover a restrição enum

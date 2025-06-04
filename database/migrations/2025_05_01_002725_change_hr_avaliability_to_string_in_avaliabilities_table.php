@@ -37,13 +37,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('avaliabilities', function (Blueprint $table) {
-            $table->datetime('hr_avaliability_temp')->nullable()->after('hr_avaliability');
-        });
+        if (!Schema::hasColumn('avaliabilities', 'hr_avaliability_temp')) {
+            Schema::table('avaliabilities', function (Blueprint $table) {
+                $table->datetime('hr_avaliability_temp')->nullable()->after('hr_avaliability');
+            });
+        }
 
         // 2. Converter e copiar os dados de volta
         DB::table('avaliabilities')->update([
-            'hr_avaliability_temp' => DB::raw("STR_TO_DATE(hr_avaliability, '%H:%i:%s')")
+            'hr_avaliability_temp' => DB::raw("CONCAT('2023-01-01 ', SUBSTRING_INDEX(hr_avaliability, '-', 1), ':00')")
         ]);
 
         // 3. Remover coluna string
