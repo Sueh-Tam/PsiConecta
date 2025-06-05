@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 @endswitch
                                 </td>
                                 <td class="px-4 text-center">
-                                    @if ($appointment['status'] != 'canceled_early' && $appointment['status']!= 'cancelled')
+                                    @if ($appointment['status'] != 'canceled_early' && $appointment['status']!= 'cancelled' && $appointment['status'] != 'canceled_late')
                                         <a href="{{ route('appointments.edit', $appointment['id']) }}" class="btn btn-sm {{ $appointment['status'] == 'scheduled' ? 'btn-success' : 'btn-secondary' }} me-2" title="Marcar como realizada">
                                             <i class="bi bi-check-circle"></i> {{ $appointment['status'] == 'scheduled' ? 'Realizar':'Visualizar' }}
                                         </a>

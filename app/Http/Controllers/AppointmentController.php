@@ -123,7 +123,19 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment)
     {
-        return view('Dashboard.Consults.edit', compact('appointment'));
+        if($appointment->status = 'scheduled' || $appointment->status = 'completed'){
+            $lastAppointments = Appointment::where('patient_id', $appointment->patient_id)
+            ->where('status', 'completed')
+            ->where('psychologist_id', $appointment->psychologist_id)
+            ->where('clinic_id', $appointment->clinic_id)
+            ->where('dt_avaliability', '<=', $appointment->dt_avaliability)
+            ->get();
+
+            return view('Dashboard.Consults.edit', compact('appointment','lastAppointments'));
+        }else{
+            return redirect()->back();
+        }
+        
     }
 
     public function finishAppointment(Appointment $appointment, Request $request){

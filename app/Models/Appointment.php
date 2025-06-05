@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Avaliability;
 use App\Models\Package;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 class Appointment extends Model
 {
     protected $fillable = [
@@ -16,7 +19,7 @@ class Appointment extends Model
      * Relacionamento: Obtém o paciente associado à consulta
      * Relação: Muitos para Um (N:1) - Cada consulta pertence a um paciente
      */
-    public function patient()
+    public function patient():BelongsTo
     {
         return $this->belongsTo(User::class, 'patient_id');
     }

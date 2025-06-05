@@ -30,7 +30,7 @@ class AppointmentSeeder extends Seeder
             // Criar consultas para cada pacote
             for ($i = 0; $i < $package->total_appointments; $i++) {
                 // Gerar data e hora aleatórias para a consulta (entre hoje e 3 meses no futuro)
-                $appointmentDate = $faker->dateTimeBetween('now', '+3 months');
+                $appointmentDate = $faker->dateTimeBetween('-3 months', '+3 months');
                 $appointmentHour = sprintf("%02d:%02d", rand(8, 18), rand(0, 1) * 30); // Horas entre 8:00 e 18:30
                 
                 // Definir status aleatório para a consulta
