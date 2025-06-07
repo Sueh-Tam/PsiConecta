@@ -139,6 +139,7 @@
             window.location.href = window.location.pathname;
         });
     });
+</script>
 <style>
 .avatar-circle {
     width: 40px;
