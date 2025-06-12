@@ -32,7 +32,7 @@
 
                     <div class="mb-3">
                         <label for="document_number" class="form-label">CPF/Documento</label>
-                        <input name="document_number" type="text" class="form-control" value="{{ old('document_number', $attendant->formartDocumentCPF($attendant->document_number)) }}" minlength="11" maxlength="11" required>
+                        <input name="document_number" type="text" class="form-control" value="{{ old('document_number', $attendant->formartDocumentCPF($attendant->document_number)) }}" minlength="14" maxlength="14" required>
                         @error('document_number') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
 

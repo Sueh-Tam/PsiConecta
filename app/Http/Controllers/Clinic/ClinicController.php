@@ -53,7 +53,7 @@ class ClinicController extends Controller
             $query->where('status', request('status'));
         }
         $appointments = $query
-            ->orderBy('dt_avaliability', 'asc')
+            ->orderBy('dt_avaliability', 'desc')
             ->orderBy('hr_avaliability', 'asc')
             ->paginate(10)
             ->through(function($appointment) {
@@ -99,7 +99,15 @@ class ClinicController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
-                'document_number' => 'required|unique:users,document_number',
+                'document_number' => 'required|unique:users,document_number|cnpj',
+            ],[
+                'document_number.cnpj' => 'O número do documento deve ser um CNPJ válido.',
+                'document_number.unique' => 'O número do documento já está em uso.',
+                'document_number.required' => 'O número do documento é obrigatório.',
+                'email.unique' => 'O email já está em uso.',
+                'email.required' => 'O email é obrigatório.',
+                'password.required' => 'A senha é obrigatória.',
+                'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
             ]);
 
             $paciente = new User();

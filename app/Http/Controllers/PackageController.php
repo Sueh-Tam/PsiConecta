@@ -46,7 +46,7 @@ class PackageController extends Controller
                 'patient_id' => 'required|integer|exists:users,id,type,patient',
                 'psychologist_id' => 'required|integer|exists:users,id,type,psychologist',
                 'total_appointments' => 'required|integer|min:1',
-                'payment_method' => 'required|in:pix,cash',
+                'payment_method' => 'required|in:pix,cash,health_plan',
             ], [
                 'patient_id.required' => 'O campo paciente é obrigatório.',
                 'patient_id.integer' => 'O campo paciente deve ser um número inteiro.',
@@ -58,7 +58,7 @@ class PackageController extends Controller
                 'total_appointments.integer' => 'O número total de consultas deve ser um número inteiro.',
                 'total_appointments.min' => 'O número total de consultas deve ser pelo menos 1.',
                 'payment_method.required' => 'O método de pagamento é obrigatório.',
-                'payment_method.in' => 'O método de pagamento selecionado não é válido. Escolha entre pix ou dinheiro.',
+                'payment_method.in' => 'O método de pagamento selecionado não é válido. Escolha entre pix, dinheiro ou plano de saúde.',
             ]);
 
             $psychologist = User::where('id', $validatedData['psychologist_id'])

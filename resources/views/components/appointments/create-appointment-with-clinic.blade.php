@@ -132,8 +132,8 @@
                 fetch(`/patient/api/psychologist/${this.value}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(this.value)
-                        console.log(data);
+                        // console.log(this.value)
+                        // console.log(data);
                         if (data.psychologist) {
                             availableDays = data.available_days;
                             availableTimes = data.available_times;
@@ -146,10 +146,12 @@
                             });
                             
                             daySelect.disabled = false;
-                            if (data.package && data.package.balance && appointmentsLeftSpan) {
+                            //if (data.package && data.package.balance ) {
+                                
+                                
                                 appointmentsLeftSpan.textContent = data.package.total_appointments - data.package.balance ;
                                 appointmentsLeftInfo.style.display = 'block';
-                            }
+                            //}
                         }
                     })
                     .catch(error => console.error('Erro:', error));

@@ -104,7 +104,7 @@
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             {{ \Carbon\Carbon::parse($item->dt_avaliability)->format('d/m/Y') }} - {{ $item->hr_avaliability }}
                             <span class="badge {{ $item->status === 'available' ? 'bg-success' : 'bg-secondary' }}">
-                                {{ ucfirst($item->status) }}
+                                {{ ucfirst($item->status) == "Available" ? 'Disponível' : 'Indisponível' }}
                             </span>
                             <form action="{{ route('psychologist.disponibility.delete', $item->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este horário?');">
                                 @csrf

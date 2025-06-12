@@ -22,7 +22,7 @@ class PsychologistController extends Controller
                 'status' => 'required|in:active,inactive',
             ]);
             $psychologist = new User();
-            $psychologist->id_clinic = Auth::user()->id;
+            $psychologist->id_clinic = Auth::user()->isClinic() ? Auth::user()->id : Auth::user()->id_clinic;
             $psychologist->name = $request->name;
             $psychologist->email = $request->email;
             $psychologist->password = bcrypt($request->password);

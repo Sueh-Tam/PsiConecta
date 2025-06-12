@@ -41,6 +41,7 @@
                         <select name="payment_method" class="form-select" required>
                             <option value="pix">Pix</option>
                             <option value="cash">Dinheiro</option>
+                            <option value="health_plan">Plano de Saúde</option>
                         </select>
                     </div>
                 </div>

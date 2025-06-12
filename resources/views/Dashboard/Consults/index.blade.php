@@ -190,11 +190,14 @@
                                 @endswitch
                             </td>
                             <td class="px-4 text-center">
-                                <button class="btn btn-sm btn-danger cancel-appointment" 
-                                    data-appointment-id="{{ $appointment->id }}" 
-                                    title="Cancelar consulta">
-                                    <i class="bi bi-x-circle"></i> Cancelar
-                                </button>
+                                @if ($appointment->status === 'scheduled')
+                                    <button class="btn btn-sm btn-danger cancel-appointment" 
+                                        data-appointment-id="{{ $appointment->id }}" 
+                                        title="Cancelar consulta">
+                                        <i class="bi bi-x-circle"></i> Cancelar
+                                    </button>
+                                @endif
+                                
                             </td>
                         </tr>
                         @empty

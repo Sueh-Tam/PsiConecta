@@ -137,7 +137,19 @@
                         </div>
                     </div>
                 @empty
-                    <label>Tem anda não</label>
+                    <div class="col-12">
+                        <div class="card h-100 shadow-sm text-center py-4">
+                            <div class="card-body">
+                                <i class="bi bi-building-x display-1 text-muted mb-3"></i>
+                                <h5 class="card-title">Nenhuma Clínica Cadastrada</h5>
+                                <p class="card-text text-muted">No momento não há clínicas parceiras cadastradas em nossa plataforma.</p>
+                                <p class="card-text">Seja a primeira clínica a fazer parte da nossa rede!</p>
+                                <a href="{{ Route('clinic.signup') }}" class="btn btn-primary">
+                                    <i class="bi bi-building-add"></i> Cadastrar Minha Clínica
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 @endforelse
             </div>
         </section>

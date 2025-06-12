@@ -29,8 +29,10 @@ class PatientController extends Controller
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
+        
         $appointments = $query
-        ->orderBy('dt_avaliability', 'asc')
+        
+        ->orderBy('dt_avaliability', 'desc')
         ->orderBy('hr_avaliability', 'asc')
         ->paginate(10);
         

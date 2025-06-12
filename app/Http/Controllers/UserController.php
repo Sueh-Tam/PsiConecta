@@ -28,11 +28,24 @@ class UserController extends Controller
             $validated = $request->validate([
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
+                'password' =>'required|min:6',
+                'document_type' =>'required|in:cpf',
+                'document_number' =>'required|min:14|max:14|cpf|unique:users,document_number',
+
             ], [
                 'name.required' => 'O campo nome é obrigatório.',
                 'email.required' => 'O campo e-mail é obrigatório.',
                 'email.email' => 'Por favor, informe um endereço de e-mail válido.',
                 'email.unique' => 'Este e-mail já está sendo utilizado por outro usuário.',
+                'password.required' => 'O campo senha é obrigatório.',
+                'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+                'document_type.required' => 'O campo tipo de documento é obrigatório.',
+                'document_type.in' => 'O tipo de documento deve ser CPF.',
+                'document_number.required' => 'O campo número do documento é obrigatório.',
+                'document_number.min' => 'O número do documento deve ter pelo menos 14 caracteres.',
+                'document_number.max' => 'O número do documento deve ter no máximo 14 caracteres.',
+                'document_number.cpf' => 'O número do documento deve ser um CPF válido.',
+                'document_number.unique' => 'Este número de documento já está sendo utilizado por outro usuário.',
             ]);
             
             if ($validated) {
@@ -60,7 +73,8 @@ class UserController extends Controller
         try {
             $credential = $request->validate([
                 'email' => 'required|email',
-                'password' => 'required|min:6'
+                'password' => 'required|min:6',
+                
             ], [
                 'email.required' => 'O campo e-mail é obrigatório.',
                 'email.email' => 'Por favor, informe um endereço de e-mail válido.',
@@ -68,6 +82,11 @@ class UserController extends Controller
                 'password.min' => 'A senha deve ter pelo menos 6 caracteres.'
             ]);
             $user = User::withTrashed()->where('email', $request->email)->first();
+            if (!$user) {
+                return back()->withErrors([
+                    'email' => 'As credenciais fornecidas não correspondem aos nossos registros.',
+                ])->onlyInput('email');
+            }
             if($user->isClinic() && $user->situation == 'invalid' || $user->status == 'inactive' || $user->situation == 'pending'){
                 return back()->withErrors([
                     'acesso_rejeitado' => 'Não é possível acessar pois o cadastro da clínica está inativo ou pendente.',

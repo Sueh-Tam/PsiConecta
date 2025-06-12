@@ -21,7 +21,7 @@ class AttendantController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
-                'document_number' => 'required|unique:users,document_number',
+                'document_number' => 'required|unique:users,document_number|cpf',
                 'status' => 'required|in:active,inactive',
             ], [
                 'name.required' => 'O campo nome é obrigatório.',
@@ -34,6 +34,7 @@ class AttendantController extends Controller
                 'document_number.unique' => 'Este número de documento já está sendo usado por outro usuário.',
                 'status.required' => 'O campo status é obrigatório.',
                 'status.in' => 'O status deve ser ativo ou inativo.',
+                'document_number.cpf' => 'O número de documento deve ser um CPF válido.'
             ]);
             $attendant = new User();
             $attendant->id_clinic = Auth::user()->id;

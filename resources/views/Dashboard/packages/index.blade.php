@@ -149,7 +149,20 @@
                                 R$ {{ number_format($package->price, 2, ',', '.') }}
                             </td>
                             <td class="px-4">
-                                {{ $package->payment_method=='pix' ? 'Pix': 'Dinheiro' }}
+                                @switch($package->payment_method)
+                                    @case('pix')
+                                            "Pix"
+                                        @break
+                                    @case('health_plan')
+                                            "Plano de Saúde"
+                                        @break
+                                    @case('cash')
+                                            "Dinheiro"
+                                        @break
+                                    @default
+                                        
+                                @endswitch
+                                {{-- {{ $package->payment_method=='pix' ? 'Pix': 'Dinheiro' }} --}}
                             </td>
                         </tr>
                         @empty

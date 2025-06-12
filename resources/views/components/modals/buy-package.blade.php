@@ -60,6 +60,10 @@
                                 <input class="form-check-input" type="radio" name="payment_method" id="payment_money" value="money">
                                 <label class="form-check-label" for="payment_money">Dinheiro</label>
                             </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_health_plan" value="health_plan">
+                                <label class="form-check-label" for="health_plan">Plano de Saúde</label>
+                            </div>
                         </div>
                     </div>
                 </div>

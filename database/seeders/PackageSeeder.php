@@ -44,7 +44,7 @@ class PackageSeeder extends Seeder
                     'total_appointments' => $totalAppointments,
                     'price' => $totalPrice,
                     'balance' => $totalBalance, // balance igual ao total_appointments
-                    'payment_method' => $faker->randomElement(['pix', 'cash']),
+                    'payment_method' => $faker->randomElement(['pix', 'cash','health_plan']),
                 ]);
             }
         }

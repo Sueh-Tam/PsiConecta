@@ -179,7 +179,7 @@
                     </div>
                     <div>
                         <h5 class="mb-0">{{ Auth::user()->name }}</h5>
-                        <small class="text-muted">{{ Auth::user()->type }}</small>
+                        <small class="text-muted">{{ Auth::user()->type == "psychologist" ? "Psicólogo" : 'N/D' }}</small>
                     </div>
                 </div>
             </div>

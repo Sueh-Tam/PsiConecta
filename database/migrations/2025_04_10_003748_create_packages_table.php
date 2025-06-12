@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('total_appointments');
             $table->decimal('price', 10, 2);
             $table->integer('balance')->nullable();
-            $table->enum('payment_method', ['pix', 'cash'])->nullable();
+            $table->enum('payment_method', ['pix', 'cash','health_plan'])->nullable();
             $table->timestamps();
             $table->softDeletes();
 
