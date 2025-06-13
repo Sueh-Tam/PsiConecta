@@ -68,7 +68,7 @@ Siga estes passos para configurar o projeto em seu ambiente local:
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/psiconecta.git
+   git clone https://github.com/Sueh-Tam/PsiConecta.git
    cd psiconecta
    ```
 
