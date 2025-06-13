@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('avaliabilities', function (Blueprint $table) {
+        Schema::table('availabilities', function (Blueprint $table) {
             $table->timestamps();
             $table->softDeletes();
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('avaliabilities', function (Blueprint $table) {
+        Schema::table('availabilities', function (Blueprint $table) {
             $table->dropSoftDeletes(); // Remove se precisar reverter
             $table->dropTimestamps(); // Remove se precisar reverter
         });

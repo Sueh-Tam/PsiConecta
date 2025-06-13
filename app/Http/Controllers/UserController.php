@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,6 +32,11 @@ class UserController extends Controller
                 'password' =>'required|min:6',
                 'document_type' =>'required|in:cpf',
                 'document_number' =>'required|min:14|max:14|cpf|unique:users,document_number',
+                'data_nascimento' => [
+                    'required',
+                    'date',
+                    'before:' . Carbon::today()->subYears(18)->toDateString(),
+                ]
 
             ], [
                 'name.required' => 'O campo nome é obrigatório.',
@@ -46,6 +52,9 @@ class UserController extends Controller
                 'document_number.max' => 'O número do documento deve ter no máximo 14 caracteres.',
                 'document_number.cpf' => 'O número do documento deve ser um CPF válido.',
                 'document_number.unique' => 'Este número de documento já está sendo utilizado por outro usuário.',
+                'data_nascimento.required' => 'O campo data de nascimento é obrigatório.',
+                'data_nascimento.date' => 'O campo data de nascimento deve ser uma data válida.',
+                'data_nascimento.before' => 'Você deve ter pelo menos 18 anos para se cadastrar.',
             ]);
             
             if ($validated) {

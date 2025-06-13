@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>PsiConecta - Conectando Você ao Bem-Estar</title>
+    <link rel="shortcut icon" type="imagex/png" href="./img/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
