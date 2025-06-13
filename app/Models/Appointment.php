@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Avaliability;
+use App\Models\Availability;
 use App\Models\Package;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -65,6 +65,6 @@ class Appointment extends Model
      */
     public function availability()
     {
-        return $this->hasOne(Avaliability::class, 'id_appointments');
+        return $this->hasOne(Availability::class, 'id_appointments');
     }
 }

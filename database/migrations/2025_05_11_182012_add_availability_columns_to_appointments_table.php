@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->dateTime('dt_avaliability')->nullable();
-            $table->string('hr_avaliability')->nullable();
+            $table->dateTime('dt_Availability')->nullable();
+            $table->string('hr_Availability')->nullable();
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->dropColumn(['dt_avaliability', 'hr_avaliability']);
+            $table->dropColumn(['dt_Availability', 'hr_Availability']);
         });
     }
 };

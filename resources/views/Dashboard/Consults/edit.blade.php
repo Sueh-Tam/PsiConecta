@@ -29,8 +29,8 @@ message="{{ session('message') }}"
                     </div>
                     <div class="col-md-6">
                         <h5 class="card-title mb-3">Detalhes da Consulta</h5>
-                        <p><strong>Data:</strong> {{ \Carbon\Carbon::parse($appointment->dt_avaliability)->format('d/m/Y') }}</p>
-                        <p><strong>Horário:</strong> {{ $appointment->hr_avaliability }}</p>
+                        <p><strong>Data:</strong> {{ \Carbon\Carbon::parse($appointment->dt_Availability)->format('d/m/Y') }}</p>
+                        <p><strong>Horário:</strong> {{ $appointment->hr_Availability }}</p>
                         <p><strong>Status:</strong> @switch($appointment['status'])
                             @case('completed')
                                 <span class="badge bg-success">Realizada</span>
@@ -78,8 +78,8 @@ message="{{ session('message') }}"
                                 
                                 @forelse($lastAppointments as $prev_appointment)
                                     <tr>
-                                        <td>{{ \Carbon\Carbon::parse($prev_appointment->dt_avaliability)->format('d/m/Y') }}</td>
-                                        <td>{{ $prev_appointment->hr_avaliability }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($prev_appointment->dt_Availability)->format('d/m/Y') }}</td>
+                                        <td>{{ $prev_appointment->hr_Availability }}</td>
                                         <td>
                                             @switch($prev_appointment->status)
                                                 @case('completed')
@@ -112,7 +112,7 @@ message="{{ session('message') }}"
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="recordModalLabel{{ $prev_appointment->id }}">Prontuário Médico - {{ \Carbon\Carbon::parse($prev_appointment->dt_avaliability)->format('d/m/Y') }}</h5>
+                                                                <h5 class="modal-title" id="recordModalLabel{{ $prev_appointment->id }}">Prontuário Médico - {{ \Carbon\Carbon::parse($prev_appointment->dt_Availability)->format('d/m/Y') }}</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                                                             </div>
                                                             <div class="modal-body">

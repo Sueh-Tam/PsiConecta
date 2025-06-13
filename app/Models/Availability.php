@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Avaliability extends Model
+class Availability extends Model
 {
     use SoftDeletes;
     protected $fillable = [
-        'id_psychologist', 'status', 'dt_avaliability', 'hr_avaliability'
+        'id_psychologist', 'status', 'dt_Availability', 'hr_Availability'
     ];
 
     /**

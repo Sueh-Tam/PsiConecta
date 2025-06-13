@@ -22,7 +22,7 @@ class PatientController extends Controller
         // Aplicar filtro de data
         //dd($request->date);
         if ($request->has('date') && $request->date) {            
-            $query->whereDate('dt_avaliability', $request->date);
+            $query->whereDate('dt_Availability', $request->date);
         }
 
         // Aplicar filtro de status
@@ -32,8 +32,8 @@ class PatientController extends Controller
         
         $appointments = $query
         
-        ->orderBy('dt_avaliability', 'desc')
-        ->orderBy('hr_avaliability', 'asc')
+        ->orderBy('dt_Availability', 'desc')
+        ->orderBy('hr_Availability', 'asc')
         ->paginate(10);
         
         $psychologists = Auth::user()->patientAppointments()
@@ -48,7 +48,7 @@ class PatientController extends Controller
             ->get();
         $stats = [
             'next_appointment' => $appointments->where('status', 'scheduled')
-                ->sortBy('hr_avaliability')
+                ->sortBy('hr_Availability')
                 ->first(),
             'completed_appointments' => $appointments->where('status', 'completed')
                 ->where('date', '>=', now()->subMonth())

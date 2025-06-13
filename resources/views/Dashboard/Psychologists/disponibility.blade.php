@@ -102,7 +102,7 @@
                 <ul class="list-group">
                     @foreach($diaDisponibilidades as $item)
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ \Carbon\Carbon::parse($item->dt_avaliability)->format('d/m/Y') }} - {{ $item->hr_avaliability }}
+                            {{ \Carbon\Carbon::parse($item->dt_Availability)->format('d/m/Y') }} - {{ $item->hr_Availability }}
                             <span class="badge {{ $item->status === 'available' ? 'bg-success' : 'bg-secondary' }}">
                                 {{ ucfirst($item->status) == "Available" ? 'Disponível' : 'Indisponível' }}
                             </span>

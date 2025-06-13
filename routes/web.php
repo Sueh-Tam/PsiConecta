@@ -2,14 +2,14 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Attendant\AttendantController;
-use App\Http\Controllers\AvaliabilityController;
+use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\Clinic\ClinicController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\Psychologist\PsychologistController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AppointmentController;
-use App\Models\Avaliability;
+use App\Models\Availability;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -85,9 +85,9 @@ Route::prefix('patient')->middleware('auth')->group(function () {
             $psychologist = \App\Models\User::find($activePackage->psychologist_id);
 
             // Buscar disponibilidades do psicólogo
-            $availabilities = \App\Models\Avaliability::where('id_psychologist', $psychologist->id)
+            $availabilities = \App\Models\Availability::where('id_psychologist', $psychologist->id)
                 ->where('status', 'available')
-                ->whereDate('dt_avaliability', '>=', now())
+                ->whereDate('dt_Availability', '>=', now())
                 ->get();
 
             // Organizar disponibilidades por dia da semana
@@ -95,7 +95,7 @@ Route::prefix('patient')->middleware('auth')->group(function () {
             $availableTimesByDay = [];
 
             foreach ($availabilities as $availability) {
-                $dayOfWeek = Carbon::parse($availability->dt_avaliability)->format('d/m/Y');
+                $dayOfWeek = Carbon::parse($availability->dt_Availability)->format('d/m/Y');
                 if (!in_array($dayOfWeek, $availableDays)) {
                     $availableDays[] = $dayOfWeek;
                 }
@@ -104,7 +104,7 @@ Route::prefix('patient')->middleware('auth')->group(function () {
                     $availableTimesByDay[$dayOfWeek] = [];
                 }
 
-                $availableTimesByDay[$dayOfWeek][] = $availability->hr_avaliability;
+                $availableTimesByDay[$dayOfWeek][] = $availability->hr_Availability;
             }
 
             return response()->json([
@@ -129,9 +129,9 @@ Route::prefix('patient')->middleware('auth')->group(function () {
         if ($activePackage) {
 
             // Buscar disponibilidades do psicólogo
-            $availabilities = \App\Models\Avaliability::where('id_psychologist', $psychologist->id)
+            $availabilities = \App\Models\Availability::where('id_psychologist', $psychologist->id)
                 ->where('status', 'available')
-                ->whereDate('dt_avaliability', '>=', now())
+                ->whereDate('dt_Availability', '>=', now())
                 ->get();
 
             // Organizar disponibilidades por dia da semana
@@ -139,7 +139,7 @@ Route::prefix('patient')->middleware('auth')->group(function () {
             $availableTimesByDay = [];
 
             foreach ($availabilities as $availability) {
-                $dayOfWeek = Carbon::parse($availability->dt_avaliability)->format('d/m/Y');
+                $dayOfWeek = Carbon::parse($availability->dt_Availability)->format('d/m/Y');
                 if (!in_array($dayOfWeek, $availableDays)) {
                     $availableDays[] = $dayOfWeek;
                 }
@@ -148,7 +148,7 @@ Route::prefix('patient')->middleware('auth')->group(function () {
                     $availableTimesByDay[$dayOfWeek] = [];
                 }
 
-                $availableTimesByDay[$dayOfWeek][] = $availability->hr_avaliability;
+                $availableTimesByDay[$dayOfWeek][] = $availability->hr_Availability;
             }
 
             return response()->json([
@@ -228,10 +228,10 @@ Route::prefix('psychologist')->middleware('auth')->group(function () {
     Route::get('profile',function(){
         return view('Dashboard.Psychologists.profile');
     })->name('psychologist.profile');
-    Route::get('disponibility', [AvaliabilityController::class, 'show'])->name('psychologist.disponibility');
-    Route::post('disponibility/store', [AvaliabilityController::class, 'store'])->name('psychologist.disponibility.store');
-    Route::delete('disponibility/delete/{id}', [AvaliabilityController::class, 'destroy'])->name('psychologist.disponibility.delete');
-    Route::post('/psychologist/availability/deactivate', [AvaliabilityController::class, 'deactivate'])->name('psychologist.availability.deactivate');
-    Route::post('/availability/restore', [AvaliabilityController::class, 'restore'])->name('psychologist.availability.restore');
+    Route::get('disponibility', [AvailabilityController::class, 'show'])->name('psychologist.disponibility');
+    Route::post('disponibility/store', [AvailabilityController::class, 'store'])->name('psychologist.disponibility.store');
+    Route::delete('disponibility/delete/{id}', [AvailabilityController::class, 'destroy'])->name('psychologist.disponibility.delete');
+    Route::post('/psychologist/availability/deactivate', [AvailabilityController::class, 'deactivate'])->name('psychologist.availability.deactivate');
+    Route::post('/availability/restore', [AvailabilityController::class, 'restore'])->name('psychologist.availability.restore');
 
 });

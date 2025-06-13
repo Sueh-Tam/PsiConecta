@@ -22,7 +22,7 @@ class AppointmentSeeder extends Seeder
         $packages = Package::all();
         
         // Para cada pacote, criar consultas baseadas no total_appointments
-        foreach ($packages as $package) {
+        foreach ($packages as $package) { 
             $patient = User::find($package->patient_id);
             $psychologist = User::find($package->psychologist_id);
             $clinic = User::find($psychologist->id_clinic);
@@ -59,8 +59,8 @@ class AppointmentSeeder extends Seeder
                     'status' => $status,
                     'medical_record' => $medicalRecord,
                     'payment_status' => 'paid', // Todas as consultas de pacotes são pagas
-                    'dt_avaliability' => Carbon::instance($appointmentDate)->format('Y-m-d'),
-                    'hr_avaliability' => $appointmentHour,
+                    'dt_Availability' => Carbon::instance($appointmentDate)->format('Y-m-d'),
+                    'hr_Availability' => $appointmentHour,
                 ]);
             }
         }

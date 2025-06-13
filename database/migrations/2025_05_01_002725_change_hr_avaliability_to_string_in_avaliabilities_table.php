@@ -13,22 +13,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('availabilities', function (Blueprint $table) {
-            $table->string('hr_avaliability_temp')->nullable()->after('hr_avaliability');
+            $table->string('hr_Availability_temp')->nullable()->after('hr_Availability');
         });
 
         // 2. Converter e copiar os dados
         DB::table('availabilities')->update([
-            'hr_avaliability_temp' => DB::raw("DATE_FORMAT(hr_avaliability, '%H:%i:%s')")
+            'hr_Availability_temp' => DB::raw("DATE_FORMAT(hr_Availability, '%H:%i:%s')")
         ]);
 
         // 3. Remover coluna original
         Schema::table('availabilities', function (Blueprint $table) {
-            $table->dropColumn('hr_avaliability');
+            $table->dropColumn('hr_Availability');
         });
 
         // 4. Renomear coluna temporária
         Schema::table('availabilities', function (Blueprint $table) {
-            $table->renameColumn('hr_avaliability_temp', 'hr_avaliability');
+            $table->renameColumn('hr_Availability_temp', 'hr_Availability');
         });
     }
 
@@ -37,25 +37,25 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (!Schema::hasColumn('availabilities', 'hr_avaliability_temp')) {
+        if (!Schema::hasColumn('availabilities', 'hr_Availability_temp')) {
             Schema::table('availabilities', function (Blueprint $table) {
-                $table->datetime('hr_avaliability_temp')->nullable()->after('hr_avaliability');
+                $table->datetime('hr_Availability_temp')->nullable()->after('hr_Availability');
             });
         }
 
         // 2. Converter e copiar os dados de volta
         DB::table('availabilities')->update([
-            'hr_avaliability_temp' => DB::raw("CONCAT('2023-01-01 ', SUBSTRING_INDEX(hr_avaliability, '-', 1), ':00')")
+            'hr_Availability_temp' => DB::raw("CONCAT('2023-01-01 ', SUBSTRING_INDEX(hr_Availability, '-', 1), ':00')")
         ]);
 
         // 3. Remover coluna string
         Schema::table('availabilities', function (Blueprint $table) {
-            $table->dropColumn('hr_avaliability');
+            $table->dropColumn('hr_Availability');
         });
 
         // 4. Renomear coluna temporária
         Schema::table('availabilities', function (Blueprint $table) {
-            $table->renameColumn('hr_avaliability_temp', 'hr_avaliability');
+            $table->renameColumn('hr_Availability_temp', 'hr_Availability');
         });
     }
 };

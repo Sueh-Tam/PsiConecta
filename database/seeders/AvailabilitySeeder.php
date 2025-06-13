@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Avaliability;
-use App\Models\User;
+use App\Models\Availability;
+use App\Models\User; 
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
-class AvaliabilitySeeder extends Seeder
+class AvailabilitySeeder extends Seeder
 {
     /**
      * Executa o seeder para criar disponibilidades.
@@ -44,10 +44,10 @@ class AvaliabilitySeeder extends Seeder
                 foreach ($psychologists as $psychologist) {
                     // Para cada horário disponível
                     foreach ($availableHours as $hour) {
-                        Avaliability::create([
+                        Availability::create([
                             'id_psychologist' => $psychologist->id,
-                            'dt_avaliability' => $currentDate->format('Y-m-d'),
-                            'hr_avaliability' => $hour,
+                            'dt_Availability' => $currentDate->format('Y-m-d'),
+                            'hr_Availability' => $hour,
                             'status' => 'available'
                         ]);
                     }

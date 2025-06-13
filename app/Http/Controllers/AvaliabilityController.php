@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Avaliability;
+use App\Models\Availability;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AvaliabilityController extends Controller
+class AvailabilityController extends Controller
 {
 
     private const diasSemanaMap = [
@@ -64,16 +64,16 @@ class AvaliabilityController extends Controller
         $datasHorarios = $this->getDayBetweenDates($dayOfWeek, $dataInicio, $dataFim, $startTimes, $endTimes);
 
         foreach ($datasHorarios as $item) {
-            $exists = Avaliability::where('id_psychologist', $psychologistId)
-                ->where('dt_avaliability', $item['dt_avaliability'])
-                ->where('hr_avaliability', $item['hr_avaliability'])
+            $exists = Availability::where('id_psychologist', $psychologistId)
+                ->where('dt_Availability', $item['dt_Availability'])
+                ->where('hr_Availability', $item['hr_Availability'])
                 ->exists();
 
             if (!$exists) {
-                Avaliability::create([
+                Availability::create([
                     'id_psychologist' => $psychologistId,
-                    'dt_avaliability' => $item['dt_avaliability'],
-                    'hr_avaliability' => $item['hr_avaliability'],
+                    'dt_Availability' => $item['dt_Availability'],
+                    'hr_Availability' => $item['hr_Availability'],
                 ]);
             }
 
@@ -107,8 +107,8 @@ class AvaliabilityController extends Controller
 
                     $horario = $startTime . '-' . $endTime;
                     $datas[] = [
-                        'dt_avaliability' => $date->toDateString(),
-                        'hr_avaliability' => $horario
+                        'dt_Availability' => $date->toDateString(),
+                        'hr_Availability' => $horario
                     ];
                 }
             }
@@ -119,56 +119,56 @@ class AvaliabilityController extends Controller
 
     public function getDisponibility()
     {
-        $disponibilidade = Avaliability::where('id_psychologist', Auth::user()->id)
-            ->orderBy('dt_avaliability')
-            ->orderBy('hr_avaliability')
+        $disponibilidade = Availability::where('id_psychologist', Auth::user()->id)
+            ->orderBy('dt_Availability')
+            ->orderBy('hr_Availability')
             ->get();
 
         return view('Dashboard.Psychologists.disponibility', [
             'disponibilidade' => $disponibilidade,
-            'timeBlocks' => Avaliability::TIME_BLOCKS
+            'timeBlocks' => Availability::TIME_BLOCKS
         ]);
     }
 
 
-    public function show(Avaliability $avaliability)
+    public function show(Availability $Availability)
     {
         $user = Auth::user(); // psicólogo autenticado
 
         $now = Carbon::now();
-    $availabilities = Avaliability::where('id_psychologist', $user->id)
+    $availabilities = Availability::where('id_psychologist', $user->id)
         ->whereNull('deleted_at')
-        ->where('dt_avaliability', '>=', $now)
-        ->orderBy('dt_avaliability')
+        ->where('dt_Availability', '>=', $now)
+        ->orderBy('dt_Availability')
         ->get()
         ->groupBy(function ($item) {
-            return Carbon::parse($item->dt_avaliability)->locale('pt_BR')->dayName;
+            return Carbon::parse($item->dt_Availability)->locale('pt_BR')->dayName;
         });
 
         return view('Dashboard.Psychologists.disponibility', [
             'groupedAvailabilities' => $availabilities,
-            'timeBlocks' => Avaliability::TIME_BLOCKS
+            'timeBlocks' => Availability::TIME_BLOCKS
         ]);
     }
 
 
-    public function edit(Avaliability $avaliability)
+    public function edit(Availability $Availability)
     {
     }
 
 
-    public function update(Request $request, Avaliability $avaliability)
+    public function update(Request $request, Availability $Availability)
     {
     }
 
 
     public function destroy($id)
 {
-        $avaliability = Avaliability::where('id', $id)
+        $Availability = Availability::where('id', $id)
             ->where('id_psychologist', Auth::id())
             ->firstOrFail();
 
-        $avaliability->delete();
+        $Availability->delete();
 
         return redirect()->back()
             ->with('success_message', 'Horário excluído com sucesso!');
@@ -195,19 +195,19 @@ class AvaliabilityController extends Controller
             'dia_semana.max' => 'O dia da semana deve ser entre 0 (domingo) e 6 (sábado).'
         ]);
 
-        $query = Avaliability::where('id_psychologist', Auth::id())
-            ->whereBetween('dt_avaliability', [
+        $query = Availability::where('id_psychologist', Auth::id())
+            ->whereBetween('dt_Availability', [
                 Carbon::parse($request->data_inicio)->startOfDay(),
                 Carbon::parse($request->data_fim)->endOfDay()
             ])
             ->whereNull('deleted_at');
 
         if ($request->filled('dia_semana')) {
-            $query->whereRaw('WEEKDAY(dt_avaliability) = ?', [(int) $request->dia_semana - 1]);
+            $query->whereRaw('WEEKDAY(dt_Availability) = ?', [(int) $request->dia_semana - 1]);
         }
 
         if ($request->filled('hora_inicio') && $request->filled('hora_fim')) {
-            $query->whereBetween('hr_avaliability', [$request->hora_inicio, $request->hora_fim]);
+            $query->whereBetween('hr_Availability', [$request->hora_inicio, $request->hora_fim]);
         }
 
         $horariosAfetados = $query->count();
@@ -242,16 +242,16 @@ class AvaliabilityController extends Controller
 
         $userId = Auth::id();
 
-        $query = Avaliability::onlyTrashed() // <-- recupera apenas os que foram soft deleted
+        $query = Availability::onlyTrashed() // <-- recupera apenas os que foram soft deleted
             ->where('id_psychologist', $userId)
-            ->whereBetween('dt_avaliability', [$request->data_inicio, $request->data_fim]);
+            ->whereBetween('dt_Availability', [$request->data_inicio, $request->data_fim]);
 
         if ($request->filled('dia_semana')) {
-            $query->whereRaw('WEEKDAY(dt_avaliability) = ?', [$request->dia_semana == 0 ? 6 : $request->dia_semana - 1]);
+            $query->whereRaw('WEEKDAY(dt_Availability) = ?', [$request->dia_semana == 0 ? 6 : $request->dia_semana - 1]);
         }
 
         if ($request->filled('hora_inicio') && $request->filled('hora_fim')) {
-            $query->whereBetween('hr_avaliability', [$request->hora_inicio, $request->hora_fim]);
+            $query->whereBetween('hr_Availability', [$request->hora_inicio, $request->hora_fim]);
         }
 
         $restauradas = $query->restore();

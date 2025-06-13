@@ -63,7 +63,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             @if($stats['next_appointment'])
-                                <h5 class="mb-0">{{ \Carbon\Carbon::parse($stats['next_appointment']['dt_avaliability'])->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($stats['next_appointment']['hr_avaliability'])->format('H:i') }}</h5>
+                                <h5 class="mb-0">{{ \Carbon\Carbon::parse($stats['next_appointment']['dt_Availability'])->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($stats['next_appointment']['hr_Availability'])->format('H:i') }}</h5>
                                 <small class="text-muted">{{ $stats['next_appointment']['psychologist']['name'] }}</small>
                             @else
                                 <h5 class="mb-0">Nenhuma consulta agendada</h5>
@@ -154,7 +154,7 @@
                             <td class="px-4">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-calendar-event text-primary me-2"></i>
-                                    {{  \Carbon\Carbon::parse($appointment->dt_avaliability)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($appointment->hr_avaliability)->format('H:i') }}
+                                    {{  \Carbon\Carbon::parse($appointment->dt_Availability)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($appointment->hr_Availability)->format('H:i') }}
                                 </div>
                             </td>
                             <td class="px-4">

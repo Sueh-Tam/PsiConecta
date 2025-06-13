@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
-use App\Models\Avaliability;
+use App\Models\Availability;
 use App\Models\Package;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -44,9 +44,9 @@ class AppointmentController extends Controller
             $dataFormatada = Carbon::createFromFormat('d/m/Y', $request->day_of_week)->startOfDay()->toDateTimeString();            // Calcula a data usando o Carbon baseado no dia da semana
 
             // Verifica disponibilidade do psicólogo
-            $availability = Avaliability::where('id_psychologist', $request->psychologist_id)
-                        ->where('dt_avaliability', $dataFormatada)
-                        ->where('hr_avaliability', $request->time)
+            $availability = Availability::where('id_psychologist', $request->psychologist_id)
+                        ->where('dt_Availability', $dataFormatada)
+                        ->where('hr_Availability', $request->time)
                         ->where('status', 'available')
                         ->first();  
 
@@ -94,8 +94,8 @@ class AppointmentController extends Controller
             $appointment->psychologist_id = $request->psychologist_id;
             $appointment->package_id = $package->id;
             $appointment->payment_status = 'paid';
-            $appointment->dt_avaliability = $availability->dt_avaliability;
-            $appointment->hr_avaliability = $availability->hr_avaliability;
+            $appointment->dt_Availability = $availability->dt_Availability;
+            $appointment->hr_Availability = $availability->hr_Availability;
             $appointment->status = 'scheduled';
             $appointment->save();
 
@@ -128,7 +128,7 @@ class AppointmentController extends Controller
             ->where('status', 'completed')
             ->where('psychologist_id', $appointment->psychologist_id)
             ->where('clinic_id', $appointment->clinic_id)
-            ->where('dt_avaliability', '<=', $appointment->dt_avaliability)
+            ->where('dt_Availability', '<=', $appointment->dt_Availability)
             ->get();
 
             return view('Dashboard.Consults.edit', compact('appointment','lastAppointments'));
@@ -176,7 +176,7 @@ class AppointmentController extends Controller
             $appointment->save();
 
             // Busca e atualiza a disponibilidade relacionada
-            $availability = Avaliability::where('id_appointments', $appointment->id)
+            $availability = Availability::where('id_appointments', $appointment->id)
                                     ->first();
             
             if ($availability) {
@@ -201,7 +201,7 @@ class AppointmentController extends Controller
                 $package->balance--;
                 $package->save();
             }
-            $availability = Avaliability::where('id_appointments', $appointment->id)->first();
+            $availability = Availability::where('id_appointments', $appointment->id)->first();
 
             if ($availability) {
                 $availability->status = 'available';
@@ -218,7 +218,7 @@ class AppointmentController extends Controller
 
     public function cancellByPatient(Appointment $appointment){
         try {
-            $appointmentDateTime = Carbon::parse($appointment->dt_avaliability)->setTimeFromTimeString($appointment->hr_avaliability);          
+            $appointmentDateTime = Carbon::parse($appointment->dt_Availability)->setTimeFromTimeString($appointment->hr_Availability);          
             $now = Carbon::now();
             $hrLessToConult = $now->diffInHours($appointmentDateTime, false);
             
@@ -235,7 +235,7 @@ class AppointmentController extends Controller
             
             $appointment->save();
             
-            $availability = Avaliability::where('id_appointments', $appointment->id)->first();
+            $availability = Availability::where('id_appointments', $appointment->id)->first();
 
             if ($availability) {
                 $availability->status = 'available';

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_psychologist');
             $table->unsignedBigInteger('id_appointments')->nullable();
             $table->enum('status', ['available', 'unvailable']);
-            $table->dateTime('dt_avaliability');
-            $table->dateTime('hr_avaliability');
+            $table->dateTime('dt_Availability');
+            $table->dateTime('hr_Availability');
 
             $table->foreign('id_psychologist')->references('id')->on('users');
             $table->foreign('id_appointments')->references('id')->on('appointments');

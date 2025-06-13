@@ -13,7 +13,7 @@ class ClinicPatientSeeder extends Seeder
      * Vincula pacientes a clínicas aleatoriamente para demonstração.
      */
     public function run(): void
-    {
+    { 
         // Obter todas as clínicas e pacientes
         $clinics = User::where('type', 'clinic')->get();
         $patients = User::where('type', 'patient')->get();

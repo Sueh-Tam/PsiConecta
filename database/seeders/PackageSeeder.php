@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Package;
 use App\Models\User;
+use App\Models\ClinicPatient;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 
@@ -36,6 +37,22 @@ class PackageSeeder extends Seeder
                 
                 // Calcular o preço total baseado no preço de consulta do psicólogo
                 $totalPrice = $psychologist->appointment_price * $totalAppointments;
+                
+                // Garantir que o paciente está vinculado à clínica do psicólogo
+                $clinicId = $psychologist->id_clinic;
+                
+                // Verificar se já existe vínculo entre paciente e clínica
+                $exists = ClinicPatient::where('id_clinic', $clinicId)
+                    ->where('id_patient', $patient->id)
+                    ->exists();
+                
+                // Se não existir vínculo, criar
+                if (!$exists) {
+                    ClinicPatient::create([
+                        'id_clinic' => $clinicId,
+                        'id_patient' => $patient->id
+                    ]);
+                }
                 
                 // Criar o pacote com balance igual ao total_appointments
                 Package::create([

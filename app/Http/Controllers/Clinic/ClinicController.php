@@ -46,15 +46,15 @@ class ClinicController extends Controller
         }
 
         if (request()->has('date') && request('date')) {
-            $query->whereDate('dt_avaliability', request('date'));
+            $query->whereDate('dt_Availability', request('date'));
         }
 
         if (request()->has('status') && request('status')) {
             $query->where('status', request('status'));
         }
         $appointments = $query
-            ->orderBy('dt_avaliability', 'desc')
-            ->orderBy('hr_avaliability', 'asc')
+            ->orderBy('dt_Availability', 'desc')
+            ->orderBy('hr_Availability', 'asc')
             ->paginate(10)
             ->through(function($appointment) {
                 $psychologist = $appointment->psychologist;
@@ -62,8 +62,8 @@ class ClinicController extends Controller
                 
                 return [
                     'id' => $appointment->id,
-                    'date' => $appointment->dt_avaliability,
-                    'start_time' => $appointment->hr_avaliability,
+                    'date' => $appointment->dt_Availability,
+                    'start_time' => $appointment->hr_Availability,
                     'psychologist' => [
                         'name' => $psychologist->name,
                         'initials' => strtoupper(substr($psychologist->name, 0, 2))

@@ -223,7 +223,7 @@ class User extends Authenticatable
      */
     public function availabilities()
     {
-        return $this->hasMany(Avaliability::class, 'id_psychologist');
+        return $this->hasMany(Availability::class, 'id_psychologist');
     }
 
     /**

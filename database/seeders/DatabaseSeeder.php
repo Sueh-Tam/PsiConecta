@@ -88,14 +88,14 @@ class DatabaseSeeder extends Seeder
                 'type' => 'patient',
                 'situation' => 'valid',
                 'status' => 'active',
-            ]);
+            ]); 
         }
         
         // Executar o seeder para vincular pacientes a clínicas
         $this->call(ClinicPatientSeeder::class);
 
         // Executar o seeder para criar disponibilidades
-        $this->call(AvaliabilitySeeder::class);
+        $this->call(AvailabilitySeeder::class);
         
         // Executar o seeder para criar pacotes
         $this->call(PackageSeeder::class);
