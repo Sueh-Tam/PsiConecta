@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('document_type', ['cpf', 'cnpj', 'rg']);
             $table->string('document_number')->unique();
+            $table->date('birth_date')->nullable(true);
             $table->float('appointment_price')->nullable();
             $table->enum('type', ['admin', 'clinic', 'psychologist', 'patient', 'attendant']);
             $table->enum('situation', ['valid', 'invalid', 'pending'])->nullable();

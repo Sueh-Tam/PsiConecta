@@ -33,9 +33,10 @@ class ClinicController extends Controller
                 return $patient;
             });
         $query = \App\Models\Appointment::with(['psychologist', 'patient'])
-            ->whereHas('psychologist', function($q) use ($clinicId) {
-                $q->where('clinic_id', $clinicId);
-            });
+        ->whereHas('psychologist', function($q) use ($clinicId) {
+            $q->where('id_clinic', $clinicId);
+        });
+        
 
         if (request()->has('patient') && request('patient')) {
             $query->where('patient_id', request('patient'));
@@ -52,6 +53,15 @@ class ClinicController extends Controller
         if (request()->has('status') && request('status')) {
             $query->where('status', request('status'));
         }
+        $allAppointments = $query
+        ->orderBy('dt_Availability', 'desc')
+        ->orderBy('hr_Availability', 'asc')
+        ->get();
+
+        // dd($allAppointments->where('status', 'completed')
+        // ->where('date', '>=', now()->subMonth())
+        // ->count());
+
         $appointments = $query
             ->orderBy('dt_Availability', 'desc')
             ->orderBy('hr_Availability', 'asc')
@@ -73,16 +83,14 @@ class ClinicController extends Controller
                         'initials' => strtoupper(substr($patient->name, 0, 2))
                     ],
                     'status' => $appointment->status,
-                    'can_be_completed' => $appointment->status === 'scheduled',
-                    'can_be_cancelled' => $appointment->status === 'scheduled',
-                    'can_be_cancelled_early' => $appointment->status === 'scheduled'
                 ];
             });
+        
         $stats = [
             'next_appointment' => $appointments->where('status', 'scheduled')
                 ->sortBy('date')
                 ->first(),
-            'completed_appointments' => $appointments->where('status', 'completed')
+            'completed_appointments' => $allAppointments->where('status', 'completed')
                 ->where('date', '>=', now()->subMonth())
                 ->count(),
             'pending_appointments' => $appointments->where('status', 'scheduled')->count()

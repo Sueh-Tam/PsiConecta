@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClinicPatient;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -71,7 +72,7 @@ class PatientController extends Controller
                 'password' => 'required|min:6',
                 'document_type' => 'required|in:cpf,rg',
                 'document_number' => 'required|unique:users,document_number',
-                'data_nascimento' => 'required|date|before_or_equal:'.now()->subYears(18)->format('Y-m-d')
+                'birth_date' => 'required|date|before_or_equal:'.now()->subYears(18)->format('Y-m-d')
 
             ],
             [
@@ -84,28 +85,39 @@ class PatientController extends Controller
                 'document_type.required' => 'O tipo de documento é obrigatório',
                 'document_number.required' => 'O número do documento é obrigatório',
                 'document_number.unique' => 'Este número de documento já está em uso',
-                'data_nascimento.required' => 'A data de nascimento é obrigatória',
-                'data_nascimento.date' => 'Digite uma data válida',
-                'data_nascimento.before_or_equal' => 'Você deve ter pelo menos 18 anos'
+                'birth_date.required' => 'A data de nascimento é obrigatória',
+                'birth_date.date' => 'Digite uma data válida',
+                'birth_date.before_or_equal' => 'Você deve ter pelo menos 18 anos'
             ]);
 
 
             $paciente = new User();
-            if(Auth::check() && Auth::user()->isAttendant()){
-                $paciente->id_clinic = Auth::user()->id_clinic;
-            }
             $paciente->name = $request->name;
             $paciente->email = $request->email;
             $paciente->password = bcrypt($request->password);
+            $paciente->birth_date = $request->birth_date;
             $paciente->document_type = strtolower($request->document_type);
             $paciente->document_number = preg_replace('/[^0-9]/', '',$request->document_number);
             $paciente->type = 'patient';
             $paciente->status = 'active';
             $paciente->save();
+            $clinicPaciente = new ClinicPatient();
+
+            if(Auth::check() && Auth::user()->isAttendant()){
+                $clinicPaciente->id_clinic = Auth::user()->id_clinic;
+                $paciente->id_clinic = Auth::user()->id_clinic;
+                $clinicPaciente->id_patient = $paciente->id;
+                return redirect()->back()
+                ->with('show_success_modal', true)
+                    ->with('success_message', 'Paciente cadastrado com sucesso!');
+            }
+
             return redirect()->back()
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Paciente cadastrado com sucesso!')
                 ->with('success_redirect', route('home'));
+
+            
         } catch (\Throwable $th) {
             return redirect()->back()
                 ->withErrors($th->getMessage())
@@ -122,6 +134,11 @@ class PatientController extends Controller
             'email' => 'required|email',
             'document_number' => 'required|unique:users,document_number',
             'password' => 'nullable|min:6|confirmed',
+            'birth_date' => [
+                'required',
+                'date',
+                'before:' . Carbon::today()->subYears(18)->toDateString(),
+            ]
         ], [
             'name.required' => 'O campo nome é obrigatório.',
             'email.required' => 'O campo email é obrigatório.',
@@ -130,6 +147,9 @@ class PatientController extends Controller
             'document_number.unique' => 'Este número de documento já está sendo usado.',
             'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
             'password.confirmed' => 'A confirmação da senha não corresponde.',
+            'birth_date.required' => 'O campo data de nascimento é obrigatório.',
+            'birth_date.date' => 'O campo data de nascimento deve ser uma data válida.',
+            'birth_date.before' => 'Você deve ter pelo menos 18 anos.',
         ]);
         $paciente = User::find(Auth::user()->id);
 
@@ -137,6 +157,7 @@ class PatientController extends Controller
             $paciente->name = $request->name;
             $paciente->email = $request->email;
             $paciente->document_number = preg_replace('/[^0-9]/', '',$request->document_number);
+            $paciente->birth_date = $request->birth_date;
             $paciente->save();
             return redirect()->back()
                 ->with('show_success_modal', true)

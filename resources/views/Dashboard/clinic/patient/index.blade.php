@@ -35,7 +35,7 @@
                 <div class="col-auto">
                     <form method="GET" action="{{ Route('clinic.patient.index') }}" id="searchForm">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="searchPatient" name="searchPatient" placeholder="Buscar paciente...">
+                            <input type="text" class="form-control" id="searchPatient" name="searchPatient" placeholder="Buscar paciente pelo CPF">
                             <button type="submit" class="input-group-text bg-primary text-white border-0" style="cursor: pointer;">
                                 <i class="bi bi-search"></i>
                             </button>

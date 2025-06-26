@@ -32,7 +32,7 @@
 
                     <div class="mb-3">
                         <label for="document_number" class="form-label">CPF/Documento</label>
-                        <input name="document_number" type="text" class="form-control" value="{{ old('document_number', $attendant->formartDocumentCPF($attendant->document_number)) }}" minlength="14" maxlength="14" required>
+                        <input name="document_number" id="document_number" type="text" class="form-control" value="{{ old('document_number', $attendant->formartDocumentCPF($attendant->document_number)) }}" minlength="14" maxlength="14" required>
                         @error('document_number') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
 
@@ -54,3 +54,18 @@
         </div>
     </div>
 </div>
+<script>
+    documentoInput = document.getElementById('document_number');
+    
+
+    documentoInput.addEventListener('input', () => {
+        let value = documentoInput.value.replace(/\D/g, '');
+        
+            if (value.length > 11) value = value.slice(0, 11);
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        
+        documentoInput.value = value;
+    });
+</script>

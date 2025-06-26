@@ -25,6 +25,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        
         try {
             $validated = $request->validate([
                 'name' => 'required',
@@ -32,7 +33,7 @@ class UserController extends Controller
                 'password' =>'required|min:6',
                 'document_type' =>'required|in:cpf',
                 'document_number' =>'required|min:14|max:14|cpf|unique:users,document_number',
-                'data_nascimento' => [
+                'birth_date' => [
                     'required',
                     'date',
                     'before:' . Carbon::today()->subYears(18)->toDateString(),
@@ -52,9 +53,9 @@ class UserController extends Controller
                 'document_number.max' => 'O número do documento deve ter no máximo 14 caracteres.',
                 'document_number.cpf' => 'O número do documento deve ser um CPF válido.',
                 'document_number.unique' => 'Este número de documento já está sendo utilizado por outro usuário.',
-                'data_nascimento.required' => 'O campo data de nascimento é obrigatório.',
-                'data_nascimento.date' => 'O campo data de nascimento deve ser uma data válida.',
-                'data_nascimento.before' => 'Você deve ter pelo menos 18 anos para se cadastrar.',
+                'birth_date.required' => 'O campo data de nascimento é obrigatório.',
+                'birth_date.date' => 'O campo data de nascimento deve ser uma data válida.',
+                'birth_date.before' => 'Você deve ter pelo menos 18 anos para se cadastrar.',
             ]);
             
             if ($validated) {
@@ -65,6 +66,7 @@ class UserController extends Controller
             $paciente = new User();
             $paciente->name = $request->name;
             $paciente->email = $request->email;
+            $paciente->birth_date = $request->birth_date;
             $paciente->password = bcrypt($request->password);
             $paciente->document_type = $request->document_type;
             $paciente->document_number = $request->document_number;

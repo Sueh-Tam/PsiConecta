@@ -21,8 +21,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="data_nascimento" class="form-label">Data de nascimento</label>
-            <input type="date" name="data_nascimento" id="data_nascimento" class="form-control" required>
+            <label for="birth_date" class="form-label">Data de nascimento</label>
+            <input type="date" name="birth_date" id="birth_date" class="form-control" required>
         </div>
 
         <div class="mb-4">

@@ -42,8 +42,8 @@
             <small id="erro-valor" class="text-danger d-none">Valor inválido. Digite o valor no formato R$ 0,00.</small>
         </div>
         <div class="mb-3">
-            <label for="data_nascimento" class="form-label">Data de Nascimento</label>
-            <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="1990-01-01">
+            <label for="birth_date" class="form-label">Data de Nascimento</label>
+            <input type="date" class="form-control" id="birth_date" name="birth_date" value="1990-01-01">
         </div>
 
         <div class="mb-3">

@@ -1,21 +1,23 @@
 @extends('layouts.Clinic.dashboard')
 
-@section('title', 'Minhas Consultas')
+@section('title', 'Consultas')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <p class="text-muted mb-0">Gerencie seus agendamentos</p>
-        </div>
-        <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#agendarModal">
-            <i class="bi bi-calendar-plus me-2"></i>
-            Agendar Consulta
-        </button>
-    </div> 
+    @if (!Auth::user()->isClinic())
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <p class="text-muted mb-0">Gerencie seus agendamentos</p>
+            </div>
+            <button class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#agendarModal">
+                <i class="bi bi-calendar-plus me-2"></i>
+                Agendar Consulta
+            </button>
+        </div> 
+    @endif
 
     <div class="row mb-4">
         <div class="col-md-4">

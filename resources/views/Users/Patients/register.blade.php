@@ -110,8 +110,8 @@
 
                             <!-- Data de Nascimento -->
                             <div class="mb-3">
-                                <label for="data_nascimento" class="form-label">Data de nascimento</label>
-                                <input type="date" name="data_nascimento" id="data_nascimento" class="form-control" value="{{ old('data_nascimento') }}" required>
+                                <label for="birth_date" class="form-label">Data de nascimento</label>
+                                <input type="date" name="birth_date" id="birth_date" class="form-control" value="{{ old('birth_date') }}" required>
                             </div>
 
                             <!-- Senha -->

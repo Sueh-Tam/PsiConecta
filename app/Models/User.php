@@ -135,7 +135,7 @@ class User extends Authenticatable
         $crp = preg_replace('/[^0-9]/', '', $documentNumber);
 
         // Verifica se tem 8 dígitos (formato completo)
-        if (strlen($crp) !== 8) {
+        if (strlen($crp) !== 7) {
             return $crp;
         }
 
