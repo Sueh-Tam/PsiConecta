@@ -62,7 +62,7 @@ class AppointmentController extends Controller
             // Busca o pacote ativo do paciente
             $package = Package::where('patient_id', $request->patient_id)
                             ->where('psychologist_id', $request->psychologist_id)
-                            ->whereRaw('total_appointments > balance')
+                            ->whereRaw('balance > 0')
                             ->orderBy('created_at', 'asc') // Ordena por id em ordem decrescente para obter o mais recente
                             ->first();
 
@@ -76,7 +76,7 @@ class AppointmentController extends Controller
             }
 
             // Verifica se o pacote tem saldo disponível
-            if ($package->balance + 1 > $package->total_appointments) {
+            if (($package->balance - 1) <= 0) {
                 if ($request->ajax()) {
                     return response()->json(['message' => 'É necessário renovar o pacote para agendar mais consultas'], 422);
                 }
@@ -123,7 +123,7 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment)
     {
-        if($appointment->status = 'scheduled' || $appointment->status = 'completed'){
+        if($appointment->status == 'scheduled' || $appointment->status == 'completed'){
             $lastAppointments = Appointment::where('patient_id', $appointment->patient_id)
             ->where('status', 'completed')
             ->where('psychologist_id', $appointment->psychologist_id)

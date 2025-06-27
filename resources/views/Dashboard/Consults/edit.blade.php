@@ -20,7 +20,7 @@ message="{{ session('message') }}"
             <form action="{{ route('appointments.update', $appointment) }}" method="POST">
                 @csrf
                 @method('PUT')
-
+                
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <h5 class="card-title mb-3">Informações do Paciente</h5>

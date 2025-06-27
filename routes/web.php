@@ -122,7 +122,7 @@ Route::prefix('patient')->middleware('auth')->group(function () {
 
         $activePackage = $patient->activePackage()
             ->where('psychologist_id', $psychologist->id)
-            ->where('total_appointments','>','balance')
+            ->where('balance','!=','0')
             ->orderBy('created_at', 'desc')
             ->first();
 

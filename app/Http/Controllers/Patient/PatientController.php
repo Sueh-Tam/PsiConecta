@@ -43,7 +43,7 @@ class PatientController extends Controller
             ->get()
             ->pluck('psychologist');
 
-        $packages = Auth::user()->patientPackages()->whereRaw('balance != 0')
+        $packages = Auth::user()->patientPackages()->whereRaw('balance > 0')
             ->orderBy('created_at', 'desc')
             ->get();
         $stats = [

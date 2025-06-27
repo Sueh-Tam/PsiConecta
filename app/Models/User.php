@@ -181,7 +181,7 @@ class User extends Authenticatable
     public function activePackage()
     {
         return $this->patientPackages()
-            ->whereRaw('balance < total_appointments')
+            ->whereRaw('balance > 0')
             ->latest()
             ->first();
     }
