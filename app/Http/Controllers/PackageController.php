@@ -110,7 +110,7 @@ class PackageController extends Controller
                 'psychologist_id' => $validatedData['psychologist_id'],
                 'total_appointments' => $validatedData['total_appointments'],
                 'price' => $totalPrice,
-                'balance' => 0,
+                'balance' => $validatedData['total_appointments'],
                 'payment_method' => $validatedData['payment_method'],
             ]);
             return redirect()->back()

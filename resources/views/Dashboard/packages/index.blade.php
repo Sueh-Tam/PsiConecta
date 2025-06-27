@@ -143,7 +143,7 @@
                                 {{ $package->total_appointments }}
                             </td>
                             <td class="px-4">
-                                {{ $package->total_appointments-$package->balance }}
+                                {{ $package->balance }}
                             </td>
                             <td class="px-4">
                                 R$ {{ number_format($package->price, 2, ',', '.') }}
