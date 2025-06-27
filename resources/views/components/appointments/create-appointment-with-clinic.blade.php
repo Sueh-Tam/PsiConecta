@@ -121,13 +121,13 @@
                 const selectedOption = this.options[this.selectedIndex];
                 const appointmentsLeft = selectedOption.getAttribute('data-appointments-left');
                 const appointmentsLeftInfo = document.getElementById('appointmentsLeftInfo');
-                
-                if (appointmentsLeft && appointmentsLeftSpan) {
-                    appointmentsLeftSpan.textContent = appointmentsLeft;
-                    appointmentsLeftInfo.style.display = 'block';
-                } else {
-                    appointmentsLeftInfo.style.display = 'none';
-                }
+                console.log(appointmentsLeft);
+                // if (appointmentsLeft && appointmentsLeftSpan) {
+                //     appointmentsLeftSpan.textContent = appointmentsLeft;
+                //     appointmentsLeftInfo.style.display = 'block';
+                // } else {
+                //     appointmentsLeftInfo.style.display = 'none';
+                // }
                 
                 fetch(`/patient/api/psychologist/${this.value}`)
                     .then(response => response.json())
@@ -149,7 +149,7 @@
                             //if (data.package && data.package.balance ) {
                                 
                                 
-                                appointmentsLeftSpan.textContent = data.package.total_appointments - data.package.balance ;
+                                appointmentsLeftSpan.textContent = appointmentsLeft ;
                                 appointmentsLeftInfo.style.display = 'block';
                             //}
                         }

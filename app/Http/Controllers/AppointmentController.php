@@ -85,7 +85,7 @@ class AppointmentController extends Controller
                     ->withInput();
             }
 
-            $package->balance++;
+            $package->balance--;
             $package->save();
             // Cria uma nova consulta vinculada ao pacote
             $appointment = new Appointment();
@@ -95,7 +95,7 @@ class AppointmentController extends Controller
             $appointment->package_id = $package->id;
             $appointment->payment_status = 'paid';
             $appointment->dt_Availability = $availability->dt_Availability;
-            $appointment->hr_Availability = $availability->hr_Availability;
+            $appointment->hr_Availability = explode('-',$availability->hr_Availability)[0];
             $appointment->status = 'scheduled';
             $appointment->save();
 
