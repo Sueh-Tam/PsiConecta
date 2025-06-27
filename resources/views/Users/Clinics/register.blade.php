@@ -88,7 +88,7 @@ title="Erro no Cadastro de Clínica"
 
                             <div class="form-floating mb-3 position-relative">
                                 <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Senha" minlength="6" required>
-                                <label for="password"><i class="bi bi-lock me-2"></i>Senha</label>
+                                <label for="password"><i class="bi bi-lock me-2"></i>Senha <small>   mínimo 6 caracteres</small></label> 
                                 <i class="bi bi-eye-slash password-toggle" onclick="togglePassword('password')"></i>
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>

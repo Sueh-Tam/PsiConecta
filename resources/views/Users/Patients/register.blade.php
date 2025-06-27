@@ -125,7 +125,7 @@
 
                             <!-- Senha -->
                             <div class="mb-4">
-                                <label for="senha" class="form-label">Senha</label>
+                                <label for="senha" class="form-label">Senha</label><small>   mínimo 6 caracteres</small>
                                 <input type="password" name="password" id="senha" class="form-control @error('password') is-invalid @enderror" required minlength="6">
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>

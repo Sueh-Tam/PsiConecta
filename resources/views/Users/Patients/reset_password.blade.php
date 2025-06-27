@@ -158,7 +158,7 @@
                                            required 
                                            minlength="6">
                                     <label for="nova_senha">
-                                        <i class="bi bi-lock me-2"></i>Nova Senha
+                                        <i class="bi bi-lock me-2"></i>Nova Senha <small>   mínimo 6 caracteres</small>
                                     </label>
                                     <i class="bi bi-eye-slash password-toggle" onclick="togglePassword('nova_senha')"></i>
                                     <div class="invalid-feedback">
