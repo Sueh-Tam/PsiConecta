@@ -30,7 +30,7 @@ class PatientController extends Controller
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
-        
+        $todayAppointments = $query->whereDate('dt_Availability', now()->format('Y-m-d'))->get();
         $appointments = $query
         
         ->orderBy('dt_Availability', 'desc')
@@ -57,7 +57,7 @@ class PatientController extends Controller
             'pending_appointments' => $appointments->where('status', 'scheduled')->count()
         ];
 
-        return view('Dashboard.Consults.index', compact('appointments', 'stats', 'psychologists','packages'));
+        return view('Dashboard.Consults.index', compact('appointments', 'stats', 'psychologists','packages','todayAppointments'));
     }
 
     public function store(Request $request)

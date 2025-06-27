@@ -242,7 +242,7 @@ class AvailabilityController extends Controller
 
         $userId = Auth::id();
 
-        $query = Availability::onlyTrashed() // <-- recupera apenas os que foram soft deleted
+        $query = Availability::withTrashed()
             ->where('id_psychologist', $userId)
             ->whereBetween('dt_Availability', [$request->data_inicio, $request->data_fim]);
 
@@ -254,9 +254,15 @@ class AvailabilityController extends Controller
             $query->whereBetween('hr_Availability', [$request->hora_inicio, $request->hora_fim]);
         }
 
-        $restauradas = $query->restore();
+        // Primeiro restaura os registros
+        $registros = $query->get();
+        foreach ($registros as $registro) {
+            $registro->restore();
+            $registro->update(['status' => 'available']);
+        }
 
-        return back()->with('success', "$restauradas disponibilidades restauradas com sucesso.");
+        $totalRestauradas = $registros->count();
+        return back()->with('success', "$totalRestauradas disponibilidades restauradas e atualizadas com sucesso.");
     }
 
 }

@@ -126,7 +126,9 @@ class PsychologistController extends Controller
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
         }
-
+        $todayAppointments = $query
+            ->whereDate('dt_Availability', $today)
+            ->get();
         $appointments = $query
             ->orderBy('dt_Availability', 'asc')
             ->orderBy('hr_Availability', 'asc')
@@ -147,6 +149,7 @@ class PsychologistController extends Controller
                     'status' => $appointment->status
                 ];
             });
+
         $stats = [
             'next_appointment' => $appointments->where('status', 'scheduled')
                 ->sortBy('date')
@@ -156,7 +159,7 @@ class PsychologistController extends Controller
                 ->count(),
             'pending_appointments' => $appointments->where('status', 'scheduled')->count()
         ];
-        return view('Dashboard.Psychologists.consults', ['appointments' => $appointments,'stats' => $stats, 'patients' => $patients, 'today' => $today]);
+        return view('Dashboard.Psychologists.consults', ['appointments' => $appointments,'stats' => $stats, 'patients' => $patients, 'today' => $today, 'todayAppointments' => $todayAppointments]);
     }
 
 }

@@ -353,7 +353,7 @@
 
         // Manipulação dos botões de ação
         const cancelButtons = document.querySelectorAll('.btn-danger');
-        const cancelEarlyButtons = document.querySelectorAll('.btn-outline-danger');
+        const cancelEarlyButtons = document.querySelectorAll('button.btn-outline-danger[data-appointment-id]');
         const completeButtons = document.querySelectorAll('.btn-success');
         cancelButtons.forEach(button => {
             button.addEventListener('click', function() {

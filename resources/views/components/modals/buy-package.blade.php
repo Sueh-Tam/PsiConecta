@@ -57,7 +57,7 @@
                                 <label class="form-check-label" for="payment_pix">PIX</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="payment_method" id="payment_money" value="money">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payment_money" value="cash">
                                 <label class="form-check-label" for="payment_money">Dinheiro</label>
                             </div>
                             <div class="form-check">
