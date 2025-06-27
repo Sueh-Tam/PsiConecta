@@ -66,10 +66,10 @@
     </header>
 
     <!-- Modal de Erro -->
-    <x-error-modal
+    {{-- <x-error-modal
         modal-id="patientErrorModal"
         title="Erro no Cadastro de Paciente"
-    />
+    /> --}}
     <!-- Modal de Sucesso -->
     <x-success-modal
         modal-id="patientSuccessModal"
@@ -84,40 +84,59 @@
                     <div class="card-body">
                         <h2 class="card-title mb-4 text-primary text-center">Cadastro de Paciente</h2>
 
-                        <form method="POST" action="{{ route('patient.register') }}">
+                        <form method="POST" action="{{ route('patient.register') }}" novalidate>
                             @csrf
 
                             <!-- Nome -->
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nome completo</label>
-                                <input type="text" name="name" id="nome" class="form-control" value="{{ old('name') }}" required>
+                                <input type="text" name="name" id="nome" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Email -->
                             <div class="mb-3">
                                 <label for="email" class="form-label">E-mail</label>
-                                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                                <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- CPF -->
                             <div class="mb-3">
-                                <label class="form-label">Tipo de documento</label>
-                                <select name="document_type" id="document_type" class="form-select mb-2" onchange="atualizarDocumento()">
-                                    <option value="cpf" selected>CPF</option>
-                                </select>
-                                <input type="text" name="document_number" id="document_number" class="form-control" placeholder="000.000.000-00" value="{{ old('document_number') }}" required>
+                                <label class="form-label">Informe o CPF</label>
+                                <input type="text" name="document_number" id="document_number" class="form-control @error('document_number') is-invalid @enderror" placeholder="000.000.000-00" value="{{ old('document_number') }}" required>
+                                @error('document_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Data de Nascimento -->
                             <div class="mb-3">
                                 <label for="birth_date" class="form-label">Data de nascimento</label>
-                                <input type="date" name="birth_date" id="birth_date" class="form-control" value="{{ old('birth_date') }}" required>
+                                <input type="date" name="birth_date" id="birth_date" class="form-control @error('birth_date') is-invalid @enderror" value="{{ old('birth_date') }}" required>
+                                @error('birth_date')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Senha -->
                             <div class="mb-4">
                                 <label for="senha" class="form-label">Senha</label>
-                                <input type="password" name="password" id="senha" class="form-control" required minlength="6">
+                                <input type="password" name="password" id="senha" class="form-control @error('password') is-invalid @enderror" required minlength="6">
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-4">
+                                <label for="password_confirmation" class="form-label">Repetir Senha</label>
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" minlength="6">
+                                @error('password_confirmation')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Botão -->
@@ -171,31 +190,36 @@
 
         // Funções do formulário
         const documentoInput = document.getElementById('document_number');
-        const tipoSelect = document.getElementById('document_type');
 
         function atualizarDocumento() {
             documentoInput.value = '';
-            if (tipoSelect.value === 'cpf') {
                 documentoInput.placeholder = '000.000.000-00';
-            } else {
-                documentoInput.placeholder = '00.000.000-0';
-            }
+            
         }
 
         documentoInput.addEventListener('input', () => {
             let value = documentoInput.value.replace(/\D/g, '');
-            if (tipoSelect.value === 'cpf') {
+            
                 if (value.length > 11) value = value.slice(0, 11);
                 value = value.replace(/(\d{3})(\d)/, '$1.$2');
                 value = value.replace(/(\d{3})(\d)/, '$1.$2');
                 value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            } else {
-                if (value.length > 9) value = value.slice(0, 9);
-                value = value.replace(/(\d{2})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d{1})$/, '$1-$2');
-            }
+            
             documentoInput.value = value;
+        });
+        
+        // Script para garantir que todos os modais sejam destruídos corretamente quando fechados
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.addEventListener('hidden.bs.modal', function() {
+                // Remove a classe modal-open do body
+                document.body.classList.remove('modal-open');
+                
+                // Remove o backdrop do modal
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            });
         });
     </script>
 </body>

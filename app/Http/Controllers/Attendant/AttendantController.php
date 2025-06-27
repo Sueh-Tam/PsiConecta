@@ -16,8 +16,7 @@ class AttendantController extends Controller
         return view('Dashboard.clinic.attendant.index', compact('attendants'));
     }
     public function store(Request $request){
-        try {
-            $request->validate([
+        $request->validate([
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
@@ -51,11 +50,6 @@ class AttendantController extends Controller
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Atendente cadastrado com sucesso!!');
 
-        } catch (\Throwable $th) {
-            return redirect()->back()
-                ->withErrors($th->getMessage())
-                ->withInput();
-        }
     }
     public function update(Request $request, $id)
     {

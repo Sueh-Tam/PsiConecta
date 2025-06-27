@@ -32,7 +32,7 @@
 
                         <div class="mb-3">
                             <label for="document_number" class="form-label">Número do Documento</label>
-                            <input name="document_number" type="text" class="form-control" id="document_number" minlength="14" maxlength="14" required>
+                            <input name="document_number" type="text" class="form-control" id="document_number" minlength="11" maxlength="11" required>
                             @error('document_number') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
 
@@ -56,23 +56,36 @@
     </div>
 </div>
 <script>
-    const documentoInput = document.getElementById('document_number');
-    
-
-    function atualizarDocumento() {
-        documentoInput.value = '';
+    document.addEventListener('DOMContentLoaded', function() {
+        const documentoInput = document.getElementById('document_number');
+        
+        // Define o placeholder para orientar o usuário
         documentoInput.placeholder = '000.000.000-00';
         
-    }
-
-    documentoInput.addEventListener('input', () => {
-        let value = documentoInput.value.replace(/\D/g, '');
-        
-            if (value.length > 11) value = value.slice(0, 11);
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        
-        documentoInput.value = value;
+        documentoInput.addEventListener('input', function() {
+            // Remove todos os caracteres não numéricos
+            let value = this.value.replace(/\D/g, '');
+            
+            // Limita a 11 dígitos (CPF)
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+            
+            // Aplica a máscara de CPF (XXX.XXX.XXX-XX)
+            if (value.length > 0) {
+                value = value.replace(/^(\d{1,3})/, '$1');
+                if (value.length > 3) {
+                    value = value.replace(/^(\d{3})(\d{1,3})/, '$1.$2');
+                }
+                if (value.length > 6) {
+                    value = value.replace(/^(\d{3})\.(\d{3})(\d{1,3})/, '$1.$2.$3');
+                }
+                if (value.length > 9) {
+                    value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+                }
+            }
+            
+            this.value = value;
+        });
     });
 </script>

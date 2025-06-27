@@ -150,6 +150,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Script para garantir que todos os modais sejam destruídos corretamente quando fechados
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.addEventListener('hidden.bs.modal', function() {
+                // Remove a classe modal-open do body
+                document.body.classList.remove('modal-open');
+                
+                // Remove o backdrop do modal
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            });
+        });
+        
         // Script para carregar datas e horários disponíveis quando um psicólogo é selecionado
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('agendarModal');

@@ -21,6 +21,8 @@
         .form-floating > .form-control:focus ~ label,
         .form-floating > .form-control:not(:placeholder-shown) ~ label {
             color: #0d6efd;
+            opacity: 1;
+            transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
         }
     </style>
 </head>
@@ -39,12 +41,12 @@
             </div>
         </div>
     </header>
-<x-error-modal
-modal-id="patientErrorModal"
-title="Erro no Cadastro de Paciente"
-/>
+{{-- <x-error-modal
+modal-id="clinicErrorModal"
+title="Erro no Cadastro de Clínica"
+/> --}}
 <x-success-modal
-    modal-id="patientSuccessModal"
+    modal-id="clinicSuccessModal"
     title="Cadastro Realizado!"
     message="{{ session('success_message') }}"
 />
@@ -57,39 +59,49 @@ title="Erro no Cadastro de Paciente"
                         <p class="mb-0 mt-2">Junte-se à nossa rede de profissionais</p>
                     </div>
                     <div class="card-body p-4">
-                        <form method="POST" action="{{ route('clinic.register') }}" class="needs-validation" novalidate>
+                        <form method="POST" action="{{ route('clinic.register') }}" class="needs-validation">
                             @csrf
                             
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Nome da clínica" required>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Nome da clínica" value="{{ old('name') }}" required>
                                 <label for="name"><i class="bi bi-building me-2"></i>Nome da clínica</label>
-                                <div class="invalid-feedback">Por favor, insira o nome da clínica.</div>
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="email" name="email" placeholder="E-mail" required>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="E-mail" value="{{ old('email') }}" required>
                                 <label for="email"><i class="bi bi-envelope me-2"></i>E-mail da clínica</label>
-                                <div class="invalid-feedback">Por favor, insira um e-mail válido.</div>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="document_number" name="document_number" placeholder="CNPJ" maxlength="18" required>
+                                <input type="text" class="form-control @error('document_number') is-invalid @enderror" id="document_number" name="document_number" placeholder="CNPJ" maxlength="18" value="{{ old('document_number') }}" required>
                                 <label for="document_number"><i class="bi bi-card-text me-2"></i>CNPJ</label>
-                                <div class="invalid-feedback">Por favor, insira um CNPJ válido.</div>
+                                @error('document_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="form-floating mb-3 position-relative">
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Senha" minlength="6" required>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Senha" minlength="6" required>
                                 <label for="password"><i class="bi bi-lock me-2"></i>Senha</label>
                                 <i class="bi bi-eye-slash password-toggle" onclick="togglePassword('password')"></i>
-                                <div class="invalid-feedback">A senha deve ter no mínimo 6 caracteres.</div>
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="form-floating mb-4 position-relative">
-                                <input type="password" class="form-control" id="senha_confirmation" name="senha_confirmation" placeholder="Confirmar Senha" minlength="6" required>
-                                <label for="senha_confirmation"><i class="bi bi-lock-fill me-2"></i>Confirmar Senha</label>
-                                <i class="bi bi-eye-slash password-toggle" onclick="togglePassword('senha_confirmation')"></i>
-                                <div class="invalid-feedback">As senhas não coincidem.</div>
+                                <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror" id="password_confirmation" name="password_confirmation" placeholder="Confirmar Senha" minlength="6" required>
+                                <label for="password_confirmation"><i class="bi bi-lock-fill me-2"></i>Confirmar Senha</label>
+                                <i class="bi bi-eye-slash password-toggle" onclick="togglePassword('password_confirmation')"></i>
+                                @error('password_confirmation')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="d-grid gap-2">
@@ -172,21 +184,8 @@ title="Erro no Cadastro de Paciente"
     
     document.addEventListener("DOMContentLoaded", function () {
         const input = document.getElementById("document_number");
-        const form = input.closest("form");
         const senha = document.getElementById("password");
-        const repetirSenha = document.getElementById("senha_confirmation");
-        form.addEventListener("submit", function (e) {
-            if (senha.value !== repetirSenha.value) {
-                senha.classList.add('is-invalid');
-                repetirSenha.classList.add('is-invalid');
-                e.preventDefault(); // impede o envio
-                alert("As senhas não coincidem.");
-                repetirSenha.focus();
-            }else{
-                senha.classList.remove('is-invalid');
-                repetirSenha.classList.remove('is-invalid');
-            }
-            });
+        const repetirSenha = document.getElementById("password_confirmation");
     });
 
     function togglePassword(inputId) {
@@ -206,14 +205,25 @@ title="Erro no Cadastro de Paciente"
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.querySelector('form');
         const senha = document.getElementById('password');
-        const repetirSenha = document.getElementById('senha_confirmation');
+        const repetirSenha = document.getElementById('password_confirmation');
+
+        // Exibir modal de erro se houver erros de validação
+        @if($errors->any())
+            const clinicErrorModalElement = document.getElementById('clinicErrorModal');
+            const clinicErrorModal = new bootstrap.Modal(clinicErrorModalElement);
+            clinicErrorModal.show();
+            
+            // Garantir que o modal seja destruído corretamente quando fechado
+            clinicErrorModalElement.addEventListener('hidden.bs.modal', function () {
+                document.body.classList.remove('modal-open');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            });
+        @endif
 
         form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-
             if (senha.value !== repetirSenha.value) {
                 senha.classList.add('is-invalid');
                 repetirSenha.classList.add('is-invalid');
@@ -222,8 +232,6 @@ title="Erro no Cadastro de Paciente"
                 senha.classList.remove('is-invalid');
                 repetirSenha.classList.remove('is-invalid');
             }
-
-            form.classList.add('was-validated');
         });
     });
     </script>

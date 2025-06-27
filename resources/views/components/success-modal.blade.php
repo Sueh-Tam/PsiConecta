@@ -21,11 +21,19 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const modal = new bootstrap.Modal(document.getElementById('{{ $modalId }}'));
+        const modalElement = document.getElementById('{{ $modalId }}');
+        const modal = new bootstrap.Modal(modalElement);
         modal.show();
 
-        // Opcional: Redirecionamento após fechar
-        document.getElementById('{{ $modalId }}').addEventListener('hidden.bs.modal', function () {
+        // Opcional: Redirecionamento após fechar e limpeza do modal
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            // Garantir que o modal seja destruído corretamente quando fechado
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+            
             @if(session('success_redirect'))
                 window.location.href = "{{ session('success_redirect') }}";
             @endif

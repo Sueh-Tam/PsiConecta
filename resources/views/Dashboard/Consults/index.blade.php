@@ -339,7 +339,17 @@
 
         // Manipulação do cancelamento de consulta
         let appointmentToCancel = null;
-        const cancelModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+        const cancelModalElement = document.getElementById('cancelModal');
+        const cancelModal = new bootstrap.Modal(cancelModalElement);
+
+        // Garantir que o modal seja destruído corretamente quando fechado
+        cancelModalElement.addEventListener('hidden.bs.modal', function () {
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+        });
 
         document.querySelectorAll('.cancel-appointment').forEach(button => {
             button.addEventListener('click', function() {

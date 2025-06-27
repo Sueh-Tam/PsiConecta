@@ -31,7 +31,6 @@ class UserController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' =>'required|min:6',
-                'document_type' =>'required|in:cpf',
                 'document_number' =>'required|min:14|max:14|cpf|unique:users,document_number',
                 'birth_date' => [
                     'required',
@@ -46,8 +45,6 @@ class UserController extends Controller
                 'email.unique' => 'Este e-mail já está sendo utilizado por outro usuário.',
                 'password.required' => 'O campo senha é obrigatório.',
                 'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
-                'document_type.required' => 'O campo tipo de documento é obrigatório.',
-                'document_type.in' => 'O tipo de documento deve ser CPF.',
                 'document_number.required' => 'O campo número do documento é obrigatório.',
                 'document_number.min' => 'O número do documento deve ter pelo menos 14 caracteres.',
                 'document_number.max' => 'O número do documento deve ter no máximo 14 caracteres.',
@@ -68,7 +65,7 @@ class UserController extends Controller
             $paciente->email = $request->email;
             $paciente->birth_date = $request->birth_date;
             $paciente->password = bcrypt($request->password);
-            $paciente->document_type = $request->document_type;
+            $paciente->document_type = 'cpf';
             $paciente->document_number = $request->document_number;
             $paciente->type = 'patient';
             $paciente->status = 'active';
@@ -76,8 +73,8 @@ class UserController extends Controller
 
         } catch (\Throwable $th) {
             return redirect()->back()
-                         ->withErrors($th)
-                         ->withInput();
+                ->withErrors($th->getMessage())
+                ->withInput();
         }
     }
     public function login(Request $request){

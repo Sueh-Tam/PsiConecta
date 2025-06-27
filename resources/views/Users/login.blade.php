@@ -260,6 +260,20 @@
                     break;
             }
         }
+        
+        // Script para garantir que todos os modais sejam destruídos corretamente quando fechados
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.addEventListener('hidden.bs.modal', function() {
+                // Remove a classe modal-open do body
+                document.body.classList.remove('modal-open');
+                
+                // Remove o backdrop do modal
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.remove();
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -62,18 +62,16 @@ class PatientController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $request->merge([
+        $request->merge([
                 'document_number' => preg_replace('/[^0-9]/', '', $request->document_number)
             ]);
-            $validated = $request->validate([
-                'name' => 'required',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|min:6',
-                'document_type' => 'required|in:cpf,rg',
-                'document_number' => 'required|unique:users,document_number',
-                'birth_date' => 'required|date|before_or_equal:'.now()->subYears(18)->format('Y-m-d')
-
+            
+            $request->validate([
+                'name' => ['required'],
+                'email' => ['required','email','unique:users'],
+                'password' => ['required','min:6','confirmed'],
+                'document_number' => ['required','unique:users,document_number','cpf'],
+                'birth_date' => ['required','date','before_or_equal:'.now()->subYears(18)->format('Y-m-d')]
             ],
             [
                 'name.required' => 'O nome é obrigatório',
@@ -82,21 +80,26 @@ class PatientController extends Controller
                 'email.unique' => 'Este email já está em uso',
                 'password.required' => 'A senha é obrigatória',
                 'password.min' => 'A senha deve ter pelo menos 6 caracteres',
-                'document_type.required' => 'O tipo de documento é obrigatório',
                 'document_number.required' => 'O número do documento é obrigatório',
                 'document_number.unique' => 'Este número de documento já está em uso',
                 'birth_date.required' => 'A data de nascimento é obrigatória',
                 'birth_date.date' => 'Digite uma data válida',
-                'birth_date.before_or_equal' => 'Você deve ter pelo menos 18 anos'
+                'birth_date.before_or_equal' => 'Você deve ter pelo menos 18 anos',
+                'document_number.cpf' => 'Digite um CPF válido',
+                'password.confirmed' => 'A confirmação da senha não corresponde'
             ]);
-
+            // if (!$validated) {
+            //       return redirect()->back()
+            //           ->withErrors($validated)
+            //           ->withInput();
+            //   }
 
             $paciente = new User();
             $paciente->name = $request->name;
             $paciente->email = $request->email;
             $paciente->password = bcrypt($request->password);
             $paciente->birth_date = $request->birth_date;
-            $paciente->document_type = strtolower($request->document_type);
+            $paciente->document_type = 'cpf';
             $paciente->document_number = preg_replace('/[^0-9]/', '',$request->document_number);
             $paciente->type = 'patient';
             $paciente->status = 'active';
@@ -116,13 +119,6 @@ class PatientController extends Controller
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Paciente cadastrado com sucesso!')
                 ->with('success_redirect', route('home'));
-
-            
-        } catch (\Throwable $th) {
-            return redirect()->back()
-                ->withErrors($th->getMessage())
-                ->withInput();
-        }
 
     }
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -47,15 +48,27 @@ class PsychologistController extends Controller
     }
 
     public function update(Request $request){
-        try {
-            $request->validate([
+        $request->validate([
                 'name' => 'required',
-                'email' => 'required|email',
-                'document_number' => 'required|unique:users,document_number,'.Auth::user()->id,
+                'email' => ['required', 'email', Rule::unique('users')->ignore($request->id)],
+                'document_number' => ['required',Rule::unique('users')->ignore($request->id)],
                 'appointment_price' => 'required|numeric',
                 'password' => 'nullable|min:6|confirmed',
-            ]);
-            $psychologist = User::find(Auth::user()->id);
+            ],
+        [
+            'document_number.unique' => 'O número do documento já está em uso.',
+            'appointment_price.numeric' => 'O preço do atendimento deve ser um número válido.',
+            'password.confirmed' => 'As senhas não coincidem.',
+            'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+            'password.required' => 'A senha é obrigatória.',
+
+        ]);
+            if(Auth::user()->isPsychologist()){
+                $idUser = Auth::user()->id;
+            }else{
+                $idUser = $request->id;
+            }
+            $psychologist = User::find($idUser);
             $psychologist->name = $request->name;
             $psychologist->email = $request->email;
             $psychologist->document_number = preg_replace('/[^0-9]/', '',$request->document_number);
@@ -71,12 +84,6 @@ class PsychologistController extends Controller
             return redirect()->back()
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Psicólogo atualizado com sucesso!!');
-
-        } catch (\Throwable $th) {
-            return redirect()->back()
-                ->withErrors($th->getMessage())
-                ->withInput();
-        }
     }
 
     public function psychologistByClinic(Request $request){

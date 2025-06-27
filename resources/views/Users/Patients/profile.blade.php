@@ -40,10 +40,10 @@
     }
 </style>
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-<x-error-modal
+{{-- <x-error-modal
         modal-id="patientErrorModal"
         title="Erro"
-    />
+    /> --}}
     <x-success-modal
         modal-id="patientSuccessModal"
         title="Cadastro Atualziado!"
@@ -57,6 +57,9 @@
         @method('PUT')
 
         <div class="mb-3">
+            @error('nome')
+                <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
             <label for="nome" class="form-label">Nome completo</label>
             <input type="text" class="form-control" id="nome" name="name" value="{{ Auth::user()->name }}">
         </div>

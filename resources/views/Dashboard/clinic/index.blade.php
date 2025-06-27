@@ -70,11 +70,105 @@
         </div>
     </div>
 
+    <!-- Consultas do Dia -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0 text-info">Consultas de Hoje - {{ now()->format('d/m/Y') }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="px-4 py-3">Horário</th>
+                            <th class="px-4 py-3">Psicólogo</th>
+                            <th class="px-4 py-3">Paciente</th>
+                            <th class="px-4 py-3">Status</th>
+                            @if (!Auth::user()->isClinic())
+                                <th class="px-4 py-3 text-center">Ações</th>
+                            @endif
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($todayAppointments as $appointment)
+                            <tr>
+                                <td class="px-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-clock text-info me-2"></i>
+                                        {{ \Carbon\Carbon::parse($appointment['start_time'])->format('H:i') }}
+                                    </div>
+                                </td>
+                                <td class="px-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-primary text-white me-2">{{ $appointment['psychologist']['initials'] }}</div>
+                                        {{ $appointment['psychologist']['name'] }}
+                                    </div>
+                                </td>
+                                <td class="px-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle bg-info text-white me-2">{{ $appointment['patient']['initials'] }}</div>
+                                        {{ $appointment['patient']['name'] }}
+                                    </div>
+                                </td>
+                                <td class="px-4">
+                                @switch($appointment['status'])
+                                    @case('completed')
+                                        <span class="badge bg-success">Realizada</span>
+                                        @break
+                                    @case('scheduled')
+                                        <span class="badge bg-warning text-dark">Agendada</span>
+                                        @break
+                                    @case('cancelled')
+                                        <span class="badge" style="background-color: #8B0000">Cancelamento Tardio</span>
+                                        @break
+                                    @case('canceled_early')
+                                        <span class="badge" style="background-color: #FFA500">Cancelamento Antecipado</span>
+                                        @break
+                                    @case('canceled_late')
+                                        <span class="badge" style="background-color: #8B0000">Cancelamento Tardio</span>
+                                        @break
+                                    @default
+                                        <span class="badge bg-secondary">{{ ucfirst($appointment['status']) }}</span>
+                                @endswitch
+                                </td>
+                                @if (!Auth::user()->isClinic())
+                                    <td class="px-4 text-center">
+                                        @if($appointment['status'] === 'scheduled')
+                                            <button class="btn btn-sm btn-success me-2" title="Marcar como realizada" data-appointment-id="{{ $appointment['id'] }}"> 
+                                                <i class="bi bi-check-circle"></i> Realizada
+                                            </button>
+                                            <button class="btn btn-sm btn-danger me-2" title="Cancelar consulta" data-appointment-id="{{ $appointment['id'] }}">
+                                                <i class="bi bi-x-circle"></i> Cancelar
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar antecipadamente" data-appointment-id="{{ $appointment['id'] }}">
+                                                <i class="bi bi-calendar-x"></i> Cancelar Antecipadamente
+                                            </button>
+                                        @endif
+                                    </td>
+                                @endif
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="{{ !Auth::user()->isClinic() ? '5' : '4' }}" class="text-center py-3">
+                                    <p class="text-muted mb-0">Nenhuma consulta agendada para hoje</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3">
             <div class="row align-items-center">
                 <div class="col">
-                    <h5 class="mb-0 text-primary">Lista de Consultas</h5>
+                    <h5 class="mb-0 text-primary">Todas as Consultas</h5>
                 </div>
                 <div class="col-auto d-flex gap-2">
                     <select id="psychologist-filter" name="psychologist" class="form-control">
@@ -115,7 +209,9 @@
                             <th class="px-4 py-3">Psicólogo</th>
                             <th class="px-4 py-3">Paciente</th>
                             <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3 text-center">Ações</th>
+                            @if (!Auth::user()->isClinic())
+                                <th class="px-4 py-3 text-center">Ações</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -160,19 +256,22 @@
                                         <span class="badge bg-secondary">{{ ucfirst($appointment['status']) }}</span>
                                 @endswitch
                                 </td>
-                                <td class="px-4 text-center">
-                                    @if($appointment['status'] === 'scheduled')
-                                        <button class="btn btn-sm btn-success me-2" title="Marcar como realizada" data-appointment-id="{{ $appointment['id'] }}"> 
-                                            <i class="bi bi-check-circle"></i> Realizada
-                                        </button>
-                                        <button class="btn btn-sm btn-danger me-2" title="Cancelar consulta" data-appointment-id="{{ $appointment['id'] }}">
-                                            <i class="bi bi-x-circle"></i> Cancelar
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" title="Cancelar antecipadamente" data-appointment-id="{{ $appointment['id'] }}">
-                                            <i class="bi bi-calendar-x"></i> Cancelar Antecipadamente
-                                        </button>
-                                    @endif
-                                </td>
+                                @if (!Auth::user()->isClinic())
+                                    <td class="px-4 text-center">
+                                        @if($appointment['status'] === 'scheduled')
+                                            <button class="btn btn-sm btn-success me-2" title="Marcar como realizada" data-appointment-id="{{ $appointment['id'] }}"> 
+                                                <i class="bi bi-check-circle"></i> Realizada
+                                            </button>
+                                            <button class="btn btn-sm btn-danger me-2" title="Cancelar consulta" data-appointment-id="{{ $appointment['id'] }}">
+                                                <i class="bi bi-x-circle"></i> Cancelar
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar antecipadamente" data-appointment-id="{{ $appointment['id'] }}">
+                                                <i class="bi bi-calendar-x"></i> Cancelar Antecipadamente
+                                            </button>
+                                        @endif
+                                    </td>
+                                @endif
+                                
                             </tr>
                         @empty
                             <tr>

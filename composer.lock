@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1d85c93abd5e0128d92d1fa403d4cb9",
+    "content-hash": "a4e16f280c0c64da6f98930d59c356fd",
     "packages": [
         {
             "name": "brick/math",
@@ -1457,16 +1457,16 @@
         },
         {
             "name": "laravellegends/pt-br-validator",
-            "version": "12.0.0",
+            "version": "12.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LaravelLegends/pt-br-validator.git",
-                "reference": "7b5f77fd7ebdc8c3a866b33fc91bb949c06297fe"
+                "reference": "9c04c518a99047edb1da4cbf82dabb124da6bc94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LaravelLegends/pt-br-validator/zipball/7b5f77fd7ebdc8c3a866b33fc91bb949c06297fe",
-                "reference": "7b5f77fd7ebdc8c3a866b33fc91bb949c06297fe",
+                "url": "https://api.github.com/repos/LaravelLegends/pt-br-validator/zipball/9c04c518a99047edb1da4cbf82dabb124da6bc94",
+                "reference": "9c04c518a99047edb1da4cbf82dabb124da6bc94",
                 "shasum": ""
             },
             "require": {
@@ -1502,9 +1502,9 @@
             "description": "Uma biblioteca contendo validações de formatos Brasileiros, para o Laravel",
             "support": {
                 "issues": "https://github.com/LaravelLegends/pt-br-validator/issues",
-                "source": "https://github.com/LaravelLegends/pt-br-validator/tree/12.0.0"
+                "source": "https://github.com/LaravelLegends/pt-br-validator/tree/12.2.0"
             },
-            "time": "2025-02-27T16:35:49+00:00"
+            "time": "2025-06-21T21:37:01+00:00"
         },
         {
             "name": "league/commonmark",

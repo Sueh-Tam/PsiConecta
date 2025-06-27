@@ -6,14 +6,14 @@
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 <x-error-modal
-        modal-id="patientErrorModal"
-        title="Erro"
-    />
-    <x-success-modal
-        modal-id="patientSuccessModal"
-        title="Cadastro Atualziado!"
-        message="{{ session('success_message') }}"
-    />
+    modal-id="patientErrorModal"
+    title="Erro"
+/>
+<x-success-modal
+    modal-id="patientSuccessModal"
+    title="Cadastro Atualziado!"
+    message="{{ session('success_message') }}"
+/>
 <div class="container mt-4">
     <h2 class="mb-4">Editar Perfil</h2>
 
