@@ -151,13 +151,13 @@
                             <td class="px-4">
                                 @switch($package->payment_method)
                                     @case('pix')
-                                            "Pix"
+                                            <b>Pix</b>
                                         @break
                                     @case('health_plan')
-                                            "Plano de Saúde"
+                                            <b>Plano de Saúde</b>
                                         @break
                                     @case('cash')
-                                            "Dinheiro"
+                                            <b>Dinheiro</b>
                                         @break
                                     @default
                                         
