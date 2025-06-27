@@ -4,9 +4,9 @@
 
 @section('content')
 <x-success-modal
-modal-id="patientSuccessModal"
-title="{{ session('title') }}"
-message="{{ session('message') }}"
+    modal-id="patientSuccessModal"
+    title="{{ session('title') }}"
+    message="{{ session('message') }}"
 />
 <x-error-modal
     modal-id="patientErrorModal"

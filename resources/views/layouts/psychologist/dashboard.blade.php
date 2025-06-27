@@ -155,7 +155,7 @@
             <i class="bi bi-calendar-check"></i>
             Consultas
         </a>
-        <a href="#">
+        <a href="{{ Route('psychologist.patients') }}" class="@if(request()->is('psychologist/patients')) active @endif">
             <i class="bi bi-people"></i>
             Pacientes
         </a>

@@ -233,5 +233,6 @@ Route::prefix('psychologist')->middleware('auth')->group(function () {
     Route::delete('disponibility/delete/{id}', [AvailabilityController::class, 'destroy'])->name('psychologist.disponibility.delete');
     Route::post('/psychologist/availability/deactivate', [AvailabilityController::class, 'deactivate'])->name('psychologist.availability.deactivate');
     Route::post('/availability/restore', [AvailabilityController::class, 'restore'])->name('psychologist.availability.restore');
-
+    Route::get('/patients', [PsychologistController::class,'psychologistPatients'])->name('psychologist.patients');
+    Route::get('patient/details/{id}',[PsychologistController::class,'patientDetails'])->name('psychologist.patient.details');
 });

@@ -162,4 +162,37 @@ class PsychologistController extends Controller
         return view('Dashboard.Psychologists.consults', ['appointments' => $appointments,'stats' => $stats, 'patients' => $patients, 'today' => $today, 'todayAppointments' => $todayAppointments]);
     }
 
+    public function psychologistPatients(Request $request){
+
+        if($request->searchPatient){
+
+        }
+        $packages = \App\Models\Package::where('psychologist_id', Auth::user()->id)
+            ->distinct('patient_id')
+            ->get();
+        $patients = [];
+
+        foreach($packages as $package){
+            if($request->searchPatient){
+                if($package->patient->document_number == $request->searchPatient){
+                    $patients[] = $package->patient;
+                }
+            }else{
+               $patients[] = $package->patient; 
+            }
+            
+        }
+        return view('Dashboard.Psychologists.patients')->with('patients', $patients);
+    }
+
+    public function patientDetails($id){
+        $patient = \App\Models\User::find($id);
+        $appointments = \App\Models\Appointment::where('patient_id', $id)
+            ->where('psychologist_id', Auth::user()->id)
+            ->where('status', 'completed')
+            ->orderBy('dt_Availability', 'desc')
+            ->get();
+        return view('Dashboard.Psychologists.patient_details', ['patient' => $patient, 'appointments' => $appointments]);
+    }
+
 }
