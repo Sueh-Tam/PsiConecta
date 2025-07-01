@@ -11,22 +11,13 @@ O PsiConecta é um sistema web inovador desenvolvido para otimizar a gestão de 
 - **Gestão de Agendamentos**
   - Agendamento online de consultas
   - Confirmações automáticas
-  - Lembretes por e-mail/SMS
 
 - **Prontuário Eletrônico**
   - Registro seguro de informações
   - Histórico completo do paciente
-  - Evolução do tratamento
 
 - **Gestão Financeira**
   - Controle de pagamentos
-  - Relatórios financeiros
-  - Integração com sistemas de pagamento
-
-- **Comunicação**
-  - Chat seguro entre profissional e paciente
-  - Compartilhamento de documentos
-  - Notificações importantes
 
 ### Benefícios
 
@@ -43,7 +34,6 @@ O PsiConecta é um sistema web inovador desenvolvido para otimizar a gestão de 
 #### Para Pacientes
 - Facilidade no agendamento
 - Acesso ao histórico de consultas
-- Comunicação direta com o profissional
 
 ## Tecnologias
 

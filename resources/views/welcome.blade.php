@@ -164,14 +164,14 @@
                     <h5>PsiConecta</h5>
                     <p class="text-muted">Conectando você aos melhores profissionais de saúde mental.</p>
                 </div>
-                <div class="col-md-4 mb-3">
+                {{-- <div class="col-md-4 mb-3">
                     <h5>Links Úteis</h5>
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-white-50">Sobre Nós</a></li>
                         <li><a href="#" class="text-white-50">Como Funciona</a></li>
                         <li><a href="#" class="text-white-50">Termos de Uso</a></li>
                     </ul>
-                </div>
+                </div> --}}
                 <div class="col-md-4 mb-3">
                     <h5>Contato</h5>
                     <ul class="list-unstyled text-white-50">

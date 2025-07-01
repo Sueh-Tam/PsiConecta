@@ -53,14 +53,24 @@ class AttendantController extends Controller
     }
     public function update(Request $request, $id)
     {
-        try {
-            $attendant = User::findOrFail($id);
+        $attendant = User::findOrFail($id);
             $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $attendant->id,
                 'password' => 'nullable|string|min:6',
-                'document_number' => 'required|string|unique:users,document_number,' . $attendant->id,
+                'document_number' => 'required|cpf|string|unique:users,document_number,' . $attendant->id,
                 'status' => 'required|in:active,inactive',
+            ], [
+                'name.required' => 'O campo nome é obrigatório.',
+                'email.required' => 'O campo email é obrigatório.',
+                'email.email' => 'O email deve ter um formato válido.',
+                'email.unique' => 'Este email já está sendo usado por outro usuário.',
+                'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+                'document_number.required' => 'O campo número do documento é obrigatório.',
+                'document_number.unique' => 'Este número de documento já está sendo usado por outro usuário.',
+                'status.required' => 'O campo status é obrigatório.',
+                'status.in' => 'O status deve ser ativo ou inativo.',
+                'document_number.cpf' => 'O número de documento deve ser um CPF válido.'
             ]);
 
             $attendant->update([
@@ -74,11 +84,6 @@ class AttendantController extends Controller
             return redirect()->back()
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Atendente cadastrado com sucesso!!');
-        } catch (\Throwable $th) {
-            return redirect()->back()
-                ->withErrors($th->getMessage())
-                ->withInput();
-        }
 
     }
 }

@@ -95,15 +95,29 @@ class UserController extends Controller
                     'email' => 'As credenciais fornecidas não correspondem aos nossos registros.',
                 ])->onlyInput('email');
             }
-            if($user->isClinic() && $user->situation == 'invalid' || $user->status == 'inactive' || $user->situation == 'pending'){
-                return back()->withErrors([
-                    'acesso_rejeitado' => 'Não é possível acessar pois o cadastro da clínica está inativo ou pendente.',
-                ]);
-            }
-            if($user->isPsychologist() || $user->isAttendant()){
-                if($user->clinic->situation == 'invalid' || $user->clinic->status == 'inactive' || $user->situation == 'pending'){
+            
+            // Verificação para clínicas
+            if ($user->isClinic()) {
+                if ($user->situation == 'invalid' || $user->situation == 'pending' || $user->status == 'inactive') {
                     return back()->withErrors([
-                        'acesso_rejeitado' => 'Não é possível acessar pois a clínica está inativo ou pendente .',
+                        'acesso_rejeitado' => 'Não é possível acessar pois o cadastro da clínica está inativo ou pendente.',
+                    ]);
+                }
+            }
+            
+            // Verificação para psicólogos e atendentes
+            if ($user->isPsychologist() || $user->isAttendant()) {
+                // Verifica se o usuário está inativo
+                if ($user->status == 'inactive') {
+                    return back()->withErrors([
+                        'acesso_rejeitado' => 'Não é possível acessar pois o seu cadastro está inativo.',
+                    ]);
+                }
+                
+                // Verifica se a clínica associada está inativa ou pendente
+                if ($user->clinic && ($user->clinic->situation == 'invalid' || $user->clinic->status == 'inactive' || $user->situation == 'pending')) {
+                    return back()->withErrors([
+                        'acesso_rejeitado' => 'Não é possível acessar pois o cadastro da clínica está inativo ou pendente.',
                     ]);
                 }
             }

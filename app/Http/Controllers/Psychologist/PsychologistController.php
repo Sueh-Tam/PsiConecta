@@ -13,15 +13,29 @@ use Illuminate\Http\Request;
 class PsychologistController extends Controller
 {
     public function store(Request $request){
-        try {
-            $request->validate([
+        $request->validate([
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
                 'document_number' => 'required|unique:users,document_number',
                 'appointment_price' => 'required|numeric',
                 'status' => 'required|in:active,inactive',
-            ]);
+            ],
+        [
+            'document_number.unique' => 'O número do documento já está em uso.',
+            'appointment_price.numeric' => 'O preço do atendimento deve ser um número válido.',
+            'password.confirmed' => 'As senhas não coincidem.',
+            'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+            'password.required' => 'A senha é obrigatória.',
+            'status.required' => 'O status é obrigatório.',
+            'status.in' => 'O status deve ser active ou inactive.',
+            'email.required' => 'O email é obrigatório.',
+            'email.email' => 'O email deve ser válido.',
+            'email.unique' => 'O email já está em uso.',
+            'name.required' => 'O nome é obrigatório.',
+            'document_number.required' => 'O número do documento é obrigatório.',
+            'appointment_price.required' => 'O preço do atendimento é obrigatório.',
+        ]);
             $psychologist = new User();
             $psychologist->id_clinic = Auth::user()->isClinic() ? Auth::user()->id : Auth::user()->id_clinic;
             $psychologist->name = $request->name;
@@ -37,12 +51,6 @@ class PsychologistController extends Controller
             return redirect()->back()
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Psicólogo cadastrado com sucesso!!');
-
-        } catch (\Throwable $th) {
-            return redirect()->back()
-                ->withErrors($th->getMessage())
-                ->withInput();
-        }
 
 
     }
@@ -75,7 +83,7 @@ class PsychologistController extends Controller
             $psychologist->status = $request->status;
             $psychologist->appointment_price = $request->appointment_price;
             $psychologist->document_type = 'crp';
-            $psychologist->status = 'active';
+            $psychologist->status = $request->status;
             if($request->password){
                 $psychologist->password = bcrypt($request->password);
             }

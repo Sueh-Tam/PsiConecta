@@ -54,9 +54,9 @@ class ClinicController extends Controller
             $query->where('status', request('status'));
         }
         $allAppointments = $query
-        ->orderBy('dt_Availability', 'desc')
-        ->orderBy('hr_Availability', 'asc')
-        ->get();
+            ->orderBy('dt_Availability', 'desc')
+            ->orderBy('hr_Availability', 'asc')
+            ->get();
 
         // dd($allAppointments->where('status', 'completed')
         // ->where('date', '>=', now()->subMonth())

@@ -111,12 +111,12 @@
         patientSelect.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             const appointmentsLeft = selectedOption.dataset.appointmentsLeft;
-            
-            if (appointmentsLeft !== undefined) {
-                appointmentsLeftSpan.textContent = `Consultas restantes: ${appointmentsLeft}`;
-            } else {
-                appointmentsLeftSpan.textContent = '';
-            }
+            console.log(appointmentsLeft);
+            // if (appointmentsLeft !== undefined) {
+            //     appointmentsLeftSpan.textContent = `Consultas restantes: ${appointmentsLeft}`;
+            // } else {
+            //     appointmentsLeftSpan.textContent = '';
+            // }
 
             psychologistSelect.value = '';
             psychologistSelect.disabled = true;
