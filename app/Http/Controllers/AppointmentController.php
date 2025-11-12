@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\Availability;
 use App\Models\Package;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -249,6 +250,89 @@ class AppointmentController extends Controller
             return response()->json(['message' => 'Erro ao cancelar consulta: '. $e->getMessage()], 422);
         }
     }
+
+    public function ApiScheduleAppointment(Request $request){
+        try{
+            
+            $package = Package::find($request->package_id);
+            $psychologist = User::find($package->psychologist_id);
+            if($package->balance <= 0){
+                return response()->json(['message' => 'Pacote esgotado'], 422);
+            }
+            
+
+            $availability = Availability::find($request->availability_id);
+
+            if(!$availability){
+                return response()->json(['message' => 'Horário indisponível'], 422);
+            }
+            if($availability->status != 'available'){
+                return response()->json(['message' => 'Consulta não está disponível'], 422);
+            }
+            
+            //return response()->json(['message' => $psychologist->name]);
+
+            $appointment = new Appointment();
+            $appointment->dt_Availability = $availability->dt_Availability;
+            $appointment->hr_Availability = $availability->hr_Availability;
+            $appointment->patient_id = $package->patient_id;
+            $appointment->psychologist_id = $availability->id_psychologist;
+            $appointment->clinic_id = $psychologist->id_clinic;
+            $appointment->package_id = $package->id;
+            $appointment->payment_status = 'paid';
+            $appointment->status = 'scheduled';
+            $appointment->save();
+            
+            $availability->id_appointments = $appointment->id;
+            $availability->status = 'unvailable';
+            $availability->save();
+
+            $package->balance--;
+            $package->save();
+            return response()->json(['message' => 'Consulta agendada com sucesso!']);
+        }catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao agendar consulta: '. $e->getMessage()], 422);
+        }
+    }
+
+    public function ApiAllAppointments(Request $request){
+        $user = User::find($request->user_id);
+        $now = Carbon::now();
+        //$appointments = $user->patientAppointments()->where('dt_Availability','>=', $now)->get();
+                $appointments = $user->patientAppointments()->get();
+
+        return response()->json($appointments);
+    }
+
+    public function ApiCancelAppointment(Request $request){
+        $appointment = Appointment::find($request->appointment_id);
+        $availability = Availability::where('id_appointments',$appointment->id)->first();
+
+        if(!$availability){
+            return response()->json(['message' => 'Disponibilidade não encontrada'], 422);
+        }
+        $package = Package::find($appointment->package_id);
+        if(!$package){
+            return response()->json(['message' => 'Pacote não encontrado'], 422);
+        }
+        if(!$appointment){
+            return response()->json(['message' => 'Consulta não encontrada'], 422);
+        }
+        
+        if($availability){
+            $availability->status = 'available';
+            $availability->id_appointments = null;
+            $availability->save();
+            
+            $package->balance++;
+            $package->save();
+        }
+        $appointment->status = 'canceled_early';
+        $appointment->save();
+        return response()->json(['message' => 'Consulta cancelada com sucesso!']);
+    }
+
+    
 
     /**
      * Update the specified resource in storage.

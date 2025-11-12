@@ -221,4 +221,28 @@ class ClinicController extends Controller
                 ->with('show_success_modal', true)
                 ->with('success_message', 'Clínica atualizada com sucesso!');
     }
+    public function getAllCLinics(){
+        $clinics = User::where('type', 'clinic')
+        ->where('situation','valid')
+        ->where('status','active')
+        ->get();
+        return response()->json($clinics);
+    }
+    public function getClinic($id){
+        $clinic = User::where('type', 'clinic')
+        ->where('situation','valid')
+        ->where('status','active')
+        ->where('id',$id)
+        ->first();
+        return response()->json($clinic);
+    }
+    public function getClinicPsychologists($id){
+        $psychologists = User::find($id)->psychologists()->get();
+        return response()->json($psychologists);
+    }
+    public function getClinicPsychologist($idClinic, $idPsychologist){
+        $psychologist = User::find($idClinic)->psychologists()->find($idPsychologist);
+        return response()->json($psychologist);
+    }
+    
 }

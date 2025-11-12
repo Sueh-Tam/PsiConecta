@@ -188,6 +188,83 @@ class UserController extends Controller
         }
     }
 
+    public function apiUserRegister(Request $request){
+        // Data máxima permitida: deve ser menor ou igual à data de hoje menos 18 anos
+        $adultDate = now()->subYears(18)->toDateString();
+
+        $validated = $request->validate([
+                'name' =>'required',
+                'email' =>'required|email',
+                'password' =>'required|min:6',
+                'cpf' =>'required|min:11|max:14|cpf|unique:users,document_number',
+                'birth_date' =>'required|date|before_or_equal:'.$adultDate, 
+            ],[
+                'name.required' => 'O campo nome é obrigatório.',
+                'email.required' => 'O campo e-mail é obrigatório.',
+                'email.email' => 'Por favor, informe um endereço de e-mail válido.',
+                'password.required' => 'O campo senha é obrigatório.',
+                'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+                'cpf.required' => 'O campo CPF é obrigatório.',
+                'cpf.min' => 'O CPF deve ter pelo menos 14 caracteres.',
+                'cpf.max' => 'O CPF deve ter no máximo 14 caracteres.',
+                'cpf.cpf' => 'O CPF informado é inválido.',
+                'cpf.unique' => 'O CPF informado já está em uso.',
+                'birth_date.required' => 'O campo data de nascimento é obrigatório.',
+                'birth_date.date' => 'Por favor, informe uma data de nascimento válida.',
+                'birth_date.before_or_equal' => 'Você deve ter 18 anos ou mais para se cadastrar.',
+            ]
+        );
+        try {
+            $user = new User();
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->password = bcrypt($validated['password']);
+            $user->document_number = $validated['cpf'];
+            $user->birth_date = $validated['birth_date'];
+            $user->type = 'patient';
+            $user->status = 'active';
+            $user->situation = 'valid';
+            $user->save();
+            return json_encode([
+                'success' => true,
+                'message' => 'Usuário cadastrado com sucesso!'
+            ]);
+        } catch (\Throwable $th) {
+            return redirect()->back()
+                ->withErrors($th->getMessage())
+                ->withInput();
+        }
+        
+    }
+    public function apiResetPassword(Request $request){
+        $validated = $request->validate([
+            'password' =>'required|min:6',
+            'password_confirmation' =>'required|same:password',
+            'cpf' =>'required|min:11|max:14'
+        ]);
+        try {
+            $user = User::where('document_number', $validated['cpf'])->first();
+            if($user){
+                $user->password = bcrypt($validated['password']);
+                $user->save();
+                return json_encode([
+                    'success' => true,
+                    'message' => 'Senha alterada com sucesso!'
+                ]);
+            }else{
+                return json_encode([
+                    'success' => false,
+                    'message' => 'Usuário não encontrado'
+                ]);
+            }
+        } catch (\Throwable $th) {
+            return json_encode([
+                'success' => false,
+                'message' => $th->getMessage()
+            ]);
+        }
+    }
+
     public function resetPassword(Request $request){
         try {
             $validated = $request->validate([
@@ -250,6 +327,78 @@ class UserController extends Controller
             ->with('success_redirect', route('home'));
 
     }
+
+    public function apiLogin(Request $request){
+        $validated = $request->validate([
+            'email' =>'required|email',
+            'password' =>'required|min:6'
+        ],[
+            'email.required' => 'O campo e-mail é obrigatório.',
+            'email.email' => 'Por favor, informe um endereço de e-mail válido.',
+            'password.required' => 'O campo senha é obrigatório.',
+            'password.min' => 'A senha deve ter pelo menos 15 caracteres.',
+        ]);
+        if(Auth::attempt($validated)){
+            $user = Auth::user();
+            return response()->json([
+                'user' => $user,
+            ]);
+        }else{
+            return response()->json(
+                [
+                    'error' => 'Credenciais inválidas'
+                    ,'email' => $request->email,
+                    'password' => $request->password
+                ], 401);
+        }
+    }
+    public function generateCsrfToken(){    
+        return response()->json(['token' => csrf_token()]);
+    }
+    public function apiUpdateUser(Request $request){
+        $validated = $request->validate([
+            'name' =>'required|min:3',
+            'email' =>'required|email',
+            'document_number' =>'required|min:11|max:14|cpf|unique:users,document_number,'.$request->id,
+            'password' =>'min:6|nullable',
+            'password_confirmation' =>'nullable|same:password',
+            'birth_date' =>'required|date',
+        ]);
+        try {
+            $user = User::where('id', $request->id)->first();
+            if($user){
+                $user->name = $validated['name'];
+                $user->email = $validated['email'];
+                $user->document_number = $validated['document_number'];
+                $user->birth_date = $validated['birth_date'];
+                if(isset($validated['password'])){
+                    
+                    $user->password = bcrypt($validated['password']);
+                }else{
+                    return json_encode([
+                        'success' => false,
+                        'message' => 'senha',
+                    ]);
+                }
+                $user->save();
+                return json_encode([
+                    'success' => true,
+                    'message' => 'Usuário atualizado com sucesso!',
+                ]);
+            }else{
+                return json_encode([
+                    'success' => false,
+                    'message' => 'Usuário não encontrado'
+                ]);
+            }
+        } catch (\Throwable $th) {
+            return json_encode([
+                'success' => false,
+                'message' => json_encode($validated)
+            ]);
+        }
+    }
+
     /**
      * Display the specified resource.
      */

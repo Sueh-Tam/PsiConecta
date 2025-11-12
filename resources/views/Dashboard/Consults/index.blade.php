@@ -118,7 +118,7 @@
                     <thead class="table-light">
                         <tr>
                             <th class="px-4 py-3">Horário</th>
-                            <th class="px-4 py-3">Paciente</th>
+                            <th class="px-4 py-3">Psicólogo(a)</th>
                             <th class="px-4 py-3">Status</th>
                             <th class="px-4 py-3 text-center">Ações</th>
                         </tr>

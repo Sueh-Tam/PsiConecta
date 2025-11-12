@@ -124,6 +124,54 @@ class PackageController extends Controller
         }
     }
 
+    public function getPackages(Request $request){
+        $patient = User::where('id',$request->user_id)->first();
+
+        return response()->json($patient->patientPackages()->with(['psychologist','patient'])->get());
+    }
+
+    public function getPackage(Request $request){
+        
+        $package = Package::where('id',$request->id)->with(['psychologist','patient','appointments'])->first();
+        return response()->json($package);
+    }
+
+    public function buyPackage(Request $request){
+        
+        $package = Package::where('patient_id',$request->patient_id)->where('psychologist_id',$request->psychologist_id)->where('balance','>',0)->first();
+        if($package){
+            return response()->json('Você já possui um pacote comprado com esse psicólogo, por favor, complete as consultas do pacote atual antes de comprar um novo.', 500);
+        }
+        if($request->total_appointments == 0){
+            return response()->json('Número de consultas inválido', 500);
+        }
+
+        $psychologist = User::where('id',$request->psychologist_id)->where('type','psychologist')->first();
+        if(!$psychologist){
+            return response()->json('Psicólogo não encontrado', 500);
+        }
+
+        $package = new Package();
+        $package->patient_id = $request->patient_id;
+        $package->psychologist_id = $request->psychologist_id;
+        $package->total_appointments = $request->total_appointments;
+        $package->price = ($psychologist->appointment_price * $request->total_appointments);
+        $package->balance = $request->total_appointments;
+        $package->payment_method = $request->payment_method;
+        $package->save();
+
+        return response()->json('Pacote comprado com sucesso', 200);    
+    }
+
+    public function ApiActivePackages($id){
+        $user = User::where('id',$id)->first();
+        $packages = $user->activePackage();
+        if($packages->count() == 0){
+            return response()->json(['error' => 'Nenhum pacote ativo encontrado'], 404);
+        }
+        return response()->json($packages);
+    }
+
     public function show(Package $package)
     {
     }

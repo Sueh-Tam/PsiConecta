@@ -18,7 +18,7 @@ class Availability extends Model
      */
     public function psychologist()
     {
-        return $this->belongsTo(User::class, 'id_psychologist');
+        return $this->belongsTo(User::class, 'id');
     }
 
     /**

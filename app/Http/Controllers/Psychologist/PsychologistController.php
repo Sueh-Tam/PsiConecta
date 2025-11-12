@@ -104,8 +104,8 @@ class PsychologistController extends Controller
 
     }
     public function consultsByPsychologist(Request $request){
+        
         $today = Carbon::today();
-
         $clinicId = Auth::user()->id_clinic;
         $clinic = User::find($clinicId);
         $patients = $clinic->patients()
@@ -115,9 +115,9 @@ class PsychologistController extends Controller
             ->get()
             ->map(function($patient) {
                 $activePackage = $patient->activePackage();
-                $patient->appointments_left = $activePackage 
-                    ? $activePackage->total_appointments - $activePackage->balance
-                    : 0;
+                // $patient->appointments_left = $activePackage 
+                //     ? $activePackage->total_appointments - $activePackage->balance
+                //     : 0;
                 return $patient;
             });
 
@@ -137,7 +137,9 @@ class PsychologistController extends Controller
         $todayAppointments = $query
             ->whereDate('dt_Availability', $today)
             ->get();
-        $appointments = $query
+
+        $psychologistAppointments = Auth::user()->psychologistAppointments()->where('dt_Availability','>=',$today);
+        $appointments = $psychologistAppointments
             ->orderBy('dt_Availability', 'asc')
             ->orderBy('hr_Availability', 'asc')
             ->paginate(10)
@@ -157,7 +159,6 @@ class PsychologistController extends Controller
                     'status' => $appointment->status
                 ];
             });
-
         $stats = [
             'next_appointment' => $appointments->where('status', 'scheduled')
                 ->sortBy('date')
@@ -201,6 +202,40 @@ class PsychologistController extends Controller
             ->orderBy('dt_Availability', 'desc')
             ->get();
         return view('Dashboard.Psychologists.patient_details', ['patient' => $patient, 'appointments' => $appointments]);
+    }
+
+    public function getPsychologistAvailabilities($id,$idPsychologist){
+        try{
+            $psychologist = User::find($idPsychologist);
+
+            if(!$psychologist){
+                return response()->json(['error' => 'Psicólogo não encontrado'], 404);
+            }
+            if($psychologist->availabilities()->count() == 0 || $psychologist->availabilities() == null){
+                return response()->json(['error' => 'O psicólogo não possui disponibilidade, no momento'], 404);
+            }
+            $availabilities = $psychologist->availabilities()->where('status','available')->get();
+            return response()->json($availabilities);
+
+        }catch(\Exception $e){
+            return response()->json(['error' => $e->getMessage()], 404);
+        }
+    }
+
+    public function apiGetPsychologistAvailabilities($id){
+        try{
+            $psychologist = User::find($id);
+            if(!$psychologist){
+                return response()->json(['error' => 'Psicólogo não encontrado'], 404);
+            }
+            $availabilities = $psychologist->availabilities()->where('status','available')->where('dt_Availability','>',now())->orderBy('dt_Availability', 'asc')->get();
+            if($availabilities->count() == 0 || $availabilities == null){
+                return response()->json(['error' => 'O psicólogo não possui disponibilidade, no momento'], 404);
+            }
+            return response()->json($availabilities);
+        }catch(\Exception $e){
+            return response()->json(['error' => $e->getMessage()], 404);
+        }
     }
 
 }

@@ -162,6 +162,7 @@ class User extends Authenticatable
         }
 
     }
+    
     public function attendants()
     {
         return $this->hasMany(User::class, 'id_clinic')
@@ -181,9 +182,9 @@ class User extends Authenticatable
     public function activePackage()
     {
         return $this->patientPackages()
+            ->with(['psychologist','patient'])
             ->whereRaw('balance > 0')
-            ->latest()
-            ->first();
+            ->get();
     }
 
     /**
@@ -225,7 +226,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Availability::class, 'id_psychologist');
     }
+    /*
+        public function psychologists()
+        {
+            if($this->isClinic()){
+                return $this->hasMany(User::class, 'id_clinic')
+                    ->where('type', 'psychologist');
+            }else{
+                return $this->hasMany(User::class, 'id_clinic','id_clinic')
+                    ->where('type', 'psychologist');
+            }
 
+        }
+    */
     /**
      * Escopo para usuários do tipo clínica
      */

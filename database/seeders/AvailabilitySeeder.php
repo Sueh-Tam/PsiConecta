@@ -60,9 +60,15 @@ class AvailabilitySeeder extends Seeder
             if ($currentDate->dayOfWeek >= 1 && $currentDate->dayOfWeek <= 5) {
                 // Para cada psicólogo
                 foreach ($psychologists as $psychologist) {
+                    $this->command->info('Criando disponibilidades para Psicólogo ID: ' . $psychologist->id);
                     // Selecionar aleatoriamente alguns horários disponíveis para este psicólogo e dia
                     $numHoursToSelect = rand(1, count($availableHours)); // Número aleatório de horários
                     $selectedHours = array_rand(array_flip($availableHours), $numHoursToSelect);
+                    
+                    // Garantir que $selectedHours seja sempre um array
+                    if (!is_array($selectedHours)) {
+                        $selectedHours = [$selectedHours];
+                    }
                     
                     // Para cada horário selecionado aleatoriamente
                     foreach ($selectedHours as $hour) {
@@ -72,13 +78,7 @@ class AvailabilitySeeder extends Seeder
                         // Extrair a hora inicial do bloco de horário (ex: '08:00-09:00' -> '08:00')
                         $startHour = explode('-', $hour)[0];
                         
-                        // Criar disponibilidade com status baseado no número aleatório
-                        $availability = Availability::create([
-                            'id_psychologist' => $psychologist->id,
-                            'dt_Availability' => $currentDate->format('Y-m-d'),
-                            'hr_Availability' => $hour,
-                            'status' => $randomNumber == 1 ? 'unvailable' : 'available',
-                        ]);
+                        // Criar disponibilidade com status baseado no número aleatório availability
                         
                         // Se o número aleatório for 1, criar um agendamento associado
                         if ($randomNumber == 1) {
@@ -113,24 +113,39 @@ class AvailabilitySeeder extends Seeder
                                     $rand_status = ['scheduled','completed','cancelled','canceled_late','canceled_early'];
                                     $selected_status = $rand_status[array_rand($rand_status,1)];
                                     
+                                    $availability = Availability::create([
+                                        'id_psychologist' => $psychologist->id,
+                                        'dt_Availability' => $currentDate->format('Y-m-d'),
+                                        'hr_Availability' => $hour,
+                                        'status' => $randomNumber == 1 ? 'unvailable' : 'available',
+                                    ]);
+                                    $this->command->info('Criado Availability ID: ' . $availability->id);
+                                    
                                     if($selected_status != 'scheduled' && $selected_status != 'completed'){
                                         $availability->update([
                                             'id_appointments' => null,
                                         ]);
+                                    }else{
+
+                                        $appointment = Appointment::create([
+                                            'clinic_id' => $clinic->id,
+                                            'patient_id' => $patient->id,
+                                            'psychologist_id' => $psychologist->id,
+                                            'package_id' => $package->id,
+                                            'status' => $selected_status,
+                                            'payment_status' => 'paid',
+                                            'medical_record' => $selected_status == 'completed' ? fake()->paragraph() : null,
+                                            'dt_Availability' => $currentDate->format('Y-m-d'),
+                                            'hr_Availability' => $startHour,
+                                        ]);
+                                        $this->command->info('Criado Appointment ID: ' . $appointment->id);
+                                        
+                                        $availability->update([
+                                            'id_appointments' => $appointment->id,
+                                        ]);
                                     }
 
-                                    Appointment::create([
-                                        'clinic_id' => $clinic->id,
-                                        'patient_id' => $patient->id,
-                                        'psychologist_id' => $psychologist->id,
-                                        'package_id' => $package->id,
-                                        'status' => $selected_status,
-                                        'payment_status' => 'paid',
-                                        'medical_record' => $selected_status == 'completed' ? fake()->paragraph() : null,
-                                        'dt_Availability' => $currentDate->format('Y-m-d'),
-                                        'hr_Availability' => $startHour,
-                                    ]);
-
+                                    
                                     if($rand_status == 'canceled_early'){
                                         $i--;
                                     }
@@ -142,8 +157,8 @@ class AvailabilitySeeder extends Seeder
                         }
                     }
                 }
+                $currentDate->addDay(1);
             }
-            $currentDate->addDay(1);
         }
         
         //$this->command->info("$count disponibilidades criadas com sucesso!");

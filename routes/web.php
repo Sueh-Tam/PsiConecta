@@ -117,15 +117,21 @@ Route::prefix('patient')->middleware('auth')->group(function () {
         return response()->json(['psychologist' => null, 'available_days' => [], 'available_times' => []]);
     });
     Route::get('/api/psychologist/{id}', function ($id) {
-        $patient = \App\Models\User::find(Auth::user()->id);
-        $psychologist  = \App\Models\User::find($id);;
 
+        //$patient = \App\Models\User::find(Auth::user()->id);
+        $patient = Auth::user();
+        $psychologist  = \App\Models\User::find($id);;
+       /*
+       $activePackage = $patient->activePackage()
+            ->where('psychologist_id', $psychologist->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->first();
+       */ 
         $activePackage = $patient->activePackage()
             ->where('psychologist_id', $psychologist->id)
-            ->where('balance','!=','0')
-            ->orderBy('created_at', 'desc')
             ->first();
-
+        //return response()->json(['psychologist' => $, 'available_days' => [], 'available_times' => []]);
         if ($activePackage) {
 
             // Buscar disponibilidades do psicólogo
@@ -235,4 +241,37 @@ Route::prefix('psychologist')->middleware('auth')->group(function () {
     Route::post('/availability/restore', [AvailabilityController::class, 'restore'])->name('psychologist.availability.restore');
     Route::get('/patients', [PsychologistController::class,'psychologistPatients'])->name('psychologist.patients');
     Route::get('patient/details/{id}',[PsychologistController::class,'patientDetails'])->name('psychologist.patient.details');
+});
+
+//API
+
+Route::prefix('api')->middleware('api')->group(function () {
+    Route::get('/csrf-token', [UserController::class, 'generateCsrfToken']);
+    Route::prefix('auth')->group(function () {
+        Route::post('/login', [UserController::class, 'apiLogin']);
+        Route::post('/register', [UserController::class, 'apiUserRegister']);
+        Route::post('/reset-password', [UserController::class, 'apiResetPassword']);
+        Route::post('/update-profile', [UserController::class, 'apiUpdateUser']);
+    });
+    Route::prefix('packages')->group(function(){
+        Route::get('/', [PackageController::class, 'getPackages']);
+        Route::get('/{id}', [PackageController::class, 'getPackage']);
+        Route::post('/buyPackage', [PackageController::class, 'buyPackage']);
+        Route::get('/activePackages/{id}', [PackageController::class, 'ApiActivePackages']);
+    });
+    Route::prefix('clinics')->group(function () {
+        Route::get('/all', [ClinicController::class, 'getAllCLinics']);
+        Route::get('/{id}', [ClinicController::class, 'getClinic']);
+        Route::get('/{id}/psychologists', [ClinicController::class, 'getClinicPsychologists']);
+        Route::get('/{id}/psychologist/{idPsychologist}', [ClinicController::class, 'getClinicPsychologist']);
+        Route::get('/{id}/psychologist/{idPsychologist}/availabilities', [PsychologistController::class, 'getPsychologistAvailabilities']);
+    });
+    Route::prefix('psychologists')->group(function () {
+        Route::get('/{id}/availabilities', [PsychologistController::class, 'apiGetPsychologistAvailabilities']);
+    });
+    Route::prefix('appointments')->group(function () {
+        Route::post('/schedule', [AppointmentController::class, 'ApiScheduleAppointment']);
+        Route::get('/all', [AppointmentController::class, 'ApiAllAppointments']);
+        Route::post('/cancel', [AppointmentController::class, 'ApiCancelAppointment']);
+    });
 });
